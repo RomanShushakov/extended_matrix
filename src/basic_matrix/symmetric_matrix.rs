@@ -27,8 +27,8 @@ pub struct SymmetricMatrix<T, V>
 
 impl<T, V> BasicMatrixTrait<T, V> for SymmetricMatrix<T, V>
     where T: Copy + PartialOrd + Sub<Output = T> + Add<Output = T> + Mul<Output = T> +
-             Div<Output = T> + Debug + Rem<Output = T> + Eq + Hash +
-             SubAssign + Default + 'static + From<usize> + Into<usize>,
+             Div<Output = T> + Debug + Rem<Output = T> + Eq + Hash + Into<usize> +
+             From<usize> + SubAssign + Default + 'static,
           V: Copy + Default + Debug + PartialEq + MulAssign + 'static,
 {
    // fn create_element_value(&mut self, requested_index: T, new_value: V)
@@ -160,7 +160,7 @@ impl<T, V> BasicMatrixTrait<T, V> for SymmetricMatrix<T, V>
             {
                 let zeros_row_column = ZerosRowColumn { row: row_column, column: row_column };
                 zeros_rows_columns.push(zeros_row_column);
-                self.remove_zeros_row_column(row_column);
+                self.remove_row_column(row_column);
             }
             else
             {
@@ -171,18 +171,27 @@ impl<T, V> BasicMatrixTrait<T, V> for SymmetricMatrix<T, V>
     }
 
 
-    fn remove_zeros_row(&mut self, row: T) -> Box<dyn BasicMatrixTrait<T, V>>
+    fn remove_selected_row(&mut self, row: T) -> Box<dyn BasicMatrixTrait<T, V>>
     {
         let symmetric_matrix = self.clone();
         let mut non_symmetric_matrix = symmetric_matrix.non_symmetric();
-        non_symmetric_matrix.remove_zeros_row(row);
+        non_symmetric_matrix.remove_row(row);
+        Box::new(non_symmetric_matrix)
+    }
+
+
+    fn remove_selected_column(&mut self, column: T) -> Box<dyn BasicMatrixTrait<T, V>>
+    {
+        let symmetric_matrix = self.clone();
+        let mut non_symmetric_matrix = symmetric_matrix.non_symmetric();
+        non_symmetric_matrix.remove_column(column);
         Box::new(non_symmetric_matrix)
     }
 }
 
 
 impl<T, V> SymmetricMatrix<T, V>
-    where T: Copy + Debug + PartialEq + From<usize> + Into<usize> +
+    where T: Copy + Debug + Into<usize> + From<usize> + PartialEq +
              Mul<Output = T> + Add<Output = T> + PartialOrd + SubAssign + Div<Output = T> +
              Sub<Output = T> + Rem<Output = T>,
           V: Copy + Default
@@ -214,7 +223,7 @@ impl<T, V> SymmetricMatrix<T, V>
     }
 
 
-    fn remove_zeros_row_column(&mut self, row_column: T)
+    fn remove_row_column(&mut self, row_column: T)
     {
         for index in self.elements_indexes.as_mut_slice()
         {

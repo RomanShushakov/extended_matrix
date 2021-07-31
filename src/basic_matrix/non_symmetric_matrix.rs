@@ -28,7 +28,7 @@ pub struct NonSymmetricMatrix<T, V>
 impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
     where T: Copy + PartialEq + Debug + PartialOrd + Mul<Output = T> + Add<Output = T> +
              Default + Sub<Output = T> + Div<Output = T> + Rem<Output = T> + Eq + Hash +
-             SubAssign + 'static + From<usize> + Into<usize>,
+             Into<usize> + From<usize> + SubAssign + 'static,
           V: Copy + Default + PartialEq + Debug + MulAssign + 'static,
 {
    // fn create_element_value(&mut self, requested_index: T, new_value: V)
@@ -215,8 +215,8 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
                 {
                     let zeros_row_column = ZerosRowColumn { row, column };
                     zeros_rows_columns.push(zeros_row_column);
-                    self.remove_zeros_row(row);
-                    self.remove_zeros_column(column);
+                    self.remove_row(row);
+                    self.remove_column(column);
                 }
                 else
                 {
@@ -232,16 +232,23 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
     }
 
 
-    fn remove_zeros_row(&mut self, row: T) -> Box<dyn BasicMatrixTrait<T, V>>
+    fn remove_selected_row(&mut self, row: T) -> Box<dyn BasicMatrixTrait<T, V>>
     {
-        self.remove_zeros_row(row);
+        self.remove_row(row);
+        Box::new(self.clone())
+    }
+
+
+    fn remove_selected_column(&mut self, column: T) -> Box<dyn BasicMatrixTrait<T, V>>
+    {
+        self.remove_column(column);
         Box::new(self.clone())
     }
 }
 
 
 impl<T, V> NonSymmetricMatrix<T, V>
-    where T: Copy + Debug + PartialEq + Into<usize> + From<usize> +
+    where T: Copy + Debug + Into<usize> + From<usize> + PartialEq +
              Mul<Output = T> + Add<Output = T> + PartialOrd + SubAssign + Div<Output = T> +
              Sub<Output = T> + Rem<Output = T>,
           V: Copy + Default
@@ -292,7 +299,7 @@ impl<T, V> NonSymmetricMatrix<T, V>
     }
 
 
-    pub fn remove_zeros_row(&mut self, row: T)
+    pub fn remove_row(&mut self, row: T)
     {
         for index in self.elements_indexes.as_mut_slice()
         {
@@ -305,7 +312,7 @@ impl<T, V> NonSymmetricMatrix<T, V>
     }
 
 
-    fn remove_zeros_column(&mut self, column: T)
+    pub fn remove_column(&mut self, column: T)
     {
         for index in self.elements_indexes.as_mut_slice()
         {
