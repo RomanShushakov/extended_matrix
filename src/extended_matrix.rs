@@ -32,6 +32,7 @@ pub enum Operation
 #[derive(Clone)]
 pub struct ExtendedMatrix<T, V>
 {
+    tolerance: V,
     basic_matrix: Box<dyn BasicMatrixTrait<T, V>>
 }
 
@@ -87,7 +88,7 @@ impl<T, V> ExtendedMatrix<T, V>
                 columns_number, rows_number, elements_indexes, elements_values
             });
         let basic_matrix = basic_matrix.into_symmetric();
-        ExtendedMatrix { basic_matrix }
+        ExtendedMatrix { tolerance, basic_matrix }
     }
 
 
@@ -109,7 +110,7 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    pub fn add_subtract_matrix<'a>(&'a self, other: &'a Self, operation: Operation, tolerance: V)
+    pub fn add_subtract_matrix<'a>(&'a self, other: &'a Self, operation: Operation)
         -> Result<Self, &'a str>
     {
         let (_, shape) =
@@ -145,7 +146,7 @@ impl<T, V> ExtendedMatrix<T, V>
                                 applied for add_subtract function!"),
                     }
                 };
-            if value.into().abs() > tolerance.into()
+            if value.into().abs() > self.tolerance.into()
             {
                 elements_indexes.push(index);
                 elements_values.push(value);
@@ -158,19 +159,19 @@ impl<T, V> ExtendedMatrix<T, V>
                 rows_number: shape.0, columns_number: shape.1, elements_indexes, elements_values
             });
         let basic_matrix = basic_matrix.into_symmetric();
-        Ok(ExtendedMatrix { basic_matrix })
+        Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix })
     }
 
 
-    pub fn add_matrix<'a>(&'a self, other: &'a Self, tolerance: V) -> Result<Self, &'a str>
+    pub fn add_matrix<'a>(&'a self, other: &'a Self) -> Result<Self, &'a str>
     {
-        self.add_subtract_matrix(other, Operation::Addition, tolerance)
+        self.add_subtract_matrix(other, Operation::Addition)
     }
 
 
-    pub fn subtract_matrix<'a>(&'a self, other: &'a Self, tolerance: V) -> Result<Self, &'a str>
+    pub fn subtract_matrix<'a>(&'a self, other: &'a Self) -> Result<Self, &'a str>
     {
-        self.add_subtract_matrix(other, Operation::Subtraction, tolerance)
+        self.add_subtract_matrix(other, Operation::Subtraction)
     }
 
 
@@ -239,7 +240,7 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    pub fn multiply_by_matrix<'a>(&'a self, other: &'a Self, tolerance: V)
+    pub fn multiply_by_matrix<'a>(&'a self, other: &'a Self)
         -> Result<Self, &'a str>
     {
         let (basic_dimension, shape) =
@@ -272,7 +273,7 @@ impl<T, V> ExtendedMatrix<T, V>
                 k += T::one();
             }
 
-            if value.into().abs() > tolerance.into()
+            if value.into().abs() > self.tolerance.into()
             {
                 elements_indexes.push(T::from(index));
                 elements_values.push(value);
@@ -285,11 +286,11 @@ impl<T, V> ExtendedMatrix<T, V>
                 rows_number: shape.0, columns_number: shape.1, elements_indexes, elements_values
             });
         let basic_matrix = basic_matrix.into_symmetric();
-        Ok(ExtendedMatrix { basic_matrix })
+        Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix })
     }
 
 
-    pub fn naive_gauss_elimination<'a>(&'a self, other: &'a Self, tolerance: V)
+    pub fn naive_gauss_elimination<'a>(&'a self, other: &'a Self)
         -> Result<Self, &'a str>
     {
         let (basic_dimension, shape) =
@@ -404,11 +405,11 @@ impl<T, V> ExtendedMatrix<T, V>
         }
 
         Ok(ExtendedMatrix::create(shape.0, shape.1,
-            elements_values, tolerance))
+            elements_values, self.tolerance))
     }
 
 
-    pub fn lu_decomposition(&self, tolerance: V) -> Result<(Self, Self), &str>
+    pub fn lu_decomposition(&self) -> Result<(Self, Self), &str>
     {
         let shape = self.basic_matrix.get_shape();
         if (shape.0 != shape.1) || shape.0 < T::one() + T::one()
@@ -483,27 +484,27 @@ impl<T, V> ExtendedMatrix<T, V>
         }
 
 
-        remove_zero_values(&mut l_elements_indexes, &mut l_elements_values, tolerance);
+        remove_zero_values(&mut l_elements_indexes, &mut l_elements_values, self.tolerance);
         let l_basic_matrix = Box::new(NonSymmetricMatrix
             {
                 rows_number: shape.0, columns_number: shape.1,
                 elements_indexes: l_elements_indexes, elements_values: l_elements_values
             });
-        let l_matrix = ExtendedMatrix { basic_matrix: l_basic_matrix };
-        remove_zero_values(&mut u_elements_indexes, &mut u_elements_values, tolerance);
+        let l_matrix = ExtendedMatrix { tolerance: self.tolerance, basic_matrix: l_basic_matrix };
+        remove_zero_values(&mut u_elements_indexes, &mut u_elements_values, self.tolerance);
         let u_basic_matrix = Box::new(NonSymmetricMatrix
             {
                 rows_number: shape.0, columns_number: shape.1,
                 elements_indexes: u_elements_indexes, elements_values: u_elements_values
             });
-        let u_matrix = ExtendedMatrix { basic_matrix: u_basic_matrix };
+        let u_matrix = ExtendedMatrix { tolerance: self.tolerance, basic_matrix: u_basic_matrix };
         Ok((l_matrix, u_matrix))
     }
 
 
-    pub fn determinant(&self, tolerance: V) -> Result<V, &str>
+    pub fn determinant(&self) -> Result<V, &str>
     {
-        let (_, u_matrix) = self.lu_decomposition(tolerance)?;
+        let (_, u_matrix) = self.lu_decomposition()?;
         let u_matrix_elements_values = u_matrix.basic_matrix
             .extract_all_elements_values();
         let shape = u_matrix.basic_matrix.get_shape();
@@ -522,10 +523,10 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    pub fn inverse(&self, tolerance: V) -> Result<Self, &str>
+    pub fn inverse(&self) -> Result<Self, &str>
     {
         let (l_matrix, u_matrix) =
-            self.lu_decomposition(tolerance)?;
+            self.lu_decomposition()?;
 
         let shape = self.basic_matrix.get_shape();
         let mut inverse_matrix_indexes = Vec::new();
@@ -542,12 +543,14 @@ impl<T, V> ExtendedMatrix<T, V>
                 rows_number: shape.1, columns_number: T::one(),
                 elements_indexes: unit_column_indexes, elements_values: unit_column_values
             });
-            let unit_column = ExtendedMatrix { basic_matrix: basic_unit_column };
+            let unit_column =
+                ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_unit_column };
+
             let interim_inverse_column = l_matrix
-                .naive_gauss_elimination(&unit_column, tolerance).unwrap();
+                .naive_gauss_elimination(&unit_column).unwrap();
 
             let inverse_column = u_matrix
-                .naive_gauss_elimination(&interim_inverse_column, tolerance).unwrap();
+                .naive_gauss_elimination(&interim_inverse_column).unwrap();
 
             let all_inverse_column_values =
                 inverse_column.basic_matrix.extract_all_elements_values();
@@ -574,7 +577,7 @@ impl<T, V> ExtendedMatrix<T, V>
                 elements_indexes: inverse_matrix_indexes, elements_values: inverse_matrix_values
             });
         let basic_inverse_matrix = basic_inverse_matrix.into_symmetric();
-        Ok(ExtendedMatrix { basic_matrix: basic_inverse_matrix })
+        Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_inverse_matrix })
     }
 
 
