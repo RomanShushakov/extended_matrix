@@ -21,9 +21,9 @@ use crate::basic_matrix::functions::{matrix_size_check, extract_value_by_index};
 #[derive(Debug, Clone)]
 pub struct SymmetricMatrix<T, V>
 {
-    pub rows_and_columns_number: T,
-    pub elements_indexes: Vec<T>,
-    pub elements_values: Vec<V>,
+    rows_and_columns_number: T,
+    elements_indexes: Vec<T>,
+    elements_values: Vec<V>,
 }
 
 
@@ -102,11 +102,12 @@ impl<T, V> BasicMatrixTrait<T, V> for SymmetricMatrix<T, V>
         {
             let row = *index / self.rows_and_columns_number;
             let column = *index % self.rows_and_columns_number;
-            let position = MatrixElementPosition { row, column };
+            let position = MatrixElementPosition::create(row, column);
             all_elements_values.insert(position, *value);
             if row != column
             {
-                let symmetric_position = MatrixElementPosition { row: column, column: row };
+                let symmetric_position = MatrixElementPosition::create(
+                    column, column);
                 all_elements_values.insert(symmetric_position, *value);
             }
         }
@@ -159,7 +160,8 @@ impl<T, V> BasicMatrixTrait<T, V> for SymmetricMatrix<T, V>
         {
             if let Some(row_column) = self.find_zeros_row_column()
             {
-                let zeros_row_column = ZerosRowColumn { row: row_column, column: row_column };
+                let zeros_row_column = ZerosRowColumn::create(
+                    row_column, row_column);
                 zeros_rows_columns.push(zeros_row_column);
                 self.remove_row_column(row_column);
             }
@@ -192,11 +194,35 @@ impl<T, V> BasicMatrixTrait<T, V> for SymmetricMatrix<T, V>
 
 
 impl<T, V> SymmetricMatrix<T, V>
-    where T: Copy + Debug + PartialEq + One + Default +
-             Mul<Output = T> + Add<Output = T> + PartialOrd + SubAssign + Div<Output = T> +
-             Sub<Output = T> + Rem<Output = T>,
+    where T: Copy + Debug + PartialEq + One + Default + Mul<Output = T> + Add<Output = T> +
+             PartialOrd + SubAssign + Div<Output = T> + Sub<Output = T> + Rem<Output = T>,
           V: Copy + Default
 {
+    pub fn create(rows_and_columns_number: T, elements_indexes: Vec<T>, elements_values: Vec<V>)
+        -> Self
+    {
+        SymmetricMatrix { rows_and_columns_number, elements_indexes, elements_values }
+    }
+
+
+    pub fn rows_and_columns_number(&self) -> T
+    {
+        self.rows_and_columns_number
+    }
+
+
+    pub fn elements_indexes(&self) -> Vec<T>
+    {
+        self.elements_indexes.clone()
+    }
+
+
+    pub fn elements_values(&self) -> Vec<V>
+    {
+        self.elements_values.clone()
+    }
+
+
     fn find_zeros_row_column(&self) -> Option<T>
     {
         let mut zeros_row_column = None;
@@ -288,10 +314,9 @@ impl<T, V> SymmetricMatrix<T, V>
                 non_symmetric_values.push(*value);
             }
         }
-        NonSymmetricMatrix
-        {
-            rows_number: non_symmetric_rows_number, columns_number: non_symmetric_columns_number,
-            elements_indexes: non_symmetric_indexes, elements_values: non_symmetric_values,
-        }
+        let non_symmetric_matrix = NonSymmetricMatrix::create(
+            non_symmetric_rows_number, non_symmetric_columns_number,
+            non_symmetric_indexes, non_symmetric_values);
+        non_symmetric_matrix
     }
 }

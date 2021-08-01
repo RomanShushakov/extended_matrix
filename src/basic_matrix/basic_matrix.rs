@@ -18,16 +18,47 @@ pub struct Shape<T>(pub T, pub T);
 #[derive(Debug, Hash, PartialEq, Eq)]
 pub struct MatrixElementPosition<T>
 {
-    pub row: T,
-    pub column: T,
+    row: T,
+    column: T,
+}
+
+
+impl<T> MatrixElementPosition<T>
+    where T: Copy
+{
+    pub fn create(row: T, column: T) -> Self
+    {
+        MatrixElementPosition { row, column }
+    }
+
+
+    pub fn row(&self) -> T
+    {
+        self.row
+    }
+
+
+    pub fn column(&self) -> T
+    {
+        self.column
+    }
 }
 
 
 #[derive(Debug)]
 pub struct ZerosRowColumn<T>
 {
-    pub row: T,
-    pub column: T,
+    row: T,
+    column: T,
+}
+
+
+impl<T> ZerosRowColumn<T>
+{
+    pub fn create(row: T, column: T) -> Self
+    {
+        ZerosRowColumn { row, column }
+    }
 }
 
 

@@ -83,10 +83,10 @@ impl<T, V> ExtendedMatrix<T, V>
             index += T::one();
         }
 
-        let basic_matrix = Box::new(NonSymmetricMatrix
-            {
-                columns_number, rows_number, elements_indexes, elements_values
-            });
+        let basic_matrix = Box::new(NonSymmetricMatrix::create(
+            rows_number, columns_number, elements_indexes,
+            elements_values));
+
         let basic_matrix = basic_matrix.into_symmetric();
         ExtendedMatrix { tolerance, basic_matrix }
     }
@@ -154,10 +154,9 @@ impl<T, V> ExtendedMatrix<T, V>
             index += T::one();
         }
 
-        let basic_matrix = Box::new(NonSymmetricMatrix
-            {
-                rows_number: shape.0, columns_number: shape.1, elements_indexes, elements_values
-            });
+        let basic_matrix = Box::new(NonSymmetricMatrix::create(
+            shape.0, shape.1, elements_indexes, elements_values));
+
         let basic_matrix = basic_matrix.into_symmetric();
         Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix })
     }
@@ -189,17 +188,17 @@ impl<T, V> ExtendedMatrix<T, V>
             self_positions.iter().zip(other_positions)
         {
             let current_lhs_element_value = extract_element_value(
-                    lhs_position.row, lhs_position.column,
+                    lhs_position.row(), lhs_position.column(),
                     &lhs_all_elements_values
                 );
             let current_rhs_element_value = extract_element_value(
-                    rhs_position.row, rhs_position.column,
+                    rhs_position.row(), rhs_position.column(),
                     &rhs_all_elements_values
                 );
             let value = current_lhs_element_value + current_rhs_element_value;
             if value.into().abs() > tolerance.into()
             {
-                elements_indexes.push(lhs_position.row * lhs_shape.1 + lhs_position.column);
+                elements_indexes.push(lhs_position.row() * lhs_shape.1 + lhs_position.column());
                 elements_values.push(value);
             }
         }
@@ -207,9 +206,13 @@ impl<T, V> ExtendedMatrix<T, V>
         let mut index = T::default();
         while index < lhs_shape.0 * lhs_shape.1
         {
-            if let None = self_positions.iter().position(|position|
-                *position == MatrixElementPosition { row: index / lhs_shape.1,
-                    column: index % lhs_shape.1 })
+            if let None = self_positions.iter().position(|existed_matrix_element_position|
+                {
+                    let matrix_element_position =
+                        MatrixElementPosition::create(index / lhs_shape.1,
+                        index % lhs_shape.1);
+                    *existed_matrix_element_position == matrix_element_position
+                })
             {
                 let value = extract_element_value(
                     index / lhs_shape.1, index % lhs_shape.1,
@@ -224,11 +227,9 @@ impl<T, V> ExtendedMatrix<T, V>
             index += T::one();
         }
 
-        let basic_matrix = Box::new(NonSymmetricMatrix
-            {
-                rows_number: lhs_shape.0, columns_number: lhs_shape.1, elements_indexes,
-                elements_values
-            });
+        let basic_matrix = Box::new(NonSymmetricMatrix::create(
+            lhs_shape.0, lhs_shape.1, elements_indexes, elements_values));
+
         let basic_matrix = basic_matrix.into_symmetric();
         self.basic_matrix = basic_matrix;
     }
@@ -281,10 +282,9 @@ impl<T, V> ExtendedMatrix<T, V>
             index += T::one();
         }
 
-        let basic_matrix = Box::new(NonSymmetricMatrix
-            {
-                rows_number: shape.0, columns_number: shape.1, elements_indexes, elements_values
-            });
+        let basic_matrix = Box::new(NonSymmetricMatrix::create(
+            shape.0, shape.1, elements_indexes, elements_values));
+
         let basic_matrix = basic_matrix.into_symmetric();
         Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix })
     }
@@ -331,7 +331,7 @@ impl<T, V> ExtendedMatrix<T, V>
                         &lhs_all_elements_values);
 
                     *lhs_all_elements_values
-                        .entry(MatrixElementPosition { row: i, column: j })
+                        .entry(MatrixElementPosition::create(i, j))
                         .or_insert(Default::default()) -=
                             current_coefficient * current_lhs_element_value;
                     j += T::one();
@@ -340,7 +340,7 @@ impl<T, V> ExtendedMatrix<T, V>
                 let current_rhs_element_value = extract_element_value(k,
                     T::default(), &rhs_all_elements_values);
                 *rhs_all_elements_values
-                    .entry(MatrixElementPosition { row: i, column: T::default() })
+                    .entry(MatrixElementPosition::create(i, T::default()))
                     .or_insert(Default::default()) -=
                         current_coefficient * current_rhs_element_value;
                 i += T::one();
@@ -474,7 +474,7 @@ impl<T, V> ExtendedMatrix<T, V>
                         u_elements_values.push(current_element_value);
                     }
                     *all_elements_values
-                        .entry(MatrixElementPosition { row: i, column: j })
+                        .entry(MatrixElementPosition::create(i, j))
                         .or_insert(Default::default()) = current_element_value;
                     j += T::one();
                 }
@@ -485,18 +485,14 @@ impl<T, V> ExtendedMatrix<T, V>
 
 
         remove_zero_values(&mut l_elements_indexes, &mut l_elements_values, self.tolerance);
-        let l_basic_matrix = Box::new(NonSymmetricMatrix
-            {
-                rows_number: shape.0, columns_number: shape.1,
-                elements_indexes: l_elements_indexes, elements_values: l_elements_values
-            });
+        let l_basic_matrix = Box::new(NonSymmetricMatrix::create(
+            shape.0, shape.1, l_elements_indexes, l_elements_values));
+
         let l_matrix = ExtendedMatrix { tolerance: self.tolerance, basic_matrix: l_basic_matrix };
         remove_zero_values(&mut u_elements_indexes, &mut u_elements_values, self.tolerance);
-        let u_basic_matrix = Box::new(NonSymmetricMatrix
-            {
-                rows_number: shape.0, columns_number: shape.1,
-                elements_indexes: u_elements_indexes, elements_values: u_elements_values
-            });
+        let u_basic_matrix = Box::new(NonSymmetricMatrix::create(
+            shape.0, shape.1, u_elements_indexes, u_elements_values));
+
         let u_matrix = ExtendedMatrix { tolerance: self.tolerance, basic_matrix: u_basic_matrix };
         Ok((l_matrix, u_matrix))
     }
@@ -538,11 +534,10 @@ impl<T, V> ExtendedMatrix<T, V>
             let unit_column_indexes = vec![k];
             let unit_column_values = vec![V::one()];
 
-            let basic_unit_column = Box::new(NonSymmetricMatrix
-            {
-                rows_number: shape.1, columns_number: T::one(),
-                elements_indexes: unit_column_indexes, elements_values: unit_column_values
-            });
+            let basic_unit_column = Box::new(
+                NonSymmetricMatrix::create(shape.1, T::one(),
+                unit_column_indexes, unit_column_values));
+
             let unit_column =
                 ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_unit_column };
 
@@ -571,12 +566,12 @@ impl<T, V> ExtendedMatrix<T, V>
             k += T::one();
         }
 
-        let basic_inverse_matrix = Box::new(NonSymmetricMatrix
-            {
-                rows_number: shape.0, columns_number: shape.1,
-                elements_indexes: inverse_matrix_indexes, elements_values: inverse_matrix_values
-            });
+        let basic_inverse_matrix = Box::new(
+            NonSymmetricMatrix::create(shape.0, shape.1,
+                inverse_matrix_indexes, inverse_matrix_values));
+
         let basic_inverse_matrix = basic_inverse_matrix.into_symmetric();
+
         Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_inverse_matrix })
     }
 

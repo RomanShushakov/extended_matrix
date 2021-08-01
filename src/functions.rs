@@ -55,10 +55,10 @@ pub fn matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a ExtendedMatrix<T,
 
 pub fn extract_element_value<T, V>(row: T, column: T,
     elements_values: &HashMap<MatrixElementPosition<T>, V>) -> V
-    where T: Hash + Eq,
-          V: Copy + Default
+    where T: Hash + Eq + Copy,
+          V: Copy + Default,
 {
-    let element_position = MatrixElementPosition { row, column };
+    let element_position = MatrixElementPosition::create(row, column);
     let element_value =
         if let Some(value) = elements_values.get(&element_position)
         {

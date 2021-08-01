@@ -20,10 +20,10 @@ pub struct NonSymmetricMatrix<T, V>
     where T: Copy + Debug,
           V: Copy + Default
 {
-    pub rows_number: T,
-    pub columns_number: T,
-    pub elements_indexes: Vec<T>,
-    pub elements_values: Vec<V>,
+    rows_number: T,
+    columns_number: T,
+    elements_indexes: Vec<T>,
+    elements_values: Vec<V>,
 }
 
 
@@ -102,7 +102,7 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
         {
             let row = *index / self.columns_number;
             let column = *index % self.columns_number;
-            let position = MatrixElementPosition { row, column };
+            let position = MatrixElementPosition::create(row, column);
             all_elements_values.insert(position, *value);
         }
         all_elements_values
@@ -186,10 +186,8 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
                 return Box::new(self);
             }
         }
-        Box::new(SymmetricMatrix
-            {
-                rows_and_columns_number: self.rows_number, elements_indexes, elements_values
-            })
+        Box::new(SymmetricMatrix::create(self.rows_number, elements_indexes,
+            elements_values))
     }
 
 
@@ -215,7 +213,7 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
             {
                 if let Some(column) = self.find_zeros_column()
                 {
-                    let zeros_row_column = ZerosRowColumn { row, column };
+                    let zeros_row_column = ZerosRowColumn::create(row, column);
                     zeros_rows_columns.push(zeros_row_column);
                     self.remove_row(row);
                     self.remove_column(column);
@@ -250,11 +248,41 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
 
 
 impl<T, V> NonSymmetricMatrix<T, V>
-    where T: Copy + Debug + PartialEq + Default + One +
-             Mul<Output = T> + Add<Output = T> + PartialOrd + SubAssign + Div<Output = T> +
-             Sub<Output = T> + Rem<Output = T>,
+    where T: Copy + Debug + PartialEq + Default + One + Mul<Output = T> + Add<Output = T> +
+             PartialOrd + SubAssign + Div<Output = T> + Sub<Output = T> + Rem<Output = T>,
           V: Copy + Default
 {
+    pub fn create(rows_number: T, columns_number: T, elements_indexes: Vec<T>,
+        elements_values: Vec<V>) -> Self
+    {
+        NonSymmetricMatrix { rows_number, columns_number, elements_indexes, elements_values }
+    }
+
+
+    pub fn rows_number(&self) -> T
+    {
+        self.rows_number
+    }
+
+
+    pub fn columns_number(&self) -> T
+    {
+        self.columns_number
+    }
+
+
+    pub fn elements_indexes(&self) -> Vec<T>
+    {
+        self.elements_indexes.clone()
+    }
+
+
+    pub fn elements_values(&self) -> Vec<V>
+    {
+        self.elements_values.clone()
+    }
+
+
     fn find_zeros_row(&self) -> Option<T>
     {
         let mut zeros_row = None;
