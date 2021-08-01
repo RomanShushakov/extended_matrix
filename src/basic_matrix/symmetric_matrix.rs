@@ -4,6 +4,8 @@ use std::fmt::Debug;
 use std::collections::{HashMap};
 use std::hash::Hash;
 
+use crate::one::One;
+
 use crate::basic_matrix::basic_matrix::BasicMatrixTrait;
 use crate::basic_matrix::basic_matrix::
 {
@@ -26,9 +28,8 @@ pub struct SymmetricMatrix<T, V>
 
 
 impl<T, V> BasicMatrixTrait<T, V> for SymmetricMatrix<T, V>
-    where T: Copy + PartialOrd + Sub<Output = T> + Add<Output = T> + Mul<Output = T> +
-             Div<Output = T> + Debug + Rem<Output = T> + Eq + Hash + Into<usize> +
-             From<usize> + SubAssign + Default + 'static,
+    where T: Copy + PartialOrd + Sub<Output = T> + Add<Output = T> + Mul<Output = T> + One +
+             Div<Output = T> + Debug + Rem<Output = T> + Eq + Hash + SubAssign + Default + 'static,
           V: Copy + Default + Debug + PartialEq + MulAssign + 'static,
 {
    // fn create_element_value(&mut self, requested_index: T, new_value: V)
@@ -191,7 +192,7 @@ impl<T, V> BasicMatrixTrait<T, V> for SymmetricMatrix<T, V>
 
 
 impl<T, V> SymmetricMatrix<T, V>
-    where T: Copy + Debug + Into<usize> + From<usize> + PartialEq +
+    where T: Copy + Debug + PartialEq + One + Default +
              Mul<Output = T> + Add<Output = T> + PartialOrd + SubAssign + Div<Output = T> +
              Sub<Output = T> + Rem<Output = T>,
           V: Copy + Default
@@ -203,16 +204,37 @@ impl<T, V> SymmetricMatrix<T, V>
             .iter()
             .position(|index|
                 {
-                    *index == T::from(row) * self.rows_and_columns_number + T::from(column)
+                    *index == row * self.rows_and_columns_number + column
                 });
-        for row_column in (0..self.rows_and_columns_number.into()).rev()
+
+        let mut row_column = self.rows_and_columns_number;
+        while row_column > T::default()
         {
-            if (0..self.rows_and_columns_number.into()).rev().all(|row|
-                find_index(row, row_column) == None) &&
-                (0..self.rows_and_columns_number.into()).rev().all(|column|
-                find_index(row_column, column) == None)
+            row_column -= T::one();
+            let mut answers = Vec::new();
+            let mut row = self.rows_and_columns_number;
+            while row > T::default()
             {
-                zeros_row_column = Some(T::from(row_column));
+                row -= T::one();
+                match find_index(row, row_column)
+                {
+                    None => answers.push(true),
+                    Some(_) => answers.push(false),
+                }
+            }
+            let mut column = self.rows_and_columns_number;
+            while column > T::default()
+            {
+                column -= T::one();
+                match find_index(row_column, column)
+                {
+                    None => answers.push(true),
+                    Some(_) => answers.push(false),
+                }
+            }
+            if answers.iter().all(|answer| *answer == true)
+            {
+                zeros_row_column = Some(row_column);
             }
             if zeros_row_column != None
             {
@@ -236,14 +258,14 @@ impl<T, V> SymmetricMatrix<T, V>
         {
             if *index % self.rows_and_columns_number > row_column
             {
-                *index -= *index / self.rows_and_columns_number + T::from(1);
+                *index -= *index / self.rows_and_columns_number + T::one();
             }
             else
             {
                 *index -= *index / self.rows_and_columns_number;
             }
         }
-        self.rows_and_columns_number -= T::from(1);
+        self.rows_and_columns_number -= T::one();
     }
 
 

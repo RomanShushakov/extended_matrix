@@ -9,7 +9,7 @@ use crate::basic_matrix::non_symmetric_matrix::NonSymmetricMatrix;
 
 pub fn matrix_size_check<'a, T>(inputted_row: T, inputted_column: T, matrix_size: (T, T))
     -> Result<(), &'a str>
-    where T: PartialOrd + Copy
+    where T: PartialOrd
 {
     if inputted_row >= matrix_size.0 || inputted_column >= matrix_size.1
     {

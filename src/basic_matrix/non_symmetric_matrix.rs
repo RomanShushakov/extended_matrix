@@ -4,6 +4,8 @@ use std::any::Any;
 use std::collections::HashMap;
 use std::hash::Hash;
 
+use crate::one::One;
+
 use crate::basic_matrix::basic_matrix::BasicMatrixTrait;
 use crate::basic_matrix::basic_matrix::{MatrixElementPosition, ZerosRowColumn, Shape};
 use crate::basic_matrix::basic_matrix::{BasicMatrixType};
@@ -28,7 +30,7 @@ pub struct NonSymmetricMatrix<T, V>
 impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
     where T: Copy + PartialEq + Debug + PartialOrd + Mul<Output = T> + Add<Output = T> +
              Default + Sub<Output = T> + Div<Output = T> + Rem<Output = T> + Eq + Hash +
-             Into<usize> + From<usize> + SubAssign + 'static,
+             SubAssign + One + 'static,
           V: Copy + Default + PartialEq + Debug + MulAssign + 'static,
 {
    // fn create_element_value(&mut self, requested_index: T, new_value: V)
@@ -248,7 +250,7 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
 
 
 impl<T, V> NonSymmetricMatrix<T, V>
-    where T: Copy + Debug + Into<usize> + From<usize> + PartialEq +
+    where T: Copy + Debug + PartialEq + Default + One +
              Mul<Output = T> + Add<Output = T> + PartialOrd + SubAssign + Div<Output = T> +
              Sub<Output = T> + Rem<Output = T>,
           V: Copy + Default
@@ -260,14 +262,26 @@ impl<T, V> NonSymmetricMatrix<T, V>
             .iter()
             .position(|index|
                 {
-                    *index == T::from(row) * self.columns_number + T::from(column)
+                    *index == row * self.columns_number + column
                 });
-        for row in (0..self.rows_number.into()).rev()
+        let mut row = self.rows_number;
+        while row > T::default()
         {
-            if (0..self.columns_number.into()).rev().all(|column|
-                find_index(row, column) == None)
+            row -= T::one();
+            let mut answers = Vec::new();
+            let mut column = self.columns_number;
+            while column > T::default()
             {
-                zeros_row = Some(T::from(row));
+                column -= T::one();
+                match find_index(row, column)
+                {
+                    None => answers.push(true),
+                    Some(_) => answers.push(false),
+                }
+            }
+            if answers.iter().all(|answer| *answer == true)
+            {
+                zeros_row = Some(row);
             }
             if zeros_row != None
             {
@@ -283,12 +297,26 @@ impl<T, V> NonSymmetricMatrix<T, V>
         let mut zeros_column = None;
         let find_index = |row, column| self.elements_indexes
             .iter()
-            .position(|index| *index == T::from(row) * self.columns_number + T::from(column));
-        for column in (0..self.columns_number.into()).rev()
+            .position(|index| *index == row * self.columns_number + column);
+
+        let mut column = self.columns_number;
+        while column > T::default()
         {
-            if (0..self.rows_number.into()).rev().all(|row| find_index(row, column) == None)
+            column -= T::one();
+            let mut answers = Vec::new();
+            let mut row = self.rows_number;
+            while row > T::default()
             {
-                zeros_column = Some(T::from(column));
+                row -= T::one();
+                match find_index(row, column)
+                {
+                    None => answers.push(true),
+                    Some(_) => answers.push(false),
+                }
+            }
+            if answers.iter().all(|answer| *answer == true)
+            {
+                zeros_column = Some(column);
             }
             if zeros_column != None
             {
@@ -308,7 +336,7 @@ impl<T, V> NonSymmetricMatrix<T, V>
                 *index -= self.columns_number;
             }
         }
-        self.rows_number -= T::from(1);
+        self.rows_number -= T::one();
     }
 
 
@@ -318,13 +346,13 @@ impl<T, V> NonSymmetricMatrix<T, V>
         {
             if *index % self.columns_number > column
             {
-                *index -= *index / self.columns_number + T::from(1);
+                *index -= *index / self.columns_number + T::one();
             }
             else
             {
                 *index -= *index / self.columns_number;
             }
         }
-        self.columns_number -= T::from(1);
+        self.columns_number -= T::one();
     }
 }

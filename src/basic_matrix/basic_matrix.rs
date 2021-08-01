@@ -19,7 +19,7 @@ pub struct Shape<T>(pub T, pub T);
 pub struct MatrixElementPosition<T>
 {
     pub row: T,
-    pub column: T
+    pub column: T,
 }
 
 
