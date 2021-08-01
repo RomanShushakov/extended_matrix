@@ -54,10 +54,23 @@ pub struct ZerosRowColumn<T>
 
 
 impl<T> ZerosRowColumn<T>
+    where T: Copy
 {
     pub fn create(row: T, column: T) -> Self
     {
         ZerosRowColumn { row, column }
+    }
+
+
+    pub fn row(&self) -> T
+    {
+        self.row
+    }
+
+
+    pub fn column(&self) -> T
+    {
+        self.column
     }
 }
 
