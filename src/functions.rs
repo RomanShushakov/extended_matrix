@@ -11,7 +11,7 @@ use crate::extended_matrix::ExtendedMatrix;
 use crate::extended_matrix::Operation;
 
 
-pub fn matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a ExtendedMatrix<T, V>,
+pub(super) fn matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a ExtendedMatrix<T, V>,
     rhs: &'a ExtendedMatrix<T, V>, operation: Operation) -> Result<(T, Shape<T>), &'a str>
     where T: Copy +PartialEq + Mul<Output = T> + Add<Output = T> + Sub<Output = T> +
              Div<Output = T> + Rem<Output = T> + Default + One + AddAssign + Eq + Hash +
@@ -69,7 +69,7 @@ pub fn extract_element_value<T, V>(row: T, column: T,
 }
 
 
-pub fn remove_zero_values<T, V>(indexes: &mut Vec<T>, values: &mut Vec<V>, tolerance: V)
+pub(super) fn remove_zero_values<T, V>(indexes: &mut Vec<T>, values: &mut Vec<V>, tolerance: V)
     where V: Copy + Default + PartialEq + Into<f64>
 {
     let mut i = indexes.len() - 1;
