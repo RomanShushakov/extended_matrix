@@ -107,7 +107,7 @@ impl<T, V> BasicMatrixTrait<T, V> for SymmetricMatrix<T, V>
             if row != column
             {
                 let symmetric_position = MatrixElementPosition::create(
-                    column, column);
+                    column, row);
                 all_elements_values.insert(symmetric_position, *value);
             }
         }
