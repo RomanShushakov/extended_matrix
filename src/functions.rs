@@ -83,3 +83,17 @@ pub fn remove_zero_values<T, V>(indexes: &mut Vec<T>, values: &mut Vec<V>, toler
         i -= 1;
     }
 }
+
+
+pub fn conversion_uint_into_usize<T>(uint: T) -> usize
+    where T: Default + PartialOrd + One + AddAssign
+{
+    let mut n = 0usize;
+    let mut m = T::default();
+    while m < uint
+    {
+        n += 1usize;
+        m += T::one();
+    }
+    n
+}

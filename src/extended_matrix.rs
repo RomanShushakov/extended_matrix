@@ -16,7 +16,8 @@ use crate::basic_matrix::non_symmetric_matrix::NonSymmetricMatrix;
 
 use crate::functions::
 {
-    matrices_dimensions_conformity_check, extract_element_value, remove_zero_values
+    matrices_dimensions_conformity_check, extract_element_value, remove_zero_values,
+    conversion_uint_into_usize
 };
 
 
@@ -354,13 +355,7 @@ impl<T, V> ExtendedMatrix<T, V>
         let lhs_element_value = extract_element_value(basic_dimension - T::one(),
             basic_dimension - T::one(), &lhs_all_elements_values);
 
-        let mut n = 0usize;
-        let mut m = T::default();
-        while m < basic_dimension - T::one()
-        {
-            n += 1usize;
-            m += T::one();
-        }
+        let n = conversion_uint_into_usize(basic_dimension - T::one());
 
         elements_values[n] = rhs_element_value / lhs_element_value;
 
@@ -379,13 +374,7 @@ impl<T, V> ExtendedMatrix<T, V>
                 let lhs_element_value = extract_element_value(i, j,
                     &lhs_all_elements_values);
 
-                let mut n = 0usize;
-                let mut m = T::default();
-                while m < j
-                {
-                    n += 1usize;
-                    m += T::one();
-                }
+                let n = conversion_uint_into_usize(j);
 
                 sum -= lhs_element_value * elements_values[n];
                 j += T::one();
@@ -394,13 +383,8 @@ impl<T, V> ExtendedMatrix<T, V>
             let lhs_element_value = extract_element_value(i, i,
                 &lhs_all_elements_values);
 
-            let mut n = 0usize;
-            let mut m = T::default();
-            while m < i
-            {
-                n += 1usize;
-                m += T::one();
-            }
+            let n = conversion_uint_into_usize(i);
+
             elements_values[n] = sum / lhs_element_value;
         }
 
