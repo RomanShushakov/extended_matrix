@@ -4,8 +4,6 @@ use std::any::Any;
 use std::collections::HashMap;
 use std::hash::Hash;
 
-use crate::one::One;
-
 use crate::basic_matrix::basic_matrix::BasicMatrixTrait;
 use crate::basic_matrix::basic_matrix::{MatrixElementPosition, ZerosRowColumn, Shape};
 use crate::basic_matrix::basic_matrix::{BasicMatrixType};
@@ -18,7 +16,7 @@ use crate::basic_matrix::functions::{matrix_size_check, extract_value_by_index};
 #[derive(Debug, Clone)]
 pub struct NonSymmetricMatrix<T, V>
     where T: Copy + Debug,
-          V: Copy + Default
+          V: Copy
 {
     rows_number: T,
     columns_number: T,
@@ -29,9 +27,9 @@ pub struct NonSymmetricMatrix<T, V>
 
 impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
     where T: Copy + PartialEq + Debug + PartialOrd + Mul<Output = T> + Add<Output = T> +
-             Default + Sub<Output = T> + Div<Output = T> + Rem<Output = T> + Eq + Hash +
-             SubAssign + One + 'static,
-          V: Copy + Default + PartialEq + Debug + MulAssign + 'static,
+             Sub<Output = T> + Div<Output = T> + Rem<Output = T> + Eq + Hash + SubAssign +
+             From<u8> + 'static,
+          V: Copy + PartialEq + Debug + MulAssign + From<f32> + 'static,
 {
    // fn create_element_value(&mut self, requested_index: T, new_value: V)
     // {
@@ -248,9 +246,9 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
 
 
 impl<T, V> NonSymmetricMatrix<T, V>
-    where T: Copy + Debug + PartialEq + Default + One + Mul<Output = T> + Add<Output = T> +
-             PartialOrd + SubAssign + Div<Output = T> + Sub<Output = T> + Rem<Output = T>,
-          V: Copy + Default
+    where T: Copy + Debug + PartialEq + From<u8> + Mul<Output = T> + Add<Output = T> + PartialOrd +
+             SubAssign + Div<Output = T> + Sub<Output = T> + Rem<Output = T>,
+          V: Copy
 {
     pub fn create(rows_number: T, columns_number: T, elements_indexes: Vec<T>,
         elements_values: Vec<V>) -> Self
@@ -293,14 +291,14 @@ impl<T, V> NonSymmetricMatrix<T, V>
                     *index == row * self.columns_number + column
                 });
         let mut row = self.rows_number;
-        while row > T::default()
+        while row > T::from(0u8)
         {
-            row -= T::one();
+            row -= T::from(1u8);
             let mut answers = Vec::new();
             let mut column = self.columns_number;
-            while column > T::default()
+            while column > T::from(0u8)
             {
-                column -= T::one();
+                column -= T::from(1u8);
                 match find_index(row, column)
                 {
                     None => answers.push(true),
@@ -328,14 +326,14 @@ impl<T, V> NonSymmetricMatrix<T, V>
             .position(|index| *index == row * self.columns_number + column);
 
         let mut column = self.columns_number;
-        while column > T::default()
+        while column > T::from(0u8)
         {
-            column -= T::one();
+            column -= T::from(1u8);
             let mut answers = Vec::new();
             let mut row = self.rows_number;
-            while row > T::default()
+            while row > T::from(0u8)
             {
-                row -= T::one();
+                row -= T::from(1u8);
                 match find_index(row, column)
                 {
                     None => answers.push(true),
@@ -364,7 +362,7 @@ impl<T, V> NonSymmetricMatrix<T, V>
                 *index -= self.columns_number;
             }
         }
-        self.rows_number -= T::one();
+        self.rows_number -= T::from(1u8);
     }
 
 
@@ -374,13 +372,13 @@ impl<T, V> NonSymmetricMatrix<T, V>
         {
             if *index % self.columns_number > column
             {
-                *index -= *index / self.columns_number + T::one();
+                *index -= *index / self.columns_number + T::from(1u8);
             }
             else
             {
                 *index -= *index / self.columns_number;
             }
         }
-        self.columns_number -= T::one();
+        self.columns_number -= T::from(1u8);
     }
 }

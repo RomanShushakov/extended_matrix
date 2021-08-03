@@ -3,8 +3,6 @@ use std::hash::Hash;
 use std::ops::{Mul, Add, Sub, Div, Rem, SubAssign, AddAssign, MulAssign};
 use std::fmt::Debug;
 
-use crate::one::One;
-
 use crate::basic_matrix::basic_matrix::{MatrixElementPosition, Shape};
 
 use crate::extended_matrix::ExtendedMatrix;
@@ -14,11 +12,10 @@ use crate::extended_matrix::Operation;
 pub(super) fn matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a ExtendedMatrix<T, V>,
     rhs: &'a ExtendedMatrix<T, V>, operation: Operation) -> Result<(T, Shape<T>), &'a str>
     where T: Copy +PartialEq + Mul<Output = T> + Add<Output = T> + Sub<Output = T> +
-             Div<Output = T> + Rem<Output = T> + Default + One + AddAssign + Eq + Hash +
-             SubAssign + Debug + PartialOrd + 'static,
-          V: Copy + Default + Mul<Output = V> + Div<Output = V> + Sub<Output = V> +
-             Add<Output = V> + Debug + PartialEq + AddAssign + MulAssign + Into<f64> + One +
-             SubAssign + 'static,
+             Div<Output = T> + Rem<Output = T> + AddAssign + Eq + Hash + SubAssign +
+             Debug + PartialOrd + From<u8> + 'static,
+          V: Copy + Mul<Output = V> + Div<Output = V> + Sub<Output = V> + Add<Output = V> + Debug +
+             PartialEq + AddAssign + MulAssign + Into<f64> + From<f32> + SubAssign + 'static,
 {
     let lhs_shape = lhs.get_shape();
     let rhs_shape = rhs.get_shape();
@@ -56,7 +53,7 @@ pub(super) fn matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a ExtendedMa
 pub fn extract_element_value<T, V>(row: T, column: T,
     elements_values: &HashMap<MatrixElementPosition<T>, V>) -> V
     where T: Hash + Eq + Copy,
-          V: Copy + Default,
+          V: Copy + From<f32>,
 {
     let element_position = MatrixElementPosition::create(row, column);
     let element_value =
@@ -64,13 +61,13 @@ pub fn extract_element_value<T, V>(row: T, column: T,
         {
             *value
         }
-        else { V::default() };
+        else { V::from(0f32) };
     element_value
 }
 
 
 pub(super) fn remove_zero_values<T, V>(indexes: &mut Vec<T>, values: &mut Vec<V>, tolerance: V)
-    where V: Copy + Default + PartialEq + Into<f64>
+    where V: Copy + PartialEq + Into<f64>
 {
     let mut i = indexes.len() - 1;
     while i > 0
@@ -86,14 +83,14 @@ pub(super) fn remove_zero_values<T, V>(indexes: &mut Vec<T>, values: &mut Vec<V>
 
 
 pub fn conversion_uint_into_usize<T>(uint: T) -> usize
-    where T: Default + PartialOrd + One + AddAssign
+    where T: PartialOrd + AddAssign + From<u8>
 {
     let mut n = 0usize;
-    let mut m = T::default();
+    let mut m = T::from(0u8);
     while m < uint
     {
         n += 1usize;
-        m += T::one();
+        m += T::from(1u8);
     }
     n
 }

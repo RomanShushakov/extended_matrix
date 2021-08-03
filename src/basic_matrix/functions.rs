@@ -1,8 +1,6 @@
 use std::fmt::Debug;
 use std::ops::{Mul, Add, SubAssign, Div, Sub, Rem};
 
-use crate::one::One;
-
 use crate::basic_matrix::basic_matrix::BasicMatrixTrait;
 
 use crate::basic_matrix::symmetric_matrix::SymmetricMatrix;
@@ -25,7 +23,7 @@ pub fn matrix_size_check<'a, T>(inputted_row: T, inputted_column: T, matrix_size
 
 pub fn extract_value_by_index<T, V>(requested_index: T, indexes: &[T], values: &[V]) -> V
     where T: Copy + PartialEq,
-          V: Copy + Default
+          V: Copy + From<f32>
 {
     if let Some(position) = indexes
         .iter().position(|index| *index == requested_index)
@@ -34,16 +32,16 @@ pub fn extract_value_by_index<T, V>(requested_index: T, indexes: &[T], values: &
     }
     else
     {
-        V::default()
+        V::from(0f32)
     }
 }
 
 
 pub fn return_symmetric_matrix_struct<T, V>(boxed_struct: Box<dyn BasicMatrixTrait<T, V>>)
     -> SymmetricMatrix<T, V>
-    where T: Copy + Debug + PartialEq + One + Default + Mul<Output = T> + Add<Output = T> +
-             PartialOrd + SubAssign + Div<Output = T> + Sub<Output = T> + Rem<Output = T> + 'static,
-          V: Copy + Default + 'static
+    where T: Copy + Debug + PartialEq + From<u8> + Mul<Output = T> + Add<Output = T> + PartialOrd +
+             SubAssign + Div<Output = T> + Sub<Output = T> + Rem<Output = T> + 'static,
+          V: Copy + 'static
 {
     let matrix: &SymmetricMatrix<T, V> = match boxed_struct
         .as_any()
@@ -63,9 +61,9 @@ pub fn return_symmetric_matrix_struct<T, V>(boxed_struct: Box<dyn BasicMatrixTra
 
 pub fn return_non_symmetric_matrix_struct<T, V>(boxed_struct: Box<dyn BasicMatrixTrait<T, V>>)
     -> NonSymmetricMatrix<T, V>
-    where T: Copy + Debug + PartialEq + Default + One + Mul<Output = T> + Add<Output = T> +
-             PartialOrd + SubAssign + Div<Output = T> + Sub<Output = T> + Rem<Output = T> + 'static,
-          V: Copy + Debug + Default + 'static
+    where T: Copy + Debug + PartialEq + From<u8> + Mul<Output = T> + Add<Output = T> + PartialOrd +
+             SubAssign + Div<Output = T> + Sub<Output = T> + Rem<Output = T> + 'static,
+          V: Copy + Debug + 'static
 {
     let matrix: &NonSymmetricMatrix<T, V> = match boxed_struct
         .as_any()
