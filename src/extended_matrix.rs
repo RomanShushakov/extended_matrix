@@ -319,6 +319,11 @@ impl<T, V> ExtendedMatrix<T, V>
                 let current_diag_lhs_element_value = extract_element_value(k, k,
                     &lhs_all_elements_values);
 
+                if current_diag_lhs_element_value == V::from(0f32)
+                {
+                    return Err("Extended matrix: Matrix is singular!");
+                }
+
                 let current_coefficient =
                     current_lhs_element_value / current_diag_lhs_element_value;
 

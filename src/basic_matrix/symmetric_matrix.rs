@@ -27,7 +27,7 @@ pub struct SymmetricMatrix<T, V>
 
 impl<T, V> BasicMatrixTrait<T, V> for SymmetricMatrix<T, V>
     where T: Copy + PartialOrd + Sub<Output = T> + Add<Output = T> + Mul<Output = T> + From<u8> +
-          Div<Output = T> + Debug + Rem<Output = T> + Eq + Hash + SubAssign + 'static,
+             Div<Output = T> + Debug + Rem<Output = T> + Eq + Hash + SubAssign + 'static,
           V: Copy + Debug + PartialEq + MulAssign + From<f32> + 'static,
 {
    // fn create_element_value(&mut self, requested_index: T, new_value: V)
