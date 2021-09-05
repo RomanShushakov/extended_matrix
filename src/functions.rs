@@ -17,8 +17,8 @@ pub(super) fn matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a ExtendedMa
           V: Copy + Mul<Output = V> + Div<Output = V> + Sub<Output = V> + Add<Output = V> + Debug +
              PartialEq + AddAssign + MulAssign + Into<f64> + From<f32> + SubAssign + 'static,
 {
-    let lhs_shape = lhs.get_shape();
-    let rhs_shape = rhs.get_shape();
+    let lhs_shape = lhs.copy_shape();
+    let rhs_shape = rhs.copy_shape();
     match operation
     {
         Operation::Multiplication =>
@@ -50,7 +50,7 @@ pub(super) fn matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a ExtendedMa
 }
 
 
-pub fn extract_element_value<T, V>(row: T, column: T,
+pub fn copy_element_value<T, V>(row: T, column: T,
     elements_values: &HashMap<MatrixElementPosition<T>, V>) -> V
     where T: Hash + Eq + Copy,
           V: Copy + From<f32>,

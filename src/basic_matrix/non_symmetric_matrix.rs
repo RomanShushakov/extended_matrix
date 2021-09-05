@@ -10,7 +10,7 @@ use crate::basic_matrix::basic_matrix::{BasicMatrixType};
 
 use crate::basic_matrix::symmetric_matrix::SymmetricMatrix;
 
-use crate::basic_matrix::functions::{matrix_size_check, extract_value_by_index};
+use crate::basic_matrix::functions::{matrix_size_check, copy_value_by_index};
 
 
 #[derive(Debug, Clone)]
@@ -44,7 +44,7 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
             row, column,
             (self.rows_number, self.columns_number))?;
         let requested_index = row * self.columns_number + column;
-        let value = extract_value_by_index(
+        let value = copy_value_by_index(
             requested_index,
             self.elements_indexes.as_slice(),
             self.elements_values.as_slice());
@@ -92,7 +92,7 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
     // }
 
 
-    fn extract_all_elements_values(&self) -> HashMap<MatrixElementPosition<T>, V>
+    fn copy_all_elements_values(&self) -> HashMap<MatrixElementPosition<T>, V>
     {
         let mut all_elements_values = HashMap::new();
         for (index, value) in self.elements_indexes.iter()
@@ -107,7 +107,7 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
     }
 
 
-    fn get_shape(&self) -> Shape<T>
+    fn copy_shape(&self) -> Shape<T>
     {
         Shape(self.rows_number, self.columns_number)
     }
@@ -257,27 +257,27 @@ impl<T, V> NonSymmetricMatrix<T, V>
     }
 
 
-    pub fn rows_number(&self) -> T
+    pub fn ref_rows_number(&self) -> &T
     {
-        self.rows_number
+        &self.rows_number
     }
 
 
-    pub fn columns_number(&self) -> T
+    pub fn ref_columns_number(&self) -> &T
     {
-        self.columns_number
+        &self.columns_number
     }
 
 
-    pub fn elements_indexes(&self) -> Vec<T>
+    pub fn ref_elements_indexes(&self) -> &[T]
     {
-        self.elements_indexes.clone()
+        self.elements_indexes.as_slice()
     }
 
 
-    pub fn elements_values(&self) -> Vec<V>
+    pub fn ref_elements_values(&self) -> &[V]
     {
-        self.elements_values.clone()
+        self.elements_values.as_slice()
     }
 
 

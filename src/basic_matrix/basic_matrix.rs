@@ -106,8 +106,8 @@ pub trait BasicMatrixTrait<T, V>: BasicMatrixClone<T, V>
     fn read_element_value(&self, row: T, column: T) -> Result<V, &str>;
     // fn update_element_value(&mut self, row: T, column: T, new_value: V) -> Result<(), &str>;
     // fn delete_element_value(&mut self, row: T, column: T) -> Result<(), &str>;
-    fn extract_all_elements_values(&self) -> HashMap<MatrixElementPosition<T>, V>;
-    fn get_shape(&self) -> Shape<T>;
+    fn copy_all_elements_values(&self) -> HashMap<MatrixElementPosition<T>, V>;
+    fn copy_shape(&self) -> Shape<T>;
     fn transpose(&mut self);
     fn multiply_by_number(&mut self, number: V);
     fn into_symmetric(self) -> Box<dyn BasicMatrixTrait<T, V>>;

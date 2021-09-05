@@ -21,7 +21,7 @@ pub fn matrix_size_check<'a, T>(inputted_row: T, inputted_column: T, matrix_size
 }
 
 
-pub fn extract_value_by_index<T, V>(requested_index: T, indexes: &[T], values: &[V]) -> V
+pub fn copy_value_by_index<T, V>(requested_index: T, indexes: &[T], values: &[V]) -> V
     where T: Copy + PartialEq,
           V: Copy + From<f32>
 {
@@ -50,11 +50,11 @@ pub fn return_symmetric_matrix_struct<T, V>(boxed_struct: Box<dyn BasicMatrixTra
             Some(matrix) => matrix,
             None => panic!("Basic matrix: Matrix is not symmetric!!!"),
         };
-    let rows_and_columns_number = matrix.rows_and_columns_number();
-    let elements_indexes = matrix.elements_indexes();
-    let elements_values = matrix.elements_values();
-    let symmetric_matrix = SymmetricMatrix::create(rows_and_columns_number,
-        elements_indexes, elements_values);
+    let rows_and_columns_number = matrix.ref_rows_and_columns_number();
+    let ref_elements_indexes = matrix.ref_elements_indexes();
+    let ref_elements_values = matrix.ref_elements_values();
+    let symmetric_matrix = SymmetricMatrix::create(*rows_and_columns_number,
+        ref_elements_indexes.to_vec(), ref_elements_values.to_vec());
     symmetric_matrix
 }
 
@@ -72,13 +72,14 @@ pub fn return_non_symmetric_matrix_struct<T, V>(boxed_struct: Box<dyn BasicMatri
             Some(matrix) => matrix,
             None => panic!("Basic matrix: Matrix is symmetric!!!"),
         };
-    let rows_number = matrix.rows_number();
-    let columns_number = matrix.columns_number();
-    let elements_indexes = matrix.elements_indexes();
-    let elements_values = matrix.elements_values();
+    let rows_number = matrix.ref_rows_number();
+    let columns_number = matrix.ref_columns_number();
+    let ref_elements_indexes = matrix.ref_elements_indexes();
+    let ref_elements_values = matrix.ref_elements_values();
 
-    let non_symmetric_matrix = NonSymmetricMatrix::create(rows_number,
-        columns_number, elements_indexes, elements_values);
+    let non_symmetric_matrix = NonSymmetricMatrix::create(*rows_number,
+        *columns_number, ref_elements_indexes.to_vec(),
+        ref_elements_values.to_vec());
 
     non_symmetric_matrix
 }
