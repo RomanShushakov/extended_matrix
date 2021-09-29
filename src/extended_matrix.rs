@@ -4,7 +4,7 @@ use std::ops::{Mul, Add, Sub, Div, Rem, MulAssign, AddAssign, SubAssign};
 use std::hash::Hash;
 use std::collections::HashMap;
 
-use crate::basic_matrix::basic_matrix::BasicMatrixTrait;
+use crate::basic_matrix::basic_matrix::{BasicMatrixTrait, BasicMatrixType};
 use crate::basic_matrix::basic_matrix::
 {
     MatrixElementPosition, ZerosRowColumn, Shape,
@@ -85,7 +85,7 @@ impl<T, V> ExtendedMatrix<T, V>
             rows_number, columns_number, elements_indexes,
             elements_values));
 
-        let basic_matrix = basic_matrix.into_symmetric();
+        // let basic_matrix = basic_matrix.into_symmetric();
         ExtendedMatrix { tolerance, basic_matrix }
     }
 
@@ -155,7 +155,7 @@ impl<T, V> ExtendedMatrix<T, V>
         let basic_matrix = Box::new(NonSymmetricMatrix::create(
             shape.0, shape.1, elements_indexes, elements_values));
 
-        let basic_matrix = basic_matrix.into_symmetric();
+        // let basic_matrix = basic_matrix.into_symmetric();
         Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix })
     }
 
@@ -228,7 +228,7 @@ impl<T, V> ExtendedMatrix<T, V>
         let basic_matrix = Box::new(NonSymmetricMatrix::create(
             lhs_shape.0, lhs_shape.1, elements_indexes, elements_values));
 
-        let basic_matrix = basic_matrix.into_symmetric();
+        // let basic_matrix = basic_matrix.into_symmetric();
         self.basic_matrix = basic_matrix;
     }
 
@@ -283,7 +283,7 @@ impl<T, V> ExtendedMatrix<T, V>
         let basic_matrix = Box::new(NonSymmetricMatrix::create(
             shape.0, shape.1, elements_indexes, elements_values));
 
-        let basic_matrix = basic_matrix.into_symmetric();
+        // let basic_matrix = basic_matrix.into_symmetric();
         Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix })
     }
 
@@ -314,10 +314,10 @@ impl<T, V> ExtendedMatrix<T, V>
             while i < basic_dimension
             {
                 let current_lhs_element_value = copy_element_value(i, k,
-                                                                   &lhs_all_elements_values);
+                    &lhs_all_elements_values);
 
                 let current_diag_lhs_element_value = copy_element_value(k, k,
-                                                                        &lhs_all_elements_values);
+                    &lhs_all_elements_values);
 
                 if current_diag_lhs_element_value == V::from(0f32)
                 {
@@ -331,7 +331,7 @@ impl<T, V> ExtendedMatrix<T, V>
                 while j < basic_dimension
                 {
                     let current_lhs_element_value = copy_element_value(k, j,
-                                                                       &lhs_all_elements_values);
+                        &lhs_all_elements_values);
 
                     *lhs_all_elements_values
                         .entry(MatrixElementPosition::create(i, j))
@@ -341,7 +341,7 @@ impl<T, V> ExtendedMatrix<T, V>
                 }
 
                 let current_rhs_element_value = copy_element_value(k,
-                                                                   T::from(0u8), &rhs_all_elements_values);
+                    T::from(0u8), &rhs_all_elements_values);
                 *rhs_all_elements_values
                     .entry(MatrixElementPosition::create(i, T::from(0u8)))
                     .or_insert(V::from(0f32)) -=
@@ -352,10 +352,10 @@ impl<T, V> ExtendedMatrix<T, V>
         }
 
         let rhs_element_value = copy_element_value(basic_dimension - T::from(1u8),
-                                                   T::from(0u8), &rhs_all_elements_values);
+            T::from(0u8), &rhs_all_elements_values);
 
         let lhs_element_value = copy_element_value(basic_dimension - T::from(1u8),
-                                                   basic_dimension - T::from(1u8), &lhs_all_elements_values);
+            basic_dimension - T::from(1u8), &lhs_all_elements_values);
 
         let n = conversion_uint_into_usize(basic_dimension - T::from(1u8));
 
@@ -366,7 +366,7 @@ impl<T, V> ExtendedMatrix<T, V>
         {
             i -= T::from(1u8);
             let rhs_element_value = copy_element_value(i, T::from(0u8),
-                                                       &rhs_all_elements_values);
+                &rhs_all_elements_values);
 
             let mut sum = rhs_element_value;
 
@@ -374,7 +374,7 @@ impl<T, V> ExtendedMatrix<T, V>
             while j < basic_dimension
             {
                 let lhs_element_value = copy_element_value(i, j,
-                                                           &lhs_all_elements_values);
+                    &lhs_all_elements_values);
 
                 let n = conversion_uint_into_usize(j);
 
@@ -383,7 +383,7 @@ impl<T, V> ExtendedMatrix<T, V>
             }
 
             let lhs_element_value = copy_element_value(i, i,
-                                                       &lhs_all_elements_values);
+                &lhs_all_elements_values);
 
             let n = conversion_uint_into_usize(i);
 
@@ -436,8 +436,8 @@ impl<T, V> ExtendedMatrix<T, V>
             while i < shape.0
             {
                 let current_coefficient = copy_element_value(i, row_number,
-                                                             &all_elements_values) / copy_element_value(row_number,
-                                                                                                        row_number, &all_elements_values);
+                    &all_elements_values) / copy_element_value(row_number,
+                        row_number, &all_elements_values);
 
                 l_elements_indexes.push(i * shape.1 + row_number);
                 l_elements_values.push(current_coefficient);
@@ -446,8 +446,8 @@ impl<T, V> ExtendedMatrix<T, V>
                 while j < shape.1
                 {
                     let current_element_value = copy_element_value(i, j,
-                                                                   &all_elements_values) - copy_element_value(row_number, j,
-                                                                                                              &all_elements_values) * current_coefficient;
+                        &all_elements_values) - copy_element_value(row_number, j,
+                            &all_elements_values) * current_coefficient;
 
                     if let Some(position) = u_elements_indexes.iter().position(|index|
                         *index ==  i * shape.1 + j)
@@ -496,7 +496,7 @@ impl<T, V> ExtendedMatrix<T, V>
         while i < shape.0
         {
             let current_diag_element_value = copy_element_value(i, i,
-                                                                &u_matrix_elements_values);
+                &u_matrix_elements_values);
             determinant *= current_diag_element_value;
             i += T::from(1u8);
         }
@@ -540,7 +540,7 @@ impl<T, V> ExtendedMatrix<T, V>
             while i < shape.0
             {
                 let current_inverse_column_element_value = copy_element_value(i,
-                                                                              T::from(0u8), &all_inverse_column_values);
+                    T::from(0u8), &all_inverse_column_values);
 
                 if current_inverse_column_element_value != V::from(0f32)
                 {
@@ -556,7 +556,7 @@ impl<T, V> ExtendedMatrix<T, V>
             NonSymmetricMatrix::create(shape.0, shape.1,
                 inverse_matrix_indexes, inverse_matrix_values));
 
-        let basic_inverse_matrix = basic_inverse_matrix.into_symmetric();
+        // let basic_inverse_matrix = basic_inverse_matrix.into_symmetric();
 
         Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_inverse_matrix })
     }
@@ -577,5 +577,11 @@ impl<T, V> ExtendedMatrix<T, V>
     pub fn remove_selected_column(&mut self, column: T)
     {
         self.basic_matrix = self.basic_matrix.remove_selected_column(column);
+    }
+
+
+    pub fn define_type(&self) -> BasicMatrixType
+    {
+        self.basic_matrix.define_type()
     }
 }
