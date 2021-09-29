@@ -85,7 +85,7 @@ impl<T, V> ExtendedMatrix<T, V>
             rows_number, columns_number, elements_indexes,
             elements_values));
 
-        // let basic_matrix = basic_matrix.into_symmetric();
+        let basic_matrix = basic_matrix.into_symmetric();
         ExtendedMatrix { tolerance, basic_matrix }
     }
 
@@ -155,7 +155,7 @@ impl<T, V> ExtendedMatrix<T, V>
         let basic_matrix = Box::new(NonSymmetricMatrix::create(
             shape.0, shape.1, elements_indexes, elements_values));
 
-        // let basic_matrix = basic_matrix.into_symmetric();
+        let basic_matrix = basic_matrix.into_symmetric();
         Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix })
     }
 
@@ -228,7 +228,7 @@ impl<T, V> ExtendedMatrix<T, V>
         let basic_matrix = Box::new(NonSymmetricMatrix::create(
             lhs_shape.0, lhs_shape.1, elements_indexes, elements_values));
 
-        // let basic_matrix = basic_matrix.into_symmetric();
+        let basic_matrix = basic_matrix.into_symmetric();
         self.basic_matrix = basic_matrix;
     }
 
@@ -283,7 +283,7 @@ impl<T, V> ExtendedMatrix<T, V>
         let basic_matrix = Box::new(NonSymmetricMatrix::create(
             shape.0, shape.1, elements_indexes, elements_values));
 
-        // let basic_matrix = basic_matrix.into_symmetric();
+        let basic_matrix = basic_matrix.into_symmetric();
         Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix })
     }
 
@@ -556,7 +556,7 @@ impl<T, V> ExtendedMatrix<T, V>
             NonSymmetricMatrix::create(shape.0, shape.1,
                 inverse_matrix_indexes, inverse_matrix_values));
 
-        // let basic_inverse_matrix = basic_inverse_matrix.into_symmetric();
+        let basic_inverse_matrix = basic_inverse_matrix.into_symmetric();
 
         Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_inverse_matrix })
     }
