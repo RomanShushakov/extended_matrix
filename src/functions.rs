@@ -92,7 +92,7 @@ pub(super) fn new_matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a NewExt
 }
 
 
-pub fn copy_element_value<T, V>(row: T, column: T,
+pub fn copy_element_value_or_zero<T, V>(row: T, column: T,
     elements_values: &HashMap<MatrixElementPosition<T>, V>) -> V
     where T: Hash + Eq + Copy + From<u8> + SubAssign,
           V: Copy + From<f32>,
@@ -100,32 +100,6 @@ pub fn copy_element_value<T, V>(row: T, column: T,
     let element_position = MatrixElementPosition::create(row, column);
     let element_value =
         if let Some(value) = elements_values.get(&element_position)
-        {
-            *value
-        }
-        else { V::from(0f32) };
-    element_value
-}
-
-
-pub fn new_copy_element_value<T, V>(row: T, column: T, ref_matrix_type: &BasicMatrixType,
-    ref_elements_values: &HashMap<MatrixElementPosition<T>, V>) -> V
-    where T: Hash + Eq + Copy + From<u8> + SubAssign + PartialOrd,
-          V: Copy + From<f32>,
-{
-    let (r, c) =
-        {
-            match ref_matrix_type
-            {
-                BasicMatrixType::Symmetric =>
-                    if row > column { (column, row) } else { (row, column) },
-                BasicMatrixType::NonSymmetric => (row, column),
-            }
-        };
-
-    let element_position = MatrixElementPosition::create(r, c);
-    let element_value =
-        if let Some(value) = ref_elements_values.get(&element_position)
         {
             *value
         }
