@@ -3,14 +3,56 @@ use std::hash::Hash;
 use std::ops::{Mul, Add, Sub, Div, Rem, SubAssign, AddAssign, MulAssign};
 use std::fmt::Debug;
 
-use crate::basic_matrix::basic_matrix::{MatrixElementPosition, Shape};
+use crate::basic_matrix::basic_matrix::{BasicMatrixType, MatrixElementPosition, Shape};
+
+use crate::new_extended_matrix::NewExtendedMatrix;
 
 use crate::extended_matrix::ExtendedMatrix;
-use crate::extended_matrix::Operation;
+use crate::new_extended_matrix::Operation;
 
 
 pub(super) fn matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a ExtendedMatrix<T, V>,
     rhs: &'a ExtendedMatrix<T, V>, operation: Operation) -> Result<(T, Shape<T>), &'a str>
+    where T: Copy +PartialEq + Mul<Output = T> + Add<Output = T> + Sub<Output = T> +
+             Div<Output = T> + Rem<Output = T> + AddAssign + Eq + Hash + SubAssign +
+             Debug + PartialOrd + From<u8> + 'static,
+          V: Copy + Mul<Output = V> + Div<Output = V> + Sub<Output = V> + Add<Output = V> + Debug +
+             PartialEq + AddAssign + MulAssign + Into<f64> + From<f32> + SubAssign + 'static,
+{
+    let lhs_shape = lhs.copy_shape();
+    let rhs_shape = rhs.copy_shape();
+    match operation
+    {
+        Operation::Multiplication =>
+            {
+                if lhs_shape.1 != rhs_shape.0
+                {
+                    return Err("Extended matrix: Shapes of matrices does not conform to each other!");
+                }
+                Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
+            },
+        Operation::Addition =>
+            {
+                if lhs_shape.0 != rhs_shape.0 || lhs_shape.1 != rhs_shape.1
+                {
+                    return Err("Extended matrix: Shapes of matrices does not conform to each other!");
+                }
+                Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
+            }
+        Operation::Subtraction =>
+            {
+                if lhs_shape.0 != rhs_shape.0 || lhs_shape.1 != rhs_shape.1
+                {
+                    return Err("Extended matrix: Shapes of matrices does not conform to each other!");
+                }
+                Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
+            }
+    }
+}
+
+
+pub(super) fn new_matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a NewExtendedMatrix<T, V>,
+    rhs: &'a NewExtendedMatrix<T, V>, operation: Operation) -> Result<(T, Shape<T>), &'a str>
     where T: Copy +PartialEq + Mul<Output = T> + Add<Output = T> + Sub<Output = T> +
              Div<Output = T> + Rem<Output = T> + AddAssign + Eq + Hash + SubAssign +
              Debug + PartialOrd + From<u8> + 'static,
@@ -58,6 +100,32 @@ pub fn copy_element_value<T, V>(row: T, column: T,
     let element_position = MatrixElementPosition::create(row, column);
     let element_value =
         if let Some(value) = elements_values.get(&element_position)
+        {
+            *value
+        }
+        else { V::from(0f32) };
+    element_value
+}
+
+
+pub fn new_copy_element_value<T, V>(row: T, column: T, ref_matrix_type: &BasicMatrixType,
+    ref_elements_values: &HashMap<MatrixElementPosition<T>, V>) -> V
+    where T: Hash + Eq + Copy + From<u8> + SubAssign + PartialOrd,
+          V: Copy + From<f32>,
+{
+    let (r, c) =
+        {
+            match ref_matrix_type
+            {
+                BasicMatrixType::Symmetric =>
+                    if row > column { (column, row) } else { (row, column) },
+                BasicMatrixType::NonSymmetric => (row, column),
+            }
+        };
+
+    let element_position = MatrixElementPosition::create(r, c);
+    let element_value =
+        if let Some(value) = ref_elements_values.get(&element_position)
         {
             *value
         }

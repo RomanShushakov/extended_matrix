@@ -6,23 +6,15 @@ use std::collections::HashMap;
 
 use crate::basic_matrix::basic_matrix::{BasicMatrixTrait, BasicMatrixType};
 use crate::basic_matrix::basic_matrix::{MatrixElementPosition, Shape};
-
 use crate::basic_matrix::non_symmetric_matrix::NonSymmetricMatrix;
+
+use crate::new_extended_matrix::Operation;
 
 use crate::functions::
 {
     matrices_dimensions_conformity_check, copy_element_value, remove_zero_values,
     conversion_uint_into_usize
 };
-
-
-#[derive(Copy, Clone)]
-pub enum Operation
-{
-    Addition,
-    Multiplication,
-    Subtraction,
-}
 
 
 #[derive(Clone)]
@@ -62,13 +54,14 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    pub fn create(rows_number: T, columns_number: T, all_elements: Vec<V>, tolerance: V) -> Self
+    pub fn create(rows_number: T, columns_number: T, all_elements_values: Vec<V>, tolerance: V)
+        -> Self
     {
         let mut elements_indexes = Vec::new();
         let mut elements_values = Vec::new();
 
         let mut index = T::from(0u8);
-        for value in all_elements.into_iter()
+        for value in all_elements_values.into_iter()
         {
             if value.into().abs() > tolerance.into()
             {

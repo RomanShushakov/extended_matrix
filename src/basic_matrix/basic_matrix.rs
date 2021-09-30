@@ -8,7 +8,7 @@ use crate::basic_matrix::functions::matrix_size_check;
 use crate::functions::conversion_uint_into_usize;
 
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum BasicMatrixType
 {
     Symmetric,
@@ -125,8 +125,54 @@ impl<T, V> BasicMatrix<T, V>
     where T: Copy + PartialEq + Debug + PartialOrd + Mul<Output = T> + Add<Output = T> +
                  Sub<Output = T> + Div<Output = T> + Rem<Output = T> + Eq + Hash + SubAssign +
                  AddAssign + From<u8> + 'static,
-              V: Copy + PartialEq + Debug + MulAssign + From<f32> + 'static,
+              V: Copy + PartialEq + Debug + MulAssign + From<f32> + Into<f64> + 'static,
 {
+    pub fn create_default(rows_number: T, columns_number: T) -> Self
+    {
+        BasicMatrix { rows_number, columns_number, matrix_type: BasicMatrixType::NonSymmetric,
+            elements_values: HashMap::new() }
+    }
+
+
+    pub fn create(rows_number: T, columns_number: T, all_elements_values: Vec<V>, tolerance: V)
+        -> Result<Self, &'static str>
+    {
+        let mut index = 0usize;
+        let mut row = T::from(0u8);
+        let mut elements_values = HashMap::new();
+        while row < rows_number
+        {
+            let mut column = T::from(0u8);
+            while column < columns_number
+            {
+                if index >= all_elements_values.len()
+                {
+                    return Err("Basic matrix: Incorrect number of elements!");
+                }
+                let matrix_element_position =
+                    MatrixElementPosition::create(row, column);
+                let element_value = all_elements_values[index];
+                if element_value.into().abs() > tolerance.into()
+                {
+                    elements_values.insert(matrix_element_position, element_value);
+                }
+                column += T::from(1u8);
+                index += 1usize;
+            }
+            row += T::from(1u8);
+        }
+        let matrix_type = BasicMatrixType::NonSymmetric;
+        Ok(BasicMatrix { rows_number, columns_number, matrix_type, elements_values })
+    }
+
+
+    pub fn add_element(&mut self, matrix_element_position: MatrixElementPosition<T>,
+        element_value: V)
+    {
+        self.elements_values.insert(matrix_element_position, element_value);
+    }
+
+
     fn is_row_of_zeros(&self, row: T, nonzero_columns: &mut HashSet<T>) -> bool
     {
         let mut column = T::from(0u8);
@@ -171,9 +217,88 @@ impl<T, V> BasicMatrix<T, V>
     }
 
 
-    fn remove_row(&mut self, row: T)
+    pub fn try_into_symmetric(&mut self) -> Result<(), &'static str>
     {
-        self.matrix_type = BasicMatrixType::NonSymmetric;
+        let mut symmetric_elements_values = HashMap::new();
+        for (matrix_element_position, element_value) in
+            self.elements_values.iter()
+        {
+            let row = matrix_element_position.row();
+            let column = matrix_element_position.column();
+            if row == column
+            {
+                symmetric_elements_values.insert(matrix_element_position.clone(),
+                    *element_value);
+            }
+            else
+            {
+                let symmetric_matrix_element_position =
+                    MatrixElementPosition::create(column, row);
+                if let Some(symmetric_element_value) =
+                    self.elements_values.get(&symmetric_matrix_element_position)
+                {
+                    if element_value == symmetric_element_value
+                    {
+                        let (symmetric_row, symmetric_column) =
+                            {
+                                if row > column
+                                {
+                                    (column, row)
+                                }
+                                else
+                                {
+                                    (row, column)
+                                }
+                            };
+                        let symmetric_matrix_element_position =
+                            MatrixElementPosition::create(symmetric_row, symmetric_column);
+                        symmetric_elements_values.insert(symmetric_matrix_element_position,
+                            *symmetric_element_value);
+                    }
+                    else
+                    {
+                        return Err("Basic matrix: Matrix could not be converted into symmetric!");
+                    }
+                }
+                else
+                {
+                    return Err("Basic matrix: Matrix could not be converted into symmetric!");
+                }
+            }
+        }
+        self.elements_values = symmetric_elements_values;
+        self.matrix_type = BasicMatrixType::Symmetric;
+        Ok(())
+    }
+
+
+    pub fn into_nonsymmetric(&mut self)
+    {
+
+        if self.matrix_type == BasicMatrixType::Symmetric
+        {
+            let mut symmetric_elements_values = HashMap::new();
+            for (matrix_element_position, element_value) in
+                self.elements_values.iter()
+            {
+                let row = matrix_element_position.row();
+                let column = matrix_element_position.column();
+                if row != column
+                {
+                    let symmetric_matrix_element_position =
+                        MatrixElementPosition::create(column, row);
+                    symmetric_elements_values.insert(symmetric_matrix_element_position,
+                        *element_value);
+                }
+            }
+            self.elements_values.extend(symmetric_elements_values);
+            self.matrix_type = BasicMatrixType::NonSymmetric;
+        }
+    }
+
+
+    pub fn remove_selected_row(&mut self, row: T)
+    {
         let mut column = self.columns_number;
         while column > T::from(1u8)
         {
@@ -194,12 +319,12 @@ impl<T, V> BasicMatrix<T, V>
         }
         self.rows_number -= T::from(1u8);
         self.elements_values = updated_elements_values;
+        self.into_nonsymmetric();
     }
 
 
-    fn remove_column(&mut self, column: T)
+    pub fn remove_selected_column(&mut self, column: T)
     {
-        self.matrix_type = BasicMatrixType::NonSymmetric;
         let mut row = self.rows_number;
         while row > T::from(1u8)
         {
@@ -220,17 +345,11 @@ impl<T, V> BasicMatrix<T, V>
         }
         self.columns_number -= T::from(1u8);
         self.elements_values = updated_elements_values;
+        self.into_nonsymmetric();
     }
-}
 
 
-impl<T, V> BasicMatrixTrait<T, V> for BasicMatrix<T, V>
-    where T: Copy + PartialEq + Debug + PartialOrd + Mul<Output = T> + Add<Output = T> +
-             Sub<Output = T> + Div<Output = T> + Rem<Output = T> + Eq + Hash + SubAssign +
-             AddAssign + From<u8> + 'static,
-          V: Copy + PartialEq + Debug + MulAssign + From<f32> + 'static,
-{
-    fn read_element_value(&self, row: T, column: T) -> Result<V, &str>
+    pub fn read_element_value(&self, row: T, column: T) -> Result<V, &str>
     {
         matrix_size_check(row, column,
             (self.rows_number, self.columns_number))?;
@@ -247,19 +366,19 @@ impl<T, V> BasicMatrixTrait<T, V> for BasicMatrix<T, V>
     }
 
 
-    fn copy_all_elements_values(&self) -> HashMap<MatrixElementPosition<T>, V>
+    pub fn ref_elements_values(&self) -> &HashMap<MatrixElementPosition<T>, V>
     {
-        self.elements_values.clone()
+        &self.elements_values
     }
 
 
-    fn copy_shape(&self) -> Shape<T>
+    pub fn copy_shape(&self) -> Shape<T>
     {
         Shape(self.rows_number, self.columns_number)
     }
 
 
-    fn transpose(&mut self)
+    pub fn transpose(&mut self)
     {
         let transposed_rows_number = self.columns_number;
         let transposed_columns_number = self.rows_number;
@@ -276,7 +395,7 @@ impl<T, V> BasicMatrixTrait<T, V> for BasicMatrix<T, V>
     }
 
 
-    fn multiply_by_number(&mut self, number: V)
+    pub fn multiply_by_number(&mut self, number: V)
     {
         for element_value in self.elements_values.values_mut()
         {
@@ -285,19 +404,13 @@ impl<T, V> BasicMatrixTrait<T, V> for BasicMatrix<T, V>
     }
 
 
-    fn into_symmetric(self) -> Box<dyn BasicMatrixTrait<T, V>>
+    pub fn ref_matrix_type(&self) -> &BasicMatrixType
     {
-        return Box::new(self);
+        &self.matrix_type
     }
 
 
-    fn define_type(&self) -> BasicMatrixType
-    {
-        self.matrix_type
-    }
-
-
-    fn remove_zeros_rows_columns(&mut self) -> Vec<MatrixElementPosition<T>>
+    pub fn remove_zeros_rows_columns(&mut self) -> Vec<MatrixElementPosition<T>>
     {
         let mut zeros_rows_columns = Vec::new();
         let mut nonzero_rows = HashSet::new();
@@ -329,29 +442,9 @@ impl<T, V> BasicMatrixTrait<T, V> for BasicMatrix<T, V>
         {
             let row = matrix_element_position.row();
             let column = matrix_element_position.column();
-            self.remove_row(row);
-            self.remove_column(column);
+            self.remove_selected_row(row);
+            self.remove_selected_column(column);
         }
         zeros_rows_columns
-    }
-
-
-    fn remove_selected_row(&mut self, row: T) -> Box<dyn BasicMatrixTrait<T, V>>
-    {
-        self.remove_row(row);
-        Box::new(self.clone())
-    }
-
-
-    fn remove_selected_column(&mut self, column: T) -> Box<dyn BasicMatrixTrait<T, V>>
-    {
-        self.remove_column(column);
-        Box::new(self.clone())
-    }
-
-
-    fn as_any(&self) -> &dyn Any
-    {
-        self
     }
 }
