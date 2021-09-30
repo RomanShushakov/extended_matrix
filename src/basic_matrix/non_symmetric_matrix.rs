@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::hash::Hash;
 
 use crate::basic_matrix::basic_matrix::BasicMatrixTrait;
-use crate::basic_matrix::basic_matrix::{MatrixElementPosition, ZerosRowColumn, Shape};
+use crate::basic_matrix::basic_matrix::{MatrixElementPosition, Shape};
 use crate::basic_matrix::basic_matrix::{BasicMatrixType};
 
 use crate::basic_matrix::symmetric_matrix::SymmetricMatrix;
@@ -31,13 +31,6 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
              From<u8> + 'static,
           V: Copy + PartialEq + Debug + MulAssign + From<f32> + 'static,
 {
-   // fn create_element_value(&mut self, requested_index: T, new_value: V)
-    // {
-    //     self.elements_indexes.push(requested_index);
-    //     self.elements_values.push(new_value);
-    // }
-
-
     fn read_element_value(&self, row: T, column: T) -> Result<V, &str>
     {
         matrix_size_check(
@@ -50,46 +43,6 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
             self.elements_values.as_slice());
         Ok(value)
     }
-
-
-    // fn update_element_value(&mut self, row: T, column: T, new_value: V) -> Result<(), &str>
-    // {
-    //     if new_value == Default::default()
-    //     {
-    //         self.delete_element_value(row, column)?;
-    //         return Ok(());
-    //     }
-    //     matrix_size_check(
-    //         row, column,
-    //         (self.rows_number, self.columns_number))?;
-    //     let requested_index = row * self.columns_number + column;
-    //     if let Some(position) = self.elements_indexes
-    //         .iter().position(|index| *index == requested_index)
-    //     {
-    //         self.elements_values[position] = new_value;
-    //     }
-    //     else
-    //     {
-    //         self.create_element_value(requested_index, new_value);
-    //     }
-    //     Ok(())
-    // }
-
-
-    // fn delete_element_value(&mut self, row: T, column: T) -> Result<(), &str>
-    // {
-    //     matrix_size_check(
-    //         row, column,
-    //         (self.rows_number, self.columns_number))?;
-    //     let requested_index = row * self.columns_number + column;
-    //     if let Some(position) = self.elements_indexes
-    //         .iter().position(|index| *index == requested_index)
-    //     {
-    //         self.elements_indexes.remove(position);
-    //         self.elements_values.remove(position);
-    //     }
-    //     Ok(())
-    // }
 
 
     fn copy_all_elements_values(&self) -> HashMap<MatrixElementPosition<T>, V>
@@ -195,13 +148,7 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
     }
 
 
-    fn as_any(&self) -> &dyn Any
-    {
-        self
-    }
-
-
-    fn remove_zeros_rows_columns(&mut self) -> Vec<ZerosRowColumn<T>>
+    fn remove_zeros_rows_columns(&mut self) -> Vec<MatrixElementPosition<T>>
     {
         let mut zeros_rows_columns = Vec::new();
         let mut can_continue = true;
@@ -211,7 +158,7 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
             {
                 if let Some(column) = self.find_zeros_column()
                 {
-                    let zeros_row_column = ZerosRowColumn::create(row, column);
+                    let zeros_row_column = MatrixElementPosition::create(row, column);
                     zeros_rows_columns.push(zeros_row_column);
                     self.remove_row(row);
                     self.remove_column(column);
@@ -241,6 +188,12 @@ impl<T, V> BasicMatrixTrait<T, V> for NonSymmetricMatrix<T, V>
     {
         self.remove_column(column);
         Box::new(self.clone())
+    }
+
+
+    fn as_any(&self) -> &dyn Any
+    {
+        self
     }
 }
 

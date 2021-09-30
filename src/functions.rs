@@ -52,7 +52,7 @@ pub(super) fn matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a ExtendedMa
 
 pub fn copy_element_value<T, V>(row: T, column: T,
     elements_values: &HashMap<MatrixElementPosition<T>, V>) -> V
-    where T: Hash + Eq + Copy,
+    where T: Hash + Eq + Copy + From<u8> + SubAssign,
           V: Copy + From<f32>,
 {
     let element_position = MatrixElementPosition::create(row, column);

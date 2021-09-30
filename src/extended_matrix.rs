@@ -5,10 +5,7 @@ use std::hash::Hash;
 use std::collections::HashMap;
 
 use crate::basic_matrix::basic_matrix::{BasicMatrixTrait, BasicMatrixType};
-use crate::basic_matrix::basic_matrix::
-{
-    MatrixElementPosition, ZerosRowColumn, Shape,
-};
+use crate::basic_matrix::basic_matrix::{MatrixElementPosition, Shape};
 
 use crate::basic_matrix::non_symmetric_matrix::NonSymmetricMatrix;
 
@@ -562,7 +559,7 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    pub fn remove_zeros_rows_columns(&mut self) -> Vec<ZerosRowColumn<T>>
+    pub fn remove_zeros_rows_columns(&mut self) -> Vec<MatrixElementPosition<T>>
     {
         self.basic_matrix.remove_zeros_rows_columns()
     }
