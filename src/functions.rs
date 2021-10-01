@@ -51,47 +51,6 @@ pub(super) fn matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a ExtendedMa
 }
 
 
-pub(super) fn new_matrices_dimensions_conformity_check<'a, T, V>(lhs: &'a NewExtendedMatrix<T, V>,
-    rhs: &'a NewExtendedMatrix<T, V>, operation: Operation) -> Result<(T, Shape<T>), &'a str>
-    where T: Copy +PartialEq + Mul<Output = T> + Add<Output = T> + Sub<Output = T> +
-             Div<Output = T> + Rem<Output = T> + AddAssign + Eq + Hash + SubAssign +
-             Debug + PartialOrd + From<u8> + 'static,
-          V: Copy + Mul<Output = V> + Div<Output = V> + Sub<Output = V> + Add<Output = V> + Debug +
-             PartialEq + AddAssign + MulAssign + Into<f64> + From<f32> + SubAssign + 'static,
-{
-    let lhs_shape = lhs.copy_shape();
-    let rhs_shape = rhs.copy_shape();
-    match operation
-    {
-        Operation::Multiplication =>
-            {
-                if lhs_shape.1 != rhs_shape.0
-                {
-                    return Err("Extended matrix: Shapes of matrices does not conform to each other!");
-                }
-                Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
-            },
-        Operation::Addition =>
-            {
-                if lhs_shape.0 != rhs_shape.0 || lhs_shape.1 != rhs_shape.1
-                {
-                    return Err("Extended matrix: Shapes of matrices does not conform to each other!");
-                }
-                Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
-            }
-        Operation::Subtraction =>
-            {
-                if lhs_shape.0 != rhs_shape.0 || lhs_shape.1 != rhs_shape.1
-                {
-                    return Err("Extended matrix: Shapes of matrices does not conform to each other!");
-                }
-                Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
-            }
-    }
-
-}
-
-
 pub fn copy_element_value_or_zero<T, V>(row: T, column: T,
     elements_values: &HashMap<MatrixElementPosition<T>, V>) -> V
     where T: Hash + Eq + Copy + From<u8> + SubAssign,
