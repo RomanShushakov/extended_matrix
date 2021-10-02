@@ -127,7 +127,7 @@ impl<T, V> BasicMatrix<T, V>
                  Sub<Output = T> + Div<Output = T> + Rem<Output = T> + Eq + Hash + SubAssign +
                  AddAssign + From<u8> + Ord + 'static,
               V: Copy + PartialEq + Debug + MulAssign + From<f32> + Into<f64> + AddAssign +
-                 SubAssign + 'static,
+                 Mul<Output = V> + SubAssign + 'static,
 {
     pub fn create_default(rows_number: T, columns_number: T, matrix_type: BasicMatrixType) -> Self
     {
@@ -141,7 +141,7 @@ impl<T, V> BasicMatrix<T, V>
         let mut index = 0usize;
         let mut row = T::from(0u8);
         let mut symmetric_elements_values = HashMap::new();
-        let mut is_symmetric = true;
+        let mut is_symmetric = if rows_number == columns_number { true } else { false };
         let mut nonsymmetric_elements_values = HashMap::new();
         while row < rows_number
         {
@@ -275,7 +275,20 @@ impl<T, V> BasicMatrix<T, V>
                 }
                 else
                 {
-                    elements_values.insert(matrix_element_position.clone(), element_value);
+                    match operation
+                    {
+                        Operation::Addition =>
+                            {
+                                elements_values.insert(matrix_element_position.clone(),
+                                    element_value);
+                            },
+                        Operation::Subtraction =>
+                            {
+                                elements_values.insert(matrix_element_position.clone(),
+                                    element_value * V::from(-1f32));
+                            },
+                        Operation::Multiplication => ()
+                    }
                 }
             };
 
@@ -290,7 +303,10 @@ impl<T, V> BasicMatrix<T, V>
                         handler(&mut self.elements_values);
                     }
                 },
-            BasicMatrixType::NonSymmetric => handler(&mut self.elements_values),
+            BasicMatrixType::NonSymmetric =>
+                {
+                    handler(&mut self.elements_values);
+                },
         }
     }
 

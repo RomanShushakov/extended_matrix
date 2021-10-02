@@ -500,13 +500,6 @@ impl<T, V> ExtendedMatrix<T, V>
         let (l_matrix, u_matrix) =
             self.lu_decomposition()?;
 
-        let f = |data: &str| println!("{}", data);
-
-        l_matrix.show_matrix(f);
-        println!();
-        u_matrix.show_matrix(f);
-        println!();
-
         let shape = self.basic_matrix.copy_shape();
         let mut inverse_matrix_indexes = Vec::new();
         let mut inverse_matrix_values = Vec::new();
@@ -527,14 +520,8 @@ impl<T, V> ExtendedMatrix<T, V>
             let interim_inverse_column = l_matrix
                 .naive_gauss_elimination(&unit_column).unwrap();
 
-            interim_inverse_column.show_matrix(f);
-            println!();
-
             let inverse_column = u_matrix
                 .naive_gauss_elimination(&interim_inverse_column).unwrap();
-
-            inverse_column.show_matrix(f);
-            println!();
 
             let all_inverse_column_values =
                 inverse_column.basic_matrix.copy_all_elements_values();

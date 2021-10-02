@@ -27,8 +27,8 @@ pub enum Operation
 #[derive(Clone)]
 pub struct NewExtendedMatrix<T, V>
 {
-    pub tolerance: V,
-    pub basic_matrix: BasicMatrix<T, V>
+    tolerance: V,
+    basic_matrix: BasicMatrix<T, V>
 }
 
 
@@ -461,13 +461,6 @@ impl<T, V> NewExtendedMatrix<T, V>
 
         let f = |data: &str| println!("{}", data);
 
-        println!("{:?}", l_matrix.ref_matrix_type());
-        l_matrix.show_matrix(f);
-        println!();
-        println!("{:?}", u_matrix.ref_matrix_type());
-        u_matrix.show_matrix(f);
-        println!();
-
         let shape = self.basic_matrix.copy_shape();
 
         let mut basic_inverse_matrix = BasicMatrix::create_default(
@@ -490,14 +483,8 @@ impl<T, V> NewExtendedMatrix<T, V>
             let interim_inverse_column =
                 l_matrix.direct_solution(&unit_column)?;
 
-            interim_inverse_column.show_matrix(f);
-            println!();
-
             let inverse_column =
                 u_matrix.direct_solution(&interim_inverse_column)?;
-
-            inverse_column.show_matrix(f);
-            println!();
 
             let mut i = T::from(0u8);
             while i < shape.0
