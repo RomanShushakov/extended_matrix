@@ -4,12 +4,14 @@ use std::ops::{Mul, Add, Sub, Div, Rem, MulAssign, AddAssign, SubAssign};
 use std::hash::Hash;
 use std::collections::HashMap;
 
+use colsol::colsol::{factorization, find_unknown};
+
 use crate::basic_matrix::basic_matrix::{BasicMatrix, BasicMatrixType};
 
 use crate::shape::Shape;
 use crate::matrix_element_position::MatrixElementPosition;
 
-use crate::functions::conversion_uint_into_usize;
+use crate::functions::{conversion_uint_into_usize, try_to_compact_matrix};
 
 
 #[derive(Copy, Clone)]
@@ -34,7 +36,8 @@ impl<T, V> ExtendedMatrix<T, V>
              Div<Output = T> + Rem<Output = T> + Eq + Hash + SubAssign + AddAssign + From<u8> +
              Ord + 'static,
           V: Copy + Debug + PartialEq + AddAssign + MulAssign + Mul<Output = V> + Div<Output = V> +
-             SubAssign + Sub<Output = V> + Add<Output = V> + Into<f64> + From<f32> + 'static,
+             SubAssign + Sub<Output = V> + Add<Output = V> + Into<f64> + From<f32> + PartialOrd +
+             'static,
 {
     pub fn create(rows_number: T, columns_number: T, all_elements_values: Vec<V>, tolerance: V)
         -> Result<Self, String>
@@ -225,10 +228,33 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    pub fn direct_solution(&self, other: &Self) -> Result<Self, String>
+    pub fn direct_solution(&self, other: &Self, colsol_usage: bool) -> Result<Self, String>
     {
         let (basic_dimension, shape) = self.matrices_dimensions_conformity_check(
             &other, Operation::Multiplication)?;
+
+        if *self.ref_matrix_type() == BasicMatrixType::Symmetric && colsol_usage
+        {
+            let (mut a, maxa) = try_to_compact_matrix(&self)?;
+            let mut v = Vec::new();
+            let mut nn = 0i64;
+            let mut row = T::from(0u8);
+            let column = T::from(0u8);
+            while row < shape.0
+            {
+                let element_value = other.copy_element_value_or_zero(
+                    MatrixElementPosition::create(row, column))?;
+                v.push(element_value);
+                nn += 1;
+                row += T::from(1u8);
+            }
+            factorization::<V>(&mut a, nn, &maxa)?;
+            find_unknown::<V>(&a, &mut v, nn, &maxa);
+            return Ok(ExtendedMatrix::create(shape.0, shape.1,
+                v, self.tolerance)?);
+        }
+
+        println!("YEAH");
 
         let mut lhs_matrix = self.clone();
         let mut rhs_matrix = other.clone();
@@ -335,7 +361,7 @@ impl<T, V> ExtendedMatrix<T, V>
         }
 
         Ok(ExtendedMatrix::create(shape.0, shape.1,
-                                  elements_values, self.tolerance)?)
+            elements_values, self.tolerance)?)
     }
 
 
@@ -476,10 +502,10 @@ impl<T, V> ExtendedMatrix<T, V>
                 ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_unit_column };
 
             let interim_inverse_column =
-                l_matrix.direct_solution(&unit_column)?;
+                l_matrix.direct_solution(&unit_column, false)?;
 
             let inverse_column =
-                u_matrix.direct_solution(&interim_inverse_column)?;
+                u_matrix.direct_solution(&interim_inverse_column, false)?;
 
             let mut i = T::from(0u8);
             while i < shape.0

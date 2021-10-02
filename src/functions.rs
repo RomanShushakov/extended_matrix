@@ -24,3 +24,69 @@ pub fn conversion_uint_into_usize<T>(uint: T) -> usize
     }
     n
 }
+
+
+pub fn try_to_compact_matrix<T, V>(ref_symmetric_matrix: &ExtendedMatrix<T, V>)
+    -> Result<(Vec<V>, Vec<i64>), String>
+    where T: Copy + Debug + From<u8> + Add<Output=T> + Sub<Output=T> + Mul<Output=T> +
+             Div<Output=T> + Rem<Output=T> + Eq + Hash + AddAssign + SubAssign + PartialOrd + Ord +
+             'static,
+          V: Copy + Debug + From<f32> + Into<f64> + Add<Output=V> + Sub<Output=V> + Mul<Output=V> +
+             Div<Output=V> + PartialEq + AddAssign + SubAssign + MulAssign + PartialOrd + 'static,
+{
+    let shape = ref_symmetric_matrix.copy_shape();
+    let mut a = Vec::new();
+    let mut maxa = Vec::new();
+    let mut index = 0i64;
+    let mut column = T::from(0u8);
+    while column < shape.1
+    {
+        if ref_symmetric_matrix.copy_element_value_or_zero(
+            MatrixElementPosition::create(column, column))? == V::from(0f32)
+        {
+            let error_message = format!("Try to compact matrix action: Diagonal \
+                element {:?}, {:?} equals to zero", column, column);
+            return Err(error_message);
+        }
+        let mut skyline = T::from(0u8);
+        'skyline: while skyline < column
+        {
+            let current_element_value = ref_symmetric_matrix.copy_element_value_or_zero(
+                MatrixElementPosition::create(skyline, column))?;
+            if current_element_value != V::from(0f32)
+            {
+                break 'skyline;
+            }
+            skyline += T::from(1u8);
+        }
+        let mut row = column;
+        maxa.push(index);
+        index += 1;
+        if row > T::from(0u8)
+        {
+            while row > skyline
+            {
+                let current_element_value = ref_symmetric_matrix.copy_element_value_or_zero(
+                    MatrixElementPosition::create(row, column))?;
+                a.push(current_element_value);
+                row -= T::from(1u8);
+                if row != column
+                {
+                    index += 1;
+                }
+            }
+            let current_element_value = ref_symmetric_matrix.copy_element_value_or_zero(
+                MatrixElementPosition::create(row, column))?;
+            a.push(current_element_value);
+        }
+        else
+        {
+            let current_element_value = ref_symmetric_matrix.copy_element_value_or_zero(
+                MatrixElementPosition::create(row, column))?;
+            a.push(current_element_value);
+        }
+        column += T::from(1u8);
+    }
+    maxa.push(index);
+    Ok((a, maxa))
+}
