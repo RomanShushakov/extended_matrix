@@ -4,53 +4,12 @@ use std::collections::{HashMap, HashSet};
 use std::ops::{Mul, Add, Sub, Div, Rem, MulAssign, SubAssign, AddAssign};
 use std::hash::Hash;
 
-use crate::new_extended_matrix::Operation;
+use crate::extended_matrix::Operation;
 
 use crate::shape::Shape;
 use crate::matrix_element_position::MatrixElementPosition;
 
 use crate::functions::{conversion_uint_into_usize};
-
-
-pub trait BasicMatrixClone<T, V>
-{
-    fn clone_box(&self) -> Box<dyn BasicMatrixTrait<T, V>>;
-}
-
-
-impl<T, V, W> BasicMatrixClone<T, V> for W
-    where W: BasicMatrixTrait<T, V> + Clone + 'static,
-{
-    fn clone_box(&self) -> Box<dyn BasicMatrixTrait<T, V>>
-    {
-        Box::new(self.clone())
-    }
-}
-
-
-impl<T, V> Clone for Box<dyn BasicMatrixTrait<T, V>>
-{
-    fn clone(&self) -> Box<dyn BasicMatrixTrait<T, V>>
-    {
-        self.clone_box()
-    }
-}
-
-
-pub trait BasicMatrixTrait<T, V>: BasicMatrixClone<T, V>
-{
-    fn read_element_value(&self, row: T, column: T) -> Result<V, &str>;
-    fn copy_all_elements_values(&self) -> HashMap<MatrixElementPosition<T>, V>;
-    fn copy_shape(&self) -> Shape<T>;
-    fn transpose(&mut self);
-    fn multiply_by_number(&mut self, number: V);
-    fn into_symmetric(self) -> Box<dyn BasicMatrixTrait<T, V>>;
-    fn define_type(&self) -> BasicMatrixType;
-    fn remove_zeros_rows_columns(&mut self) -> Vec<MatrixElementPosition<T>>;
-    fn remove_selected_row(&mut self, row: T) -> Box<dyn BasicMatrixTrait<T, V>>;
-    fn remove_selected_column(&mut self, column: T) -> Box<dyn BasicMatrixTrait<T, V>>;
-    fn as_any(&self) -> &dyn Any;
-}
 
 
 #[derive(Debug, Copy, Clone, PartialEq)]
