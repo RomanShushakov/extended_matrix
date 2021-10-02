@@ -388,8 +388,6 @@ impl<T, V> BasicMatrix<T, V>
         let mut columns_for_remove = zero_columns.into_iter().collect::<Vec<T>>();
         columns_for_remove.sort();
 
-        println!("{:?}, {:?}", rows_for_remove, columns_for_remove);
-
         let mut zeros_rows_columns= Vec::new();
         for (row, column) in rows_for_remove.into_iter().rev().zip(columns_for_remove.into_iter().rev())
         {
