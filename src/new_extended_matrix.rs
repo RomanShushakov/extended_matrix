@@ -5,7 +5,9 @@ use std::hash::Hash;
 use std::collections::HashMap;
 
 use crate::basic_matrix::basic_matrix::{BasicMatrix, BasicMatrixTrait, BasicMatrixType};
-use crate::basic_matrix::basic_matrix::{MatrixElementPosition, Shape};
+
+use crate::shape::Shape;
+use crate::matrix_element_position::MatrixElementPosition;
 
 use crate::basic_matrix::non_symmetric_matrix::NonSymmetricMatrix;
 
@@ -574,10 +576,17 @@ impl<T, V> NewExtendedMatrix<T, V>
     }
 
 
-    pub fn clone_all_elements_values(&self) -> HashMap<MatrixElementPosition<T>, V>
+    pub fn copy_element_value_or_zero(&self, matrix_element_position: MatrixElementPosition<T>)
+        -> Result<V, String>
     {
-        self.basic_matrix.clone_all_elements_values()
+        self.basic_matrix.copy_element_value_or_zero(matrix_element_position)
     }
+
+
+    // pub fn clone_all_elements_values(&self) -> HashMap<MatrixElementPosition<T>, V>
+    // {
+    //     self.basic_matrix.clone_all_elements_values()
+    // }
 
 
     pub fn show_matrix<F>(&self, f: F)
@@ -603,34 +612,3 @@ impl<T, V> NewExtendedMatrix<T, V>
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//
-//     pub fn define_type(&self) -> BasicMatrixType
-//     {
-//         self.basic_matrix.define_type()
-//     }
-// }

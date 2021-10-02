@@ -6,6 +6,9 @@ use std::hash::Hash;
 
 use crate::new_extended_matrix::Operation;
 
+use crate::shape::Shape;
+use crate::matrix_element_position::MatrixElementPosition;
+
 use crate::functions::{conversion_uint_into_usize};
 
 
@@ -50,65 +53,11 @@ pub trait BasicMatrixTrait<T, V>: BasicMatrixClone<T, V>
 }
 
 
-#[derive(PartialEq)]
-pub struct Shape<T>(pub T, pub T);
-
-
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum BasicMatrixType
 {
     Symmetric,
     NonSymmetric
-}
-
-
-#[derive(Debug, Hash, PartialEq, Eq, Clone)]
-pub struct MatrixElementPosition<T>
-{
-    row: T,
-    column: T,
-}
-
-
-impl<T> MatrixElementPosition<T>
-    where T: Copy + From<u8> + SubAssign
-{
-    pub fn create(row: T, column: T) -> Self
-    {
-        MatrixElementPosition { row, column }
-    }
-
-
-    pub fn ref_row(&self) -> &T
-    {
-        &self.row
-    }
-
-
-    pub fn ref_column(&self) -> &T
-    {
-        &self.column
-    }
-
-
-    pub fn swap_row_and_column(&mut self)
-    {
-        let interim = self.row;
-        self.row = self.column;
-        self.column = interim;
-    }
-
-
-    pub fn decrease_row_number(&mut self)
-    {
-        self.row -= T::from(1u8);
-    }
-
-
-    pub fn decrease_column_number(&mut self)
-    {
-        self.column -= T::from(1u8);
-    }
 }
 
 
@@ -598,17 +547,17 @@ impl<T, V> BasicMatrix<T, V>
     }
 
 
-    pub fn clone_all_elements_values(&self) -> HashMap<MatrixElementPosition<T>, V>
-    {
-        match self.matrix_type
-        {
-            BasicMatrixType::NonSymmetric => self.elements_values.clone(),
-            BasicMatrixType::Symmetric =>
-                {
-                    let mut basic_matrix = self.clone();
-                    basic_matrix.into_nonsymmetric();
-                    basic_matrix.elements_values
-                }
-        }
-    }
+    // pub fn clone_all_elements_values(&self) -> HashMap<MatrixElementPosition<T>, V>
+    // {
+    //     match self.matrix_type
+    //     {
+    //         BasicMatrixType::NonSymmetric => self.elements_values.clone(),
+    //         BasicMatrixType::Symmetric =>
+    //             {
+    //                 let mut basic_matrix = self.clone();
+    //                 basic_matrix.into_nonsymmetric();
+    //                 basic_matrix.elements_values
+    //             }
+    //     }
+    // }
 }

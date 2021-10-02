@@ -5,12 +5,12 @@ use std::collections::HashMap;
 use std::hash::Hash;
 
 use crate::basic_matrix::basic_matrix::BasicMatrixTrait;
-use crate::basic_matrix::basic_matrix::{MatrixElementPosition, Shape};
 use crate::basic_matrix::basic_matrix::{BasicMatrixType};
-
 use crate::basic_matrix::symmetric_matrix::SymmetricMatrix;
-
 use crate::basic_matrix::functions::{matrix_size_check, copy_value_by_index};
+
+use crate::shape::Shape;
+use crate::matrix_element_position::MatrixElementPosition;
 
 
 #[derive(Debug, Clone)]
