@@ -368,8 +368,6 @@ impl<T, V> BasicMatrix<T, V>
             zero_column += T::from(1u8);
         }
 
-        println!("{:?}, {:?}", zero_rows, zero_columns);
-
         let mut row = T::from(0u8);
         while row < self.rows_number
         {

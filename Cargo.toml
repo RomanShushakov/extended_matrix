@@ -1,6 +1,6 @@
 [package]
 name = "extended_matrix"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Roman Shushakov <roman.a.shushakov1@gmail.com>"]
 edition = "2018"
 description = "A matrix calculation module."

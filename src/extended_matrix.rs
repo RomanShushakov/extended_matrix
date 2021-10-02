@@ -456,8 +456,6 @@ impl<T, V> ExtendedMatrix<T, V>
         let (l_matrix, u_matrix) =
             self.lu_decomposition()?;
 
-        let f = |data: &str| println!("{}", data);
-
         let shape = self.basic_matrix.copy_shape();
 
         let mut basic_inverse_matrix = BasicMatrix::create_default(
