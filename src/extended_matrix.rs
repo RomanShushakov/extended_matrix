@@ -254,8 +254,6 @@ impl<T, V> ExtendedMatrix<T, V>
                 v, self.tolerance)?);
         }
 
-        println!("YEAH");
-
         let mut lhs_matrix = self.clone();
         let mut rhs_matrix = other.clone();
 

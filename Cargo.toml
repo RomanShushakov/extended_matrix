@@ -1,6 +1,6 @@
 [package]
 name = "extended_matrix"
-version = "0.3.3"
+version = "0.3.4"
 authors = ["Roman Shushakov <roman.a.shushakov1@gmail.com>"]
 edition = "2018"
 description = "A matrix calculation module."
@@ -9,4 +9,4 @@ license = "MIT OR Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-colsol = "0.1.0"
+colsol = "0.1.1"
