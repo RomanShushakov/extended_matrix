@@ -90,3 +90,16 @@ pub fn try_to_compact_matrix<T, V>(ref_symmetric_matrix: &ExtendedMatrix<T, V>)
     maxa.push(index);
     Ok((a, maxa))
 }
+
+
+pub fn matrix_element_value_extractor<T, V>(row: T, column: T, ref_matrix: &ExtendedMatrix<T, V>)
+    -> Result<V, String>
+    where T: Add<Output = T> + Mul<Output = T> + Sub<Output = T> + Div<Output = T> +
+             Rem<Output = T> + Copy + Debug + Eq + Hash + SubAssign + PartialOrd + AddAssign +
+             From<u8> + Ord + 'static,
+          V: Add<Output = V> + Mul<Output = V> + Sub<Output = V> + Div<Output = V> + Copy + Debug +
+             PartialEq + AddAssign + MulAssign + SubAssign + Into<f64> + From<f32> + PartialOrd +
+             'static
+{
+    ref_matrix.copy_element_value_or_zero(MatrixElementPosition::create(row, column))
+}
