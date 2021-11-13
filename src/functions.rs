@@ -92,6 +92,7 @@ pub fn try_to_compact_matrix<T, V>(ref_symmetric_matrix: &ExtendedMatrix<T, V>)
 }
 
 
+
 pub fn matrix_element_value_extractor<T, V>(row: T, column: T, ref_matrix: &ExtendedMatrix<T, V>)
     -> Result<V, String>
     where T: Add<Output = T> + Mul<Output = T> + Sub<Output = T> + Div<Output = T> +
