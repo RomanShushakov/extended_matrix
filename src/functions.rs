@@ -87,6 +87,7 @@ pub fn try_to_compact_matrix<T, V>(ref_symmetric_matrix: &ExtendedMatrix<T, V>)
         }
         column += T::from(1u8);
     }
+    
     maxa.push(index);
     Ok((a, maxa))
 }
