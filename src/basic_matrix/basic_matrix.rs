@@ -326,18 +326,25 @@ impl<T, V> BasicMatrix<T, V>
 
     pub fn transpose(&mut self)
     {
-        let transposed_rows_number = self.columns_number;
-        let transposed_columns_number = self.rows_number;
-        let mut transposed_elements = HashMap::new();
-        for (mut matrix_element_position, element) in
-            self.elements_values.clone().into_iter()
+        match self.ref_matrix_type()
         {
-            matrix_element_position.swap_row_and_column();
-            transposed_elements.insert(matrix_element_position, element);
+            BasicMatrixType::Symmetric => (),
+            BasicMatrixType::NonSymmetric => 
+            {
+                let transposed_rows_number = self.columns_number;
+                let transposed_columns_number = self.rows_number;
+                let mut transposed_elements = HashMap::new();
+                for (mut matrix_element_position, element) in
+                    self.elements_values.clone().into_iter()
+                {
+                    matrix_element_position.swap_row_and_column();
+                    transposed_elements.insert(matrix_element_position, element);
+                }
+                self.elements_values = transposed_elements;
+                self.rows_number = transposed_rows_number;
+                self.columns_number = transposed_columns_number;
+            }
         }
-        self.elements_values = transposed_elements;
-        self.rows_number = transposed_rows_number;
-        self.columns_number = transposed_columns_number;
     }
 
 
