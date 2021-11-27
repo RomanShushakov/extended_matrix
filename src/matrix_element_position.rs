@@ -47,4 +47,10 @@ impl<T> MatrixElementPosition<T>
     {
         self.column -= T::from(1u8);
     }
+
+
+    pub(super) fn update_row(&mut self, row: T)
+    {
+        self.row = row;
+    }
 }

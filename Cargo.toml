@@ -1,6 +1,6 @@
 [package]
 name = "extended_matrix"
-version = "0.3.9"
+version = "0.3.10"
 authors = ["Roman Shushakov <roman.a.shushakov1@gmail.com>"]
 edition = "2021"
 description = "A matrix calculation module."
@@ -10,3 +10,4 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 colsol = "0.1.4"
+finite_element_method = "0.4.1"

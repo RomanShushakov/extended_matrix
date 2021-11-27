@@ -6,12 +6,18 @@ use std::collections::HashMap;
 
 use colsol::colsol::{factorization, find_unknown};
 
+use finite_element_method::my_float::MyFloatTrait;
+
 use crate::basic_matrix::basic_matrix::{BasicMatrix, BasicMatrixType};
 
 use crate::shape::Shape;
 use crate::matrix_element_position::MatrixElementPosition;
 
-use crate::functions::{conversion_uint_into_usize, try_to_compact_matrix};
+use crate::functions::
+{
+    conversion_uint_into_usize, conversion_usize_into_uint, matrix_element_value_extractor, try_to_compact_matrix,
+    decompose, substitute,
+};
 
 
 #[derive(Copy, Clone)]
@@ -37,7 +43,7 @@ impl<T, V> ExtendedMatrix<T, V>
              Ord + 'static,
           V: Copy + Debug + PartialEq + AddAssign + MulAssign + Mul<Output = V> + Div<Output = V> +
              SubAssign + Sub<Output = V> + Add<Output = V> + Into<f64> + From<f32> + PartialOrd +
-             'static,
+             MyFloatTrait + 'static,
 {
     pub fn create(rows_number: T, columns_number: T, all_elements_values: Vec<V>, tolerance: V)
         -> Result<Self, String>
@@ -49,7 +55,7 @@ impl<T, V> ExtendedMatrix<T, V>
 
 
     fn matrices_dimensions_conformity_check(&self, other: &ExtendedMatrix<T, V>,
-                                            operation: Operation) -> Result<(T, Shape<T>), String>
+        operation: Operation) -> Result<(T, Shape<T>), String>
     {
         let lhs_shape = self.copy_shape();
         let rhs_shape = other.copy_shape();
@@ -366,10 +372,6 @@ impl<T, V> ExtendedMatrix<T, V>
     pub fn lu_decomposition(&self) -> Result<(Self, Self), String>
     {
         let shape = self.copy_shape();
-        if (shape.0 != shape.1) || shape.0 < T::from(2u8)
-        {
-            return Err("Extended matrix: Matrix could not be decomposed!".to_string());
-        }
 
         let mut origin_matrix = self.clone();
         origin_matrix.into_nonsymmetric();
@@ -456,8 +458,22 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
+    pub fn insert_matrix_element(&mut self, matrix_element_position: MatrixElementPosition<T>,
+        element_value: V, tolerance: V)
+    {   
+        self.basic_matrix.insert_matrix_element(matrix_element_position, element_value, tolerance);
+    }
+
+
     pub fn determinant(&self) -> Result<V, String>
     {
+        let shape = self.copy_shape();
+        if (shape.0 != shape.1) || shape.0 < T::from(2u8)
+        {
+            return Err(format!("Extended matrix: Could not find determinant of matrix! Rows number {:?} \
+                does not match to columns number {:?}", shape.0, shape.1));
+        }
+
         let (_, u_matrix) = self.lu_decomposition()?;
         let shape = u_matrix.copy_shape();
         let mut determinant = V::from(1f32);
@@ -475,54 +491,112 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
+    // pub fn inverse(&self) -> Result<Self, String>
+    // {
+    //     let shape = self.copy_shape();
+    //     if (shape.0 != shape.1) || shape.0 < T::from(2u8)
+    //     {
+    //         return Err(format!("Extended matrix: Matrix could not be inverted! Rows number {:?} \
+    //             does not match to columns number {:?}", shape.0, shape.1));
+    //     }
+    //     let (l_matrix, u_matrix) =
+    //         self.lu_decomposition()?;
+
+    //     let shape = self.basic_matrix.copy_shape();
+
+    //     let mut basic_inverse_matrix = BasicMatrix::create_default(
+    //         shape.0, shape.1, BasicMatrixType::NonSymmetric);
+
+    //     let mut k = T::from(0u8);
+    //     while k < shape.1
+    //     {
+    //         let mut basic_unit_column = BasicMatrix::create_default(
+    //             shape.1, T::from(1u8),
+    //             BasicMatrixType::NonSymmetric);
+
+    //         basic_unit_column.insert_matrix_element(
+    //             MatrixElementPosition::create(k, T::from(0u8)),
+    //             V::from(1f32), self.tolerance);
+
+    //         let unit_column =
+    //             ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_unit_column };
+
+    //         let interim_inverse_column =
+    //             l_matrix.direct_solution(&unit_column, false)?;
+
+    //         let inverse_column =
+    //             u_matrix.direct_solution(&interim_inverse_column, false)?;
+
+    //         let mut i = T::from(0u8);
+    //         while i < shape.0
+    //         {
+    //             let current_inverse_column_element_value =
+    //                 inverse_column.basic_matrix.copy_element_value_or_zero(
+    //                     MatrixElementPosition::create(i,
+    //                     T::from(0u8)))?;
+
+    //             basic_inverse_matrix.insert_matrix_element(
+    //                 MatrixElementPosition::create(i, k),
+    //                 current_inverse_column_element_value, self.tolerance);
+
+    //             i += T::from(1u8);
+    //         }
+    //         k += T::from(1u8);
+    //     }
+
+    //     Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_inverse_matrix })
+    // }
+
+
     pub fn inverse(&self) -> Result<Self, String>
     {
-        let (l_matrix, u_matrix) =
-            self.lu_decomposition()?;
+        let shape = self.copy_shape();
+        let n = conversion_uint_into_usize(shape.0);
 
-        let shape = self.basic_matrix.copy_shape();
+        let mut a = self.clone();
+        a.into_nonsymmetric();
 
-        let mut basic_inverse_matrix = BasicMatrix::create_default(
-            shape.0, shape.1, BasicMatrixType::NonSymmetric);
+        let mut o = vec![0usize; n];
+        let mut s = vec![V::from(0f32); n];
 
-        let mut k = T::from(0u8);
-        while k < shape.1
+        let mut b = vec![V::from(0f32); n];
+        let mut ai = ExtendedMatrix::create(shape.0, shape.1, 
+            vec![V::from(0f32); n * n], self.tolerance)?;
+
+        match decompose(&mut a, n, self.tolerance, &mut o, &mut s)
         {
-            let mut basic_unit_column = BasicMatrix::create_default(
-                shape.1, T::from(1u8),
-                BasicMatrixType::NonSymmetric);
-
-            basic_unit_column.insert_matrix_element(
-                MatrixElementPosition::create(k, T::from(0u8)),
-                V::from(1f32), self.tolerance);
-
-            let unit_column =
-                ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_unit_column };
-
-            let interim_inverse_column =
-                l_matrix.direct_solution(&unit_column, false)?;
-
-            let inverse_column =
-                u_matrix.direct_solution(&interim_inverse_column, false)?;
-
-            let mut i = T::from(0u8);
-            while i < shape.0
-            {
-                let current_inverse_column_element_value =
-                    inverse_column.basic_matrix.copy_element_value_or_zero(
-                        MatrixElementPosition::create(i,
-                        T::from(0u8)))?;
-
-                basic_inverse_matrix.insert_matrix_element(
-                    MatrixElementPosition::create(i, k),
-                    current_inverse_column_element_value, self.tolerance);
-
-                i += T::from(1u8);
-            }
-            k += T::from(1u8);
+            Ok(_) =>
+                {
+                    for i in 0..n
+                    {
+                        for j in 0..n
+                        {
+                            if i == j
+                            {
+                                b[j] = V::from(1f32);
+                            }
+                            else
+                            {
+                                b[j] = V::from(0f32);    
+                            }
+                        }
+                        let mut x = vec![V::from(0f32); n];
+                        substitute(&a, &o, n, &mut b, &mut x)?;
+                        for j in 0..n
+                        {
+                            let matrix_element_position = MatrixElementPosition::create(
+                                conversion_usize_into_uint(j), conversion_usize_into_uint(i));
+                            ai.insert_matrix_element(matrix_element_position, x[j], self.tolerance);
+                        }
+                    }
+                },
+            Err(e) => 
+                {
+                    let error_message = format!("Extended matrix: Inverse matrix calculation: Ill conditioned system: {:?}", e);
+                    return Err(error_message);
+                }
         }
-
-        Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_inverse_matrix })
+        Ok(ai)
     }
 
 
