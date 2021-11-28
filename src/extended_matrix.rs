@@ -439,6 +439,7 @@ impl<T, V> ExtendedMatrix<T, V>
         let mut b = vec![V::from(0f32); n];
         let mut ai = ExtendedMatrix::create(shape.0, shape.1, 
             vec![V::from(0f32); n * n], self.tolerance)?;
+        ai.into_nonsymmetric();
 
         match decompose(&mut a, n, self.tolerance, &mut o, &mut s)
         {
