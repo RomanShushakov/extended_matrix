@@ -3,7 +3,7 @@ use std::hash::Hash;
 use std::ops::{Mul, Add, Sub, Div, Rem, SubAssign, AddAssign, MulAssign};
 use std::fmt::Debug;
 
-use finite_element_method::my_float::MyFloatTrait;
+use extended_matrix_float::MyFloatTrait;
 
 use crate::basic_matrix::basic_matrix::{BasicMatrixType};
 
@@ -122,7 +122,7 @@ pub fn matrix_element_value_extractor<T, V>(row: T, column: T, ref_matrix: &Exte
 }
 
 
-pub fn pivot<T, V>(a: &ExtendedMatrix<T, V>, o: &mut [usize], s: &[V], n: usize, k: usize)
+pub(super) fn pivot<T, V>(a: &ExtendedMatrix<T, V>, o: &mut [usize], s: &[V], n: usize, k: usize)
     -> Result<(), String>
     where T: Add<Output = T> + Mul<Output = T> + Sub<Output = T> + Div<Output = T> +
              Rem<Output = T> + Copy + Debug + Eq + Hash + SubAssign + PartialOrd + AddAssign +
@@ -152,7 +152,7 @@ pub fn pivot<T, V>(a: &ExtendedMatrix<T, V>, o: &mut [usize], s: &[V], n: usize,
 }
 
 
-pub fn decompose<T, V>(a: &mut ExtendedMatrix<T, V>, n: usize, tol: V, o: &mut [usize], s: &mut [V]) -> Result<(), String>
+pub(super) fn decompose<T, V>(a: &mut ExtendedMatrix<T, V>, n: usize, tol: V, o: &mut [usize], s: &mut [V]) -> Result<(), String>
     where T: Add<Output = T> + Mul<Output = T> + Sub<Output = T> + Div<Output = T> +
              Rem<Output = T> + Copy + Debug + Eq + Hash + SubAssign + PartialOrd + AddAssign +
              From<u8> + Ord + 'static,
@@ -224,7 +224,7 @@ pub fn decompose<T, V>(a: &mut ExtendedMatrix<T, V>, n: usize, tol: V, o: &mut [
 }
 
 
-pub fn substitute<T, V>(a: &ExtendedMatrix<T, V>, o: &[usize], n: usize, b: &mut [V], x: &mut [V]) -> Result<(), String>
+pub(super) fn substitute<T, V>(a: &ExtendedMatrix<T, V>, o: &[usize], n: usize, b: &mut [V], x: &mut [V]) -> Result<(), String>
     where T: Add<Output = T> + Mul<Output = T> + Sub<Output = T> + Div<Output = T> +
              Rem<Output = T> + Copy + Debug + Eq + Hash + SubAssign + PartialOrd + AddAssign +
              From<u8> + Ord + 'static,

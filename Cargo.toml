@@ -10,4 +10,4 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 colsol = "0.1.4"
-finite_element_method = "0.4.1"
+extended_matrix_float = "0.1.0"

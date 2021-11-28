@@ -6,7 +6,7 @@ use std::collections::HashMap;
 
 use colsol::colsol::{factorization, find_unknown};
 
-use finite_element_method::my_float::MyFloatTrait;
+use extended_matrix_float::MyFloatTrait;
 
 use crate::basic_matrix::basic_matrix::{BasicMatrix, BasicMatrixType};
 
@@ -369,96 +369,30 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    pub fn lu_decomposition(&self) -> Result<(Self, Self), String>
+    pub fn lu_decomposition(&self) -> Result<Self, String>
     {
         let shape = self.copy_shape();
 
-        let mut origin_matrix = self.clone();
-        origin_matrix.into_nonsymmetric();
-
-        let mut l_basic_matrix = BasicMatrix::create_default(
-            shape.0, shape.1, BasicMatrixType::NonSymmetric);
-        let mut u_basic_matrix = BasicMatrix::create_default(
-            shape.0, shape.1, BasicMatrixType::NonSymmetric);
-
-        let mut i = T::from(0u8);
-        while i < shape.0
+        if (shape.0 != shape.1) || shape.0 < T::from(2u8)
         {
-            l_basic_matrix.insert_matrix_element(MatrixElementPosition::create(
-                i, i), V::from(1f32), self.tolerance);
-            i += T::from(1u8);
+            return Err(format!("Extended matrix: Could not decompose matrix! Rows number {:?} \
+                does not match to columns number {:?}", shape.0, shape.1));
         }
 
-        let mut k = T::from(0u8);
-        while k < shape.1
-        {
-            let current_element_value = origin_matrix.basic_matrix.copy_element_value_or_zero(
-                MatrixElementPosition::create(T::from(0u8), k))?;
+        let mut decomposed_matrix = self.clone();
+        decomposed_matrix.into_nonsymmetric();
 
-            u_basic_matrix.insert_matrix_element(MatrixElementPosition::create(
-                T::from(0u8), k), current_element_value, self.tolerance);
+        let n = conversion_uint_into_usize(shape.0);
+        let mut o = vec![0usize; n];
+        let mut s = vec![V::from(0f32); n];
 
-            k += T::from(1u8);
-        }
+        decompose(&mut decomposed_matrix, n, self.tolerance, &mut o, &mut s)?;
 
-        let mut row_number = T::from(0u8);
-
-        while row_number < shape.0 - T::from(1u8)
-        {
-            let mut i = row_number + T::from(1u8);
-            while i < shape.0
-            {
-                let current_coefficient = origin_matrix.basic_matrix.copy_element_value_or_zero(
-                    MatrixElementPosition::create(i, row_number))? /
-                    origin_matrix.basic_matrix.copy_element_value_or_zero(
-                        MatrixElementPosition::create(
-                            row_number, row_number))?;
-
-                l_basic_matrix.insert_matrix_element(
-                    MatrixElementPosition::create(i, row_number),
-                    current_coefficient, self.tolerance);
-
-                let mut j = T::from(0u8);
-                while j < shape.1
-                {
-                    let current_element_value =
-                        origin_matrix.basic_matrix.copy_element_value_or_zero(
-                            MatrixElementPosition::create(i, j))? -
-                        origin_matrix.basic_matrix.copy_element_value_or_zero(
-                            MatrixElementPosition::create(row_number,
-                                j))? * current_coefficient;
-
-                    if current_element_value.into().abs() > self.tolerance.into()
-                    {
-                         u_basic_matrix.insert_matrix_element(
-                            MatrixElementPosition::create(i, j),
-                            current_element_value, self.tolerance);
-                        origin_matrix.basic_matrix.insert_matrix_element(
-                            MatrixElementPosition::create(i, j),
-                            current_element_value, self.tolerance);
-                    }
-                    else
-                    {
-                        u_basic_matrix.remove_matrix_element(
-                            MatrixElementPosition::create(i, j));
-                        origin_matrix.basic_matrix.remove_matrix_element(
-                            MatrixElementPosition::create(i, j));
-                    }
-
-                    j += T::from(1u8);
-                }
-                i += T::from(1u8);
-            }
-            row_number += T::from(1u8);
-        }
-
-        let l_matrix = ExtendedMatrix { tolerance: self.tolerance, basic_matrix: l_basic_matrix };
-        let u_matrix = ExtendedMatrix { tolerance: self.tolerance, basic_matrix: u_basic_matrix };
-        Ok((l_matrix, u_matrix))
+        Ok(decomposed_matrix)
     }
 
 
-    pub fn insert_matrix_element(&mut self, matrix_element_position: MatrixElementPosition<T>,
+    pub(super) fn insert_matrix_element(&mut self, matrix_element_position: MatrixElementPosition<T>,
         element_value: V, tolerance: V)
     {   
         self.basic_matrix.insert_matrix_element(matrix_element_position, element_value, tolerance);
@@ -474,14 +408,14 @@ impl<T, V> ExtendedMatrix<T, V>
                 does not match to columns number {:?}", shape.0, shape.1));
         }
 
-        let (_, u_matrix) = self.lu_decomposition()?;
-        let shape = u_matrix.copy_shape();
+        let decomposed_matrix = self.lu_decomposition()?;
+        let shape = decomposed_matrix.copy_shape();
         let mut determinant = V::from(1f32);
 
         let mut i = T::from(0u8);
         while i < shape.0
         {
-            let current_diag_element_value = u_matrix.basic_matrix.copy_element_value_or_zero(
+            let current_diag_element_value = decomposed_matrix.basic_matrix.copy_element_value_or_zero(
                 MatrixElementPosition::create(i, i))?;
             determinant *= current_diag_element_value;
             i += T::from(1u8);
@@ -489,63 +423,6 @@ impl<T, V> ExtendedMatrix<T, V>
 
         Ok(determinant)
     }
-
-
-    // pub fn inverse(&self) -> Result<Self, String>
-    // {
-    //     let shape = self.copy_shape();
-    //     if (shape.0 != shape.1) || shape.0 < T::from(2u8)
-    //     {
-    //         return Err(format!("Extended matrix: Matrix could not be inverted! Rows number {:?} \
-    //             does not match to columns number {:?}", shape.0, shape.1));
-    //     }
-    //     let (l_matrix, u_matrix) =
-    //         self.lu_decomposition()?;
-
-    //     let shape = self.basic_matrix.copy_shape();
-
-    //     let mut basic_inverse_matrix = BasicMatrix::create_default(
-    //         shape.0, shape.1, BasicMatrixType::NonSymmetric);
-
-    //     let mut k = T::from(0u8);
-    //     while k < shape.1
-    //     {
-    //         let mut basic_unit_column = BasicMatrix::create_default(
-    //             shape.1, T::from(1u8),
-    //             BasicMatrixType::NonSymmetric);
-
-    //         basic_unit_column.insert_matrix_element(
-    //             MatrixElementPosition::create(k, T::from(0u8)),
-    //             V::from(1f32), self.tolerance);
-
-    //         let unit_column =
-    //             ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_unit_column };
-
-    //         let interim_inverse_column =
-    //             l_matrix.direct_solution(&unit_column, false)?;
-
-    //         let inverse_column =
-    //             u_matrix.direct_solution(&interim_inverse_column, false)?;
-
-    //         let mut i = T::from(0u8);
-    //         while i < shape.0
-    //         {
-    //             let current_inverse_column_element_value =
-    //                 inverse_column.basic_matrix.copy_element_value_or_zero(
-    //                     MatrixElementPosition::create(i,
-    //                     T::from(0u8)))?;
-
-    //             basic_inverse_matrix.insert_matrix_element(
-    //                 MatrixElementPosition::create(i, k),
-    //                 current_inverse_column_element_value, self.tolerance);
-
-    //             i += T::from(1u8);
-    //         }
-    //         k += T::from(1u8);
-    //     }
-
-    //     Ok(ExtendedMatrix { tolerance: self.tolerance, basic_matrix: basic_inverse_matrix })
-    // }
 
 
     pub fn inverse(&self) -> Result<Self, String>
