@@ -425,6 +425,23 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
+    pub fn determinant_2x2(&self) -> Result<V, String>
+    {
+        let shape = self.copy_shape();
+        if (shape.0 != shape.1) || shape.0 != T::from(2u8)
+        {
+            return Err(format!("Extended matrix: Could not find determinant of matrix! Rows number: {:?}, \
+                columns number: {:?}", shape.0, shape.1));
+        }
+        let determinant = 
+            matrix_element_value_extractor(T::from(0u8), T::from(0u8), &self)? * 
+            matrix_element_value_extractor(T::from(1u8), T::from(1u8), &self)? -
+            matrix_element_value_extractor(T::from(0u8), T::from(1u8), &self)? *
+            matrix_element_value_extractor(T::from(1u8), T::from(0u8), &self)?;
+        Ok(determinant)
+    }
+
+
     pub fn inverse(&self) -> Result<Self, String>
     {
         let shape = self.copy_shape();
