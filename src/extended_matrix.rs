@@ -569,6 +569,12 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
+    pub fn ref_elements_values(&self) -> &HashMap<MatrixElementPosition<T>, V>
+    {
+        self.basic_matrix.ref_elements_values()
+    }
+
+
     // pub fn clone_all_elements_values(&self) -> HashMap<MatrixElementPosition<T>, V>
     // {
     //     self.basic_matrix.clone_all_elements_values()
