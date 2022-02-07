@@ -4,6 +4,8 @@ use std::collections::{HashMap, HashSet};
 use std::ops::{Mul, Add, Sub, Div, Rem, MulAssign, SubAssign, AddAssign};
 use std::hash::Hash;
 
+use extended_matrix_float::MyFloatTrait;
+
 use crate::extended_matrix::Operation;
 
 use crate::shape::Shape;
@@ -35,7 +37,8 @@ impl<T, V> BasicMatrix<T, V>
                  Sub<Output = T> + Div<Output = T> + Rem<Output = T> + Eq + Hash + SubAssign +
                  AddAssign + From<u8> + Ord + 'static,
               V: Copy + PartialEq + Debug + MulAssign + From<f32> + Into<f64> + AddAssign +
-                 Mul<Output = V> + SubAssign + 'static,
+                 Mul<Output = V> + SubAssign + Sub<Output = V> + MyFloatTrait + PartialOrd + 
+                 'static,
 {
     pub fn create_default(rows_number: T, columns_number: T, matrix_type: BasicMatrixType) -> Self
     {
@@ -409,7 +412,7 @@ impl<T, V> BasicMatrix<T, V>
     }
 
 
-    pub fn try_to_symmetrize(&mut self)
+    pub fn try_to_symmetrize(&mut self, tolerance: V)
     {
         if self.matrix_type == BasicMatrixType::NonSymmetric
         {
@@ -431,7 +434,7 @@ impl<T, V> BasicMatrix<T, V>
                     if let Some(symmetric_element_value) =
                         self.elements_values.get(&symmetric_matrix_element_position)
                     {
-                        if element_value == symmetric_element_value
+                        if (*element_value - *symmetric_element_value).my_abs() < tolerance
                         {
                             let (symmetric_row, symmetric_column) =
                                 {

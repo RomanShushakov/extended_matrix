@@ -234,10 +234,12 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    pub fn direct_solution(&self, other: &Self, colsol_usage: bool) -> Result<Self, String>
+    pub fn direct_solution(&mut self, other: &Self, colsol_usage: bool) -> Result<Self, String>
     {
         let (basic_dimension, shape) = self.matrices_dimensions_conformity_check(
             &other, Operation::Multiplication)?;
+
+        self.try_to_symmetrize(self.tolerance);
 
         if *self.ref_matrix_type() == BasicMatrixType::Symmetric && colsol_usage
         {
@@ -520,9 +522,9 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    pub fn try_to_symmetrize(&mut self)
+    pub fn try_to_symmetrize(&mut self, tolerance: V)
     {
-        self.basic_matrix.try_to_symmetrize();
+        self.basic_matrix.try_to_symmetrize(tolerance);
     }
 
 
