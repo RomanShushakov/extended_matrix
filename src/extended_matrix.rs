@@ -234,7 +234,7 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    pub fn direct_solution(&mut self, other: &Self, colsol_usage: bool) -> Result<Self, String>
+    pub fn direct_solution(&self, other: &Self, colsol_usage: bool) -> Result<Self, String>
     {
         let (basic_dimension, shape) = self.matrices_dimensions_conformity_check(
             &other, Operation::Multiplication)?;
