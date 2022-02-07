@@ -239,8 +239,6 @@ impl<T, V> ExtendedMatrix<T, V>
         let (basic_dimension, shape) = self.matrices_dimensions_conformity_check(
             &other, Operation::Multiplication)?;
 
-        self.try_to_symmetrize(self.tolerance);
-
         if *self.ref_matrix_type() == BasicMatrixType::Symmetric && colsol_usage
         {
             let (mut a, maxa) = try_to_compact_matrix(&self)?;
