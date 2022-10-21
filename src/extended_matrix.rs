@@ -19,17 +19,10 @@ use crate::functions::
     decompose, substitute,
 };
 
-
-#[derive(Copy, Clone)]
-pub enum Operation
-{
-    Addition,
-    Multiplication,
-    Subtraction,
-}
+use crate::enums::Operation;
 
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ExtendedMatrix<T, V>
 {
     tolerance: V,
@@ -54,45 +47,36 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    fn matrices_dimensions_conformity_check(&self, other: &ExtendedMatrix<T, V>,
-        operation: Operation) -> Result<(T, Shape<T>), String>
+    pub(crate) fn matrices_dimensions_conformity_check(&self, other: &ExtendedMatrix<T, V>, operation: Operation) 
+        -> Result<(T, Shape<T>), String>
     {
         let lhs_shape = self.copy_shape();
         let rhs_shape = other.copy_shape();
         match operation
         {
             Operation::Multiplication =>
+            {
+                if lhs_shape.1 != rhs_shape.0
                 {
-                    if lhs_shape.1 != rhs_shape.0
-                    {
-                        return Err("Extended matrix: Shapes of matrices \
-                            does not conform to each other!".to_string());
-                    }
-                    Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
-                },
-            Operation::Addition =>
-                {
-                    if lhs_shape.0 != rhs_shape.0 || lhs_shape.1 != rhs_shape.1
-                    {
-                        return Err("Extended matrix: Shapes of matrices \
-                            does not conform to each other!".to_string());
-                    }
-                    Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
+                    return Err("Extended matrix: Shapes of matrices \
+                        do not conform to each other!".to_string());
                 }
-            Operation::Subtraction =>
+                Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
+            },
+            Operation::Addition | Operation::Subtraction =>
+            {
+                if lhs_shape.0 != rhs_shape.0 || lhs_shape.1 != rhs_shape.1
                 {
-                    if lhs_shape.0 != rhs_shape.0 || lhs_shape.1 != rhs_shape.1
-                    {
-                        return Err("Extended matrix: Shapes of matrices \
-                            does not conform to each other!".to_string());
-                    }
-                    Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
+                    return Err("Extended matrix: Shapes of matrices \
+                        do not conform to each other!".to_string());
                 }
+                Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
+            }
         }
     }
 
 
-    pub fn add_subtract_matrix(&self, other: &Self, operation: Operation) -> Result<Self, String>
+    fn add_subtract_matrix(&self, other: &Self, operation: Operation) -> Result<Self, String>
     {
         let (_, shape) = self.matrices_dimensions_conformity_check(&other, operation)?;
 
@@ -602,5 +586,20 @@ impl<T, V> ExtendedMatrix<T, V>
             f(&format!("{}", row_str));
             row += T::from(1u8);
         }
+    }
+}
+
+
+impl<T, V> PartialEq for ExtendedMatrix<T, V>
+    where T: PartialEq + Eq + Hash,
+          V: PartialEq
+{
+    fn eq(&self, other: &Self) -> bool 
+    {
+        if self.tolerance != other.tolerance || self.basic_matrix != other.basic_matrix
+        {
+            return false;
+        }
+        true
     }
 }

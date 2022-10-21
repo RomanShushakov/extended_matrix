@@ -6,7 +6,7 @@ use std::hash::Hash;
 
 use extended_matrix_float::MyFloatTrait;
 
-use crate::extended_matrix::Operation;
+use crate::enums::Operation;
 
 use crate::shape::Shape;
 use crate::matrix_element_position::MatrixElementPosition;
@@ -525,4 +525,35 @@ impl<T, V> BasicMatrix<T, V>
     //             }
     //     }
     // }
+}
+
+
+impl<T, V> PartialEq for BasicMatrix<T, V>
+    where T: PartialEq + Eq + Hash,
+          V: PartialEq
+{
+    fn eq(&self, other: &Self) -> bool 
+    {
+        if self.rows_number != other.rows_number || self.columns_number != other.columns_number || 
+            self.matrix_type != other.matrix_type
+        {
+            return false;
+        }
+
+        for (matrix_element_position, element_value) in self.elements_values.iter()
+        {
+            match other.elements_values.get(matrix_element_position)
+            {
+                None => return false,
+                Some(v) => 
+                {
+                    if v != element_value
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        true
+    }
 }
