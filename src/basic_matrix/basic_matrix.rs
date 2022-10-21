@@ -6,7 +6,7 @@ use std::hash::Hash;
 
 use extended_matrix_float::MyFloatTrait;
 
-use crate::extended_matrix::Operation;
+use crate::enums::Operation;
 
 use crate::shape::Shape;
 use crate::matrix_element_position::MatrixElementPosition;

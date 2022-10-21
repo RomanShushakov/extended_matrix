@@ -19,14 +19,7 @@ use crate::functions::
     decompose, substitute,
 };
 
-
-#[derive(Copy, Clone)]
-pub enum Operation
-{
-    Addition,
-    Multiplication,
-    Subtraction,
-}
+use crate::enums::Operation;
 
 
 #[derive(Clone)]
@@ -54,40 +47,31 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    fn matrices_dimensions_conformity_check(&self, other: &ExtendedMatrix<T, V>,
-        operation: Operation) -> Result<(T, Shape<T>), String>
+    pub(crate) fn matrices_dimensions_conformity_check(&self, other: &ExtendedMatrix<T, V>, operation: Operation) 
+        -> Result<(T, Shape<T>), String>
     {
         let lhs_shape = self.copy_shape();
         let rhs_shape = other.copy_shape();
         match operation
         {
             Operation::Multiplication =>
+            {
+                if lhs_shape.1 != rhs_shape.0
                 {
-                    if lhs_shape.1 != rhs_shape.0
-                    {
-                        return Err("Extended matrix: Shapes of matrices \
-                            does not conform to each other!".to_string());
-                    }
-                    Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
-                },
-            Operation::Addition =>
-                {
-                    if lhs_shape.0 != rhs_shape.0 || lhs_shape.1 != rhs_shape.1
-                    {
-                        return Err("Extended matrix: Shapes of matrices \
-                            does not conform to each other!".to_string());
-                    }
-                    Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
+                    return Err("Extended matrix: Shapes of matrices \
+                        do not conform to each other!".to_string());
                 }
-            Operation::Subtraction =>
+                Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
+            },
+            Operation::Addition | Operation::Subtraction =>
+            {
+                if lhs_shape.0 != rhs_shape.0 || lhs_shape.1 != rhs_shape.1
                 {
-                    if lhs_shape.0 != rhs_shape.0 || lhs_shape.1 != rhs_shape.1
-                    {
-                        return Err("Extended matrix: Shapes of matrices \
-                            does not conform to each other!".to_string());
-                    }
-                    Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
+                    return Err("Extended matrix: Shapes of matrices \
+                        do not conform to each other!".to_string());
                 }
+                Ok((lhs_shape.1, Shape(lhs_shape.0, rhs_shape.1)))
+            }
         }
     }
 
