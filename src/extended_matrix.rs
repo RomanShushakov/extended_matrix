@@ -22,7 +22,7 @@ use crate::functions::
 use crate::enums::Operation;
 
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ExtendedMatrix<T, V>
 {
     tolerance: V,
@@ -76,7 +76,7 @@ impl<T, V> ExtendedMatrix<T, V>
     }
 
 
-    pub fn add_subtract_matrix(&self, other: &Self, operation: Operation) -> Result<Self, String>
+    fn add_subtract_matrix(&self, other: &Self, operation: Operation) -> Result<Self, String>
     {
         let (_, shape) = self.matrices_dimensions_conformity_check(&other, operation)?;
 
@@ -586,5 +586,20 @@ impl<T, V> ExtendedMatrix<T, V>
             f(&format!("{}", row_str));
             row += T::from(1u8);
         }
+    }
+}
+
+
+impl<T, V> PartialEq for ExtendedMatrix<T, V>
+    where T: PartialEq + Eq + Hash,
+          V: PartialEq
+{
+    fn eq(&self, other: &Self) -> bool 
+    {
+        if self.tolerance != other.tolerance || self.basic_matrix != other.basic_matrix
+        {
+            return false;
+        }
+        true
     }
 }

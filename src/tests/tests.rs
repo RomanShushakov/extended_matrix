@@ -27,3 +27,43 @@ fn test_matrices_dimensions_conformity_check() -> Result<(), String>
 
     Ok(())
 }
+
+
+#[test]
+fn test_add_matrix() -> Result<(), String>
+{
+    let m_1 = ExtendedMatrix::create(2, 2, 
+        vec![1.0, 2.0, 3.0, 4.0], TOLERANCE)?;
+    let m_2 = ExtendedMatrix::create(2, 2, 
+        vec![5.0, 6.0, 7.0, 8.0], TOLERANCE)?;
+
+    let mut result = m_1.add_matrix(&m_2)?;
+    result.try_to_symmetrize(TOLERANCE);
+
+    let expected = ExtendedMatrix::create(2, 2, 
+        vec![6.0, 8.0, 10.0, 12.0], TOLERANCE)?;
+
+    assert_eq!(result, expected);
+
+    Ok(())
+}
+
+
+#[test]
+fn test_subtract_matrix() -> Result<(), String>
+{
+    let m_1 = ExtendedMatrix::create(2, 2, 
+        vec![1.0, 2.0, 3.0, 4.0], TOLERANCE)?;
+    let m_2 = ExtendedMatrix::create(2, 2, 
+        vec![5.0, 6.0, 7.0, 8.0], TOLERANCE)?;
+
+    let mut result = m_1.subtract_matrix(&m_2)?;
+    result.try_to_symmetrize(TOLERANCE);
+
+    let expected = ExtendedMatrix::create(2, 2, 
+        vec![-4.0, -4.0, -4.0, -4.0], TOLERANCE)?;
+
+    assert_eq!(result, expected);
+
+    Ok(())
+}
