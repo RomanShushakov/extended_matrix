@@ -1,12 +1,8 @@
 use std::fmt::Debug;
-use std::convert::{From, Into};
-use std::ops::{Mul, Add, Sub, Div, Rem, MulAssign, AddAssign, SubAssign};
 use std::hash::Hash;
 use std::collections::HashMap;
 
 use colsol::colsol::{factorization, find_unknown};
-
-use extended_matrix_float::MyFloatTrait;
 
 use crate::basic_matrix::basic_matrix::{BasicMatrix, BasicMatrixType};
 
@@ -20,6 +16,7 @@ use crate::functions::
 };
 
 use crate::enums::Operation;
+use crate::traits::{UIntTrait, FloatTrait};
 
 
 #[derive(Clone, Debug)]
@@ -31,12 +28,8 @@ pub struct ExtendedMatrix<T, V>
 
 
 impl<T, V> ExtendedMatrix<T, V>
-    where T: Copy + Debug + Mul<Output = T> + PartialOrd + Add<Output = T> + Sub<Output = T> +
-             Div<Output = T> + Rem<Output = T> + Eq + Hash + SubAssign + AddAssign + From<u8> +
-             Ord + 'static,
-          V: Copy + Debug + PartialEq + AddAssign + MulAssign + Mul<Output = V> + Div<Output = V> +
-             SubAssign + Sub<Output = V> + Add<Output = V> + Into<f64> + From<f32> + PartialOrd +
-             MyFloatTrait + 'static,
+    where T: UIntTrait<Output = T>,
+          V: FloatTrait<Output = V, Other = V>
 {
     pub fn create(rows_number: T, columns_number: T, all_elements_values: Vec<V>, tolerance: V)
         -> Result<Self, String>

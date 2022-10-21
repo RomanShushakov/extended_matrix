@@ -1,17 +1,8 @@
-use std::collections::HashMap;
-use std::hash::Hash;
-use std::ops::{Mul, Add, Sub, Div, Rem, SubAssign, AddAssign, MulAssign};
-use std::fmt::Debug;
-
-use extended_matrix_float::MyFloatTrait;
-
-use crate::basic_matrix::basic_matrix::{BasicMatrixType};
+use std::ops::AddAssign;
 
 use crate::extended_matrix::ExtendedMatrix;
-use crate::enums::Operation;
-
-use crate::shape::Shape;
 use crate::matrix_element_position::MatrixElementPosition;
+use crate::traits::{UIntTrait, FloatTrait};
 
 
 pub fn conversion_uint_into_usize<T>(uint: T) -> usize
@@ -42,12 +33,8 @@ pub fn conversion_usize_into_uint<T>(u: usize) -> T
 
 pub fn try_to_compact_matrix<T, V>(ref_symmetric_matrix: &ExtendedMatrix<T, V>)
     -> Result<(Vec<V>, Vec<i64>), String>
-    where T: Copy + Debug + From<u8> + Add<Output=T> + Sub<Output=T> + Mul<Output=T> +
-             Div<Output=T> + Rem<Output=T> + Eq + Hash + AddAssign + SubAssign + PartialOrd + Ord +
-             'static,
-          V: Copy + Debug + From<f32> + Into<f64> + Add<Output=V> + Sub<Output=V> + Mul<Output=V> +
-             Div<Output=V> + PartialEq + AddAssign + SubAssign + MulAssign + PartialOrd + MyFloatTrait + 
-             'static,
+    where T: UIntTrait<Output = T>,
+          V: FloatTrait<Output = V, Other = V>,
 {
     let shape = ref_symmetric_matrix.copy_shape();
     let mut a = Vec::new();
@@ -111,12 +98,8 @@ pub fn try_to_compact_matrix<T, V>(ref_symmetric_matrix: &ExtendedMatrix<T, V>)
 
 pub fn matrix_element_value_extractor<T, V>(row: T, column: T, ref_matrix: &ExtendedMatrix<T, V>)
     -> Result<V, String>
-    where T: Add<Output = T> + Mul<Output = T> + Sub<Output = T> + Div<Output = T> +
-             Rem<Output = T> + Copy + Debug + Eq + Hash + SubAssign + PartialOrd + AddAssign +
-             From<u8> + Ord + 'static,
-          V: Add<Output = V> + Mul<Output = V> + Sub<Output = V> + Div<Output = V> + Copy + Debug +
-             PartialEq + AddAssign + MulAssign + SubAssign + Into<f64> + From<f32> + PartialOrd +
-             MyFloatTrait + 'static
+    where T: UIntTrait<Output = T>,
+          V: FloatTrait<Output = V, Other = V>
 {
     ref_matrix.copy_element_value_or_zero(MatrixElementPosition::create(row, column))
 }
@@ -124,12 +107,8 @@ pub fn matrix_element_value_extractor<T, V>(row: T, column: T, ref_matrix: &Exte
 
 pub(super) fn pivot<T, V>(a: &ExtendedMatrix<T, V>, o: &mut [usize], s: &[V], n: usize, k: usize)
     -> Result<(), String>
-    where T: Add<Output = T> + Mul<Output = T> + Sub<Output = T> + Div<Output = T> +
-             Rem<Output = T> + Copy + Debug + Eq + Hash + SubAssign + PartialOrd + AddAssign +
-             From<u8> + Ord + 'static,
-          V: Add<Output = V> + Mul<Output = V> + Sub<Output = V> + Div<Output = V> + Copy + Debug +
-             PartialEq + AddAssign + MulAssign + SubAssign + Into<f64> + From<f32> + PartialOrd +
-             MyFloatTrait + 'static
+    where T: UIntTrait<Output = T>,
+          V: FloatTrait<Output = V, Other = V>
 {
     let mut p = k;
     let mut big = (matrix_element_value_extractor(conversion_usize_into_uint(o[k]), 
@@ -152,13 +131,10 @@ pub(super) fn pivot<T, V>(a: &ExtendedMatrix<T, V>, o: &mut [usize], s: &[V], n:
 }
 
 
-pub(super) fn decompose<T, V>(a: &mut ExtendedMatrix<T, V>, n: usize, tol: V, o: &mut [usize], s: &mut [V]) -> Result<(), String>
-    where T: Add<Output = T> + Mul<Output = T> + Sub<Output = T> + Div<Output = T> +
-             Rem<Output = T> + Copy + Debug + Eq + Hash + SubAssign + PartialOrd + AddAssign +
-             From<u8> + Ord + 'static,
-          V: Add<Output = V> + Mul<Output = V> + Sub<Output = V> + Div<Output = V> + Copy + Debug +
-             PartialEq + AddAssign + MulAssign + SubAssign + Into<f64> + From<f32> + PartialOrd +
-             MyFloatTrait + 'static
+pub(super) fn decompose<T, V>(a: &mut ExtendedMatrix<T, V>, n: usize, tol: V, o: &mut [usize], s: &mut [V]) 
+    -> Result<(), String>
+    where T: UIntTrait<Output = T>,
+          V: FloatTrait<Output = V, Other = V>
 {
     for i in 0..n
     {
@@ -224,13 +200,10 @@ pub(super) fn decompose<T, V>(a: &mut ExtendedMatrix<T, V>, n: usize, tol: V, o:
 }
 
 
-pub(super) fn substitute<T, V>(a: &ExtendedMatrix<T, V>, o: &[usize], n: usize, b: &mut [V], x: &mut [V]) -> Result<(), String>
-    where T: Add<Output = T> + Mul<Output = T> + Sub<Output = T> + Div<Output = T> +
-             Rem<Output = T> + Copy + Debug + Eq + Hash + SubAssign + PartialOrd + AddAssign +
-             From<u8> + Ord + 'static,
-          V: Add<Output = V> + Mul<Output = V> + Sub<Output = V> + Div<Output = V> + Copy + Debug +
-             PartialEq + AddAssign + MulAssign + SubAssign + Into<f64> + From<f32> + PartialOrd +
-             MyFloatTrait + 'static
+pub(super) fn substitute<T, V>(a: &ExtendedMatrix<T, V>, o: &[usize], n: usize, b: &mut [V], x: &mut [V]) 
+    -> Result<(), String>
+    where T: UIntTrait<Output = T>,
+          V: FloatTrait<Output = V, Other = V>
 {
     for i in 1..n
     {

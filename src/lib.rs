@@ -5,4 +5,5 @@ pub mod matrix_element_position;
 pub mod functions;
 
 mod enums;
+pub mod traits;
 mod tests;

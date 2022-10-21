@@ -9,7 +9,7 @@ const TOLERANCE: f32 = 1e-12;
 #[test]
 fn test_matrices_dimensions_conformity_check() -> Result<(), String>
 {
-    let m_1 = ExtendedMatrix::create(3, 2, 
+    let m_1 = ExtendedMatrix::create(3u8, 2, 
         vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0], TOLERANCE)?;
     let m_2 = ExtendedMatrix::create(2, 3, 
         vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0], TOLERANCE)?;
@@ -32,7 +32,7 @@ fn test_matrices_dimensions_conformity_check() -> Result<(), String>
 #[test]
 fn test_add_matrix() -> Result<(), String>
 {
-    let m_1 = ExtendedMatrix::create(2, 2, 
+    let m_1 = ExtendedMatrix::create(2u16, 2, 
         vec![1.0, 2.0, 3.0, 4.0], TOLERANCE)?;
     let m_2 = ExtendedMatrix::create(2, 2, 
         vec![5.0, 6.0, 7.0, 8.0], TOLERANCE)?;
@@ -52,7 +52,7 @@ fn test_add_matrix() -> Result<(), String>
 #[test]
 fn test_subtract_matrix() -> Result<(), String>
 {
-    let m_1 = ExtendedMatrix::create(2, 2, 
+    let m_1 = ExtendedMatrix::create(2usize, 2, 
         vec![1.0, 2.0, 3.0, 4.0], TOLERANCE)?;
     let m_2 = ExtendedMatrix::create(2, 2, 
         vec![5.0, 6.0, 7.0, 8.0], TOLERANCE)?;

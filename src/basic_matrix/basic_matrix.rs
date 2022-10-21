@@ -1,17 +1,12 @@
 use std::fmt::Debug;
-use std::any::Any;
 use std::collections::{HashMap, HashSet};
-use std::ops::{Mul, Add, Sub, Div, Rem, MulAssign, SubAssign, AddAssign};
 use std::hash::Hash;
 
-use extended_matrix_float::MyFloatTrait;
-
 use crate::enums::Operation;
+use crate::traits::{UIntTrait, FloatTrait};
 
 use crate::shape::Shape;
 use crate::matrix_element_position::MatrixElementPosition;
-
-use crate::functions::{conversion_uint_into_usize};
 
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -33,12 +28,8 @@ pub struct BasicMatrix<T, V>
 
 
 impl<T, V> BasicMatrix<T, V>
-    where T: Copy + PartialEq + Debug + PartialOrd + Mul<Output = T> + Add<Output = T> +
-                 Sub<Output = T> + Div<Output = T> + Rem<Output = T> + Eq + Hash + SubAssign +
-                 AddAssign + From<u8> + Ord + 'static,
-              V: Copy + PartialEq + Debug + MulAssign + From<f32> + Into<f64> + AddAssign +
-                 Mul<Output = V> + SubAssign + Sub<Output = V> + MyFloatTrait + PartialOrd + 
-                 'static,
+    where T: UIntTrait<Output = T>,
+          V: FloatTrait<Output = V, Other = V>
 {
     pub fn create_default(rows_number: T, columns_number: T, matrix_type: BasicMatrixType) -> Self
     {
