@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 use std::fmt::Debug;
 
-use crate::matrix::NewShape;
-use crate::matrix::Position;
+use crate::matrix::{NewShape, Position};
+use crate::matrix::BasicOperationsTrait;
 
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Matrix<V> 
 {
     pub(crate) shape: NewShape,
@@ -34,5 +34,29 @@ impl<V> Matrix<V>
         }
 
         Matrix { shape, elements }
+    }
+}
+
+
+impl<V> BasicOperationsTrait for Matrix<V>
+{
+    type Other = Matrix<V>;
+    type Value = V;
+
+    fn get_shape(&self) -> &NewShape 
+    {
+        &self.shape
+    }
+
+
+    fn get_elements(&self) -> &HashMap<Position, Self::Value> 
+    {
+        &self.elements
+    }
+
+
+    fn get_mut_elements(&mut self) -> &mut HashMap<Position, Self::Value> 
+    {
+        &mut self.elements
     }
 }

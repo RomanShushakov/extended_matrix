@@ -2,5 +2,5 @@
 pub struct Shape<T>(pub T, pub T);
 
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct NewShape(pub usize, pub usize);
