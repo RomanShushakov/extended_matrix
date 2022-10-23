@@ -1,1 +1,2 @@
-mod tests;
+mod matrix_operations;
+mod matrix;

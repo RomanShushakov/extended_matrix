@@ -6,7 +6,7 @@ use colsol::colsol::{factorization, find_unknown};
 
 use crate::basic_matrix::basic_matrix::{BasicMatrix, BasicMatrixType};
 
-use crate::shape::Shape;
+use crate::matrix::Shape;
 use crate::matrix_element_position::MatrixElementPosition;
 
 use crate::functions::

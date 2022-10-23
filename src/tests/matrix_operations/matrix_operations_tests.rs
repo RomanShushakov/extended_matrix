@@ -1,6 +1,6 @@
 use crate::enums::Operation;
 use crate::extended_matrix::ExtendedMatrix;
-use crate::shape::Shape;
+use crate::matrix::Shape;
 
 
 const TOLERANCE: f32 = 1e-12;

@@ -5,7 +5,7 @@ use std::hash::Hash;
 use crate::enums::Operation;
 use crate::traits::{UIntTrait, FloatTrait};
 
-use crate::shape::Shape;
+use crate::matrix::Shape;
 use crate::matrix_element_position::MatrixElementPosition;
 
 
