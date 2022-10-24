@@ -49,6 +49,12 @@ impl<V> BasicOperationsTrait for Matrix<V>
     }
 
 
+    fn get_mut_shape(&mut self) -> &mut NewShape 
+    {
+        &mut self.shape
+    }
+
+
     fn get_elements(&self) -> &HashMap<Position, Self::Value> 
     {
         &self.elements

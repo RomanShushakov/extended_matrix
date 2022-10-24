@@ -96,7 +96,7 @@ impl<T, V> ExtendedMatrix<T, V>
             {
                 while column < shape.1
                 {
-                    let mut current_matrix_element_position =
+                    let current_matrix_element_position =
                         MatrixElementPosition::create(row, column);
                     let current_lhs_element_value =
                         self.basic_matrix.copy_element_value_or_zero(
@@ -180,12 +180,12 @@ impl<T, V> ExtendedMatrix<T, V>
             let mut k = T::from(0u8);
             while k < basic_dimension
             {
-                let mut current_lhs_matrix_element_position =
+                let current_lhs_matrix_element_position =
                     MatrixElementPosition::create(index / shape.1, k);
                 let current_lhs_element_value = self.basic_matrix.copy_element_value_or_zero(
                     current_lhs_matrix_element_position)?;
 
-                let mut current_rhs_matrix_element_position =
+                let current_rhs_matrix_element_position =
                     MatrixElementPosition::create(k, index % shape.1);
                 let current_rhs_element_value = other.basic_matrix.copy_element_value_or_zero(
                         current_rhs_matrix_element_position)?;
@@ -570,7 +570,7 @@ impl<T, V> ExtendedMatrix<T, V>
             let mut column = T::from(0u8);
             while column < shape.1
             {
-                let mut matrix_element_position =
+                let matrix_element_position =
                     MatrixElementPosition::create(row, column);
                 row_str += &format!("{:?}, ",
                     self.basic_matrix.copy_element_value_or_zero(matrix_element_position).unwrap());
