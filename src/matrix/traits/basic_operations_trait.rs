@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::fmt::Debug;
 use std::ops::{AddAssign, SubAssign, Mul, MulAssign};
 
 use crate::matrix::{NewShape, Position};
@@ -140,5 +141,26 @@ pub trait BasicOperationsTrait
             result.get_mut_elements().insert(pos, *value);
         }
         result
+    }
+
+
+    fn show_matrix<F>(&self, f: F)
+        where F: Fn(&str),
+              Self::Value: Copy + Debug
+    {
+        let NewShape(rows_number, columns_numbers) = self.get_shape();
+        for row in 0..*rows_number
+        {
+            let mut row_str = String::from("[");
+            for column in 0..*columns_numbers
+            {
+                let pos = Position(row, column);
+                let value = self.get_element_value(&pos);
+                row_str += &format!("{:?}, ", value);
+            }
+            row_str = row_str[..row_str.len() - 2].to_string();
+            row_str += "]";
+            f(&format!("{}", row_str));
+        }
     }
 }
