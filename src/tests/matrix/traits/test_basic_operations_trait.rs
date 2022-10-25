@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use crate::Matrix;
+use crate::{Matrix, SquareMatrix};
 use crate::matrix::{NewShape, Position};
 use crate::matrix::BasicOperationsTrait;
 
@@ -95,7 +95,7 @@ fn test_multiply()
     let m_2 = Matrix::create(3, 1, vec![4.0, 5.0, 6.0]);
     let m_3 = Matrix::create(2, 3, 
         vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
-    let m_4 = Matrix::create(3, 3, 
+    let m_4 = SquareMatrix::create(3, 
         vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
     let m_5 = Matrix::create(2, 3, 
         vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);

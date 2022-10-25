@@ -2,13 +2,12 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 use std::ops::{AddAssign, SubAssign, Mul, MulAssign};
 
-use crate::matrix::{NewShape, Position};
+use crate::matrix::{NewShape, Position, Matrix, IntoMatrixTrait};
 use crate::enums::Operation;
 
 
 pub trait BasicOperationsTrait 
 {
-    type Other;
     type Value;
 
     fn get_shape(&self) -> &NewShape;
@@ -31,8 +30,8 @@ pub trait BasicOperationsTrait
     }
 
 
-    fn shape_conformity_check(&self, other: &Self::Other, operation: Operation) -> Result<(), String>
-        where Self::Other: BasicOperationsTrait
+    fn shape_conformity_check<M>(&self, other: &M, operation: Operation) -> Result<(), String>
+        where M: BasicOperationsTrait
     {
         match operation 
         {
@@ -55,12 +54,12 @@ pub trait BasicOperationsTrait
     }
 
 
-    fn add(&self, other: &Self::Other) -> Result<Self, String>
-        where Self::Other: BasicOperationsTrait<Value = Self::Value>, 
+    fn add<M>(&self, other: &M) -> Result<Self, String>
+        where M: BasicOperationsTrait<Value = Self::Value>, 
               Self::Value: Copy + AddAssign,
               Self: Clone,
     {
-        self.shape_conformity_check(&other, Operation::Addition)?;
+        self.shape_conformity_check::<M>(&other, Operation::Addition)?;
         let mut result = self.clone();
         for (position, value) in other.get_elements()
         {
@@ -70,12 +69,12 @@ pub trait BasicOperationsTrait
     }
 
 
-    fn subtract(&self, other: &Self::Other) -> Result<Self, String>
-        where Self::Other: BasicOperationsTrait<Value = Self::Value>, 
+    fn subtract<M>(&self, other: &M) -> Result<Self, String>
+        where M: BasicOperationsTrait<Value = Self::Value>, 
               Self::Value: Copy + SubAssign,
               Self: Clone,
     {
-        self.shape_conformity_check(&other, Operation::Subtraction)?;
+        self.shape_conformity_check::<M>(&other, Operation::Subtraction)?;
         let mut result = self.clone();
         for (position, value) in other.get_elements()
         {
@@ -98,13 +97,12 @@ pub trait BasicOperationsTrait
     }
 
 
-    fn multiply(&self, other: &Self::Other) -> Result<Self, String>
-        where Self::Other: BasicOperationsTrait<Value = Self::Value>, 
+    fn multiply<M>(&self, other: &M) -> Result<Matrix<Self::Value>, String>
+        where M: BasicOperationsTrait<Value = Self::Value> + IntoMatrixTrait<Value = Self::Value> + Clone,
               Self::Value: Copy + AddAssign + SubAssign + Mul<Output = Self::Value> + From<f32>,
-              Self: Clone,
     {
-        self.shape_conformity_check(&other, Operation::Multiplication)?;
-        let mut result = self.clone();
+        self.shape_conformity_check::<M>(&other, Operation::Multiplication)?;
+        let mut result = other.clone();
         let (rows_number, columns_number) = (self.get_shape().0, other.get_shape().1);
         result.get_mut_shape().update(rows_number, columns_number);
         result.get_mut_elements().clear();
@@ -123,7 +121,7 @@ pub trait BasicOperationsTrait
             let result_position = Position(i / columns_number, i % columns_number);
             result.get_mut_elements().insert(result_position, result_value);
         }
-        Ok(result)
+        Ok(result.into_matrix())
     }
 
 

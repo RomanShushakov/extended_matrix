@@ -1,29 +1,27 @@
 use std::collections::HashMap;
-use std::fmt::Debug;
 
-use crate::matrix::{NewShape, Position};
+use crate::matrix::{Position, NewShape, Matrix};
 use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait};
 
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct Matrix<V> 
+#[derive(PartialEq, Debug, Clone)]
+pub struct SquareMatrix<V>
 {
     pub(crate) shape: NewShape,
     pub(crate) elements: HashMap<Position, V>,
 }
 
 
-impl<V> Matrix<V> 
-    where V: Debug + Copy + From<f32>,
+impl<V> SquareMatrix<V> 
+    where V: Copy + From<f32>,
 {
-    pub fn create(rows_number: usize, columns_number: usize, elements_values: Vec<V>) -> Self
+    pub fn create(order: usize, elements_values: Vec<V>) -> Self
     {
-        let shape = NewShape(rows_number, columns_number);
         let mut elements = HashMap::new();
 
-        for i in 0..rows_number * columns_number
+        for i in 0..order * order
         {
-            let (row_number, column_number) = (i / columns_number, i % columns_number);
+            let (row_number, column_number) = (i / order, i % order);
             let position = Position(row_number, column_number);
 
             match elements_values.get(i)
@@ -33,12 +31,12 @@ impl<V> Matrix<V>
             };
         }
 
-        Matrix { shape, elements }
+        SquareMatrix { shape: NewShape(order, order), elements }
     }
 }
 
 
-impl<V> BasicOperationsTrait for Matrix<V>
+impl<V> BasicOperationsTrait for SquareMatrix<V>
 {
     type Value = V;
 
@@ -67,12 +65,12 @@ impl<V> BasicOperationsTrait for Matrix<V>
 }
 
 
-impl<V> IntoMatrixTrait for Matrix<V>
+impl<V> IntoMatrixTrait for SquareMatrix<V>
 {
     type Value = V;
 
     fn into_matrix(self) -> Matrix<Self::Value>
     {
-        self
+        Matrix { shape: self.shape, elements: self.elements }
     }
 }
