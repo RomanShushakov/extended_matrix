@@ -13,7 +13,7 @@ fn test_square_matrix_create()
 
     let expected = SquareMatrix 
         { 
-            shape: crate::matrix::NewShape(2, 2), 
+            shape: NewShape(2, 2), 
             elements: HashMap::from(
                 [(Position(0, 0), 1.0), (Position(0, 1), 2.0), (Position(1, 0), 3.0), (Position(1, 1), 4.0)]
             ) 

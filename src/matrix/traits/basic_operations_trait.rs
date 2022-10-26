@@ -16,17 +16,17 @@ pub trait BasicOperationsTrait
     fn get_mut_elements(&mut self) -> &mut HashMap<Position, Self::Value>;
 
 
-    fn get_element_value(&self, position: &Position) -> &Self::Value
+    fn get_element_value(&self, position: &Position) -> Result<&Self::Value, String>
         where Self::Value: Copy
     {
-        self.get_elements().get(position).expect("Element is absent")
+        self.get_elements().get(position).ok_or("Element is absent".to_string())
     }
 
 
-    fn get_mut_element_value(&mut self, position: &Position) -> &mut Self::Value
+    fn get_mut_element_value(&mut self, position: &Position) -> Result<&mut Self::Value, String>
         where Self::Value: Copy
     {
-        self.get_mut_elements().get_mut(position).expect("Element is absent")
+        self.get_mut_elements().get_mut(position).ok_or("Element is absent".to_string())
     }
 
 
@@ -63,7 +63,7 @@ pub trait BasicOperationsTrait
         let mut result = self.clone();
         for (position, value) in other.get_elements()
         {
-            *result.get_mut_element_value(position) += *value;
+            *result.get_mut_element_value(position).expect("Element is absent") += *value;
         }
         Ok(result)
     }
@@ -78,7 +78,7 @@ pub trait BasicOperationsTrait
         let mut result = self.clone();
         for (position, value) in other.get_elements()
         {
-            *result.get_mut_element_value(position) -= *value;
+            *result.get_mut_element_value(position).expect("Element is absent") -= *value;
         }
         Ok(result)
     }
@@ -113,9 +113,11 @@ pub trait BasicOperationsTrait
             for k in 0..self.get_shape().1
             {
                 let self_position = Position(i / columns_number, k);
-                let self_value = self.get_element_value(&self_position);
+                let self_value = 
+                    self.get_element_value(&self_position).expect("Element is absent");
                 let other_position = Position(k, i % columns_number);
-                let other_value = other.get_element_value(&other_position);
+                let other_value = 
+                    other.get_element_value(&other_position).expect("Element is absent");
                 result_value += (*self_value) * (*other_value);
             }
             let result_position = Position(i / columns_number, i % columns_number);
@@ -142,7 +144,7 @@ pub trait BasicOperationsTrait
     }
 
 
-    fn show_matrix<F>(&self, f: F)
+    fn show<F>(&self, f: F)
         where F: Fn(&str),
               Self::Value: Copy + Debug
     {
