@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 
 use crate::matrix::{Matrix, NewShape, Position};
-use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait};
+use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait, VectorTrait};
 
 
 #[derive(Debug, PartialEq, Clone)]
@@ -65,3 +65,6 @@ impl<V> IntoMatrixTrait for Vec3<V>
         Matrix { shape: self.shape, elements: self.elements }
     }
 }
+
+
+impl<V> VectorTrait for Vec3<V> {}
