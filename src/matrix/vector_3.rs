@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 use std::ops::{Sub, Mul};
 
+use crate::FloatTrait;
 use crate::matrix::{Matrix, NewShape, Position};
 use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait, VectorTrait};
 use crate::enums::Operation;
@@ -117,5 +118,13 @@ impl<V> Vector3<V>
         }
         
         Ok(result)
+    }
+
+
+    pub fn angle_between_vectors(&self, other: &Self) -> Result<V, String>
+        where V: FloatTrait<Output = V>
+    {
+        let cos_angle = self.dot_product(other)? / (self.norm()? * other.norm()?);
+        Ok(cos_angle.my_acos())
     }
 }

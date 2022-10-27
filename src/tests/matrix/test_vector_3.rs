@@ -3,7 +3,7 @@
 use std::collections::HashMap;
 
 use crate::{Matrix, Vector3, SquareMatrix};
-use crate::matrix::{Position, NewShape, BasicOperationsTrait, IntoMatrixTrait};
+use crate::matrix::{Position, NewShape, BasicOperationsTrait, IntoMatrixTrait, VectorTrait};
 
 
 #[test]
@@ -122,4 +122,20 @@ fn test_get_components()
 
     assert_eq!(v_1.get_components(), expected.clone());
     assert_eq!(v_2.get_components(), expected);
+}
+
+
+#[test]
+fn test_angle_between_vectors()
+{
+    let v_1 = Vector3::create(&[3.0, 3.0, 0.0]);
+    let v_2 = Vector3::create(&[0.0, 2.0, 2.0]);
+    let v_3 = v_1.transpose();
+    let v_4 = v_2.transpose();
+
+    let expected = 1.0471975511965979; 
+
+    assert_eq!(v_1.angle_between_vectors(&v_2), Ok(expected));
+    assert_eq!(v_1.angle_between_vectors(&v_4), Ok(expected));
+    assert_eq!(v_2.angle_between_vectors(&v_3), Ok(expected));
 }
