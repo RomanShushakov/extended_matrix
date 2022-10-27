@@ -4,7 +4,8 @@ pub mod matrix_element_position;
 pub mod functions;
 
 mod matrix;
-pub use matrix::{Matrix, Position, BasicOperationsTrait, SquareMatrix, Vec3, VectorTrait};
+pub use matrix::{Matrix, Position, BasicOperationsTrait, SquareMatrix, Vector3, VectorTrait};
+pub(crate) use matrix::IntoMatrixTrait;
 
 mod enums;
 

@@ -6,14 +6,14 @@ use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait, VectorTrait};
 
 
 #[derive(Debug, PartialEq, Clone)]
-pub struct Vec3<V> 
+pub struct Vector3<V> 
 {
     pub(crate) shape: NewShape,
     pub(crate) elements: HashMap<Position, V>,
 }
 
 
-impl<V> Vec3<V> 
+impl<V> Vector3<V> 
     where V: Debug + Copy + From<f32>,
 {
     pub fn create(components: &[V; 3]) -> Self
@@ -22,12 +22,12 @@ impl<V> Vec3<V>
         let elements = HashMap::from([
             (Position(0, 0), components[0]), (Position(1, 0), components[1]), (Position(2, 0), components[2])]);
 
-        Vec3 { shape, elements }
+        Vector3 { shape, elements }
     }
 }
 
 
-impl<V> BasicOperationsTrait for Vec3<V>
+impl<V> BasicOperationsTrait for Vector3<V>
 {
     type Value = V;
 
@@ -56,7 +56,7 @@ impl<V> BasicOperationsTrait for Vec3<V>
 }
 
 
-impl<V> IntoMatrixTrait for Vec3<V>
+impl<V> IntoMatrixTrait for Vector3<V>
 {
     type Value = V;
 
@@ -67,4 +67,4 @@ impl<V> IntoMatrixTrait for Vec3<V>
 }
 
 
-impl<V> VectorTrait for Vec3<V> {}
+impl<V> VectorTrait for Vector3<V> {}

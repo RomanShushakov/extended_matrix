@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use crate::{Matrix, SquareMatrix, Vec3};
+use crate::{Matrix, SquareMatrix, Vector3};
 use crate::matrix::{NewShape, Position};
 use crate::matrix::BasicOperationsTrait;
 
@@ -13,7 +13,7 @@ fn test_get_element_value()
 {
     let m = Matrix::create(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
     let sm = SquareMatrix::create(2, vec![1.0, 2.0, 3.0, 4.0]);
-    let v = Vec3::create(&[1.0, 2.0, 3.0]);
+    let v = Vector3::create(&[1.0, 2.0, 3.0]);
 
     assert_eq!(m.get_element_value(&Position(0, 0)), Ok(&1.0));
     assert_eq!(sm.get_element_value(&Position(1, 1)), Ok(&4.0));
@@ -28,7 +28,7 @@ fn test_get_mut_element_value()
 {
     let mut m = Matrix::create(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
     let mut sm = SquareMatrix::create(2, vec![1.0, 2.0, 3.0, 4.0]);
-    let mut v = Vec3::create(&[1.0, 2.0, 3.0]);
+    let mut v = Vector3::create(&[1.0, 2.0, 3.0]);
 
     assert_eq!(m.get_mut_element_value(&Position(0, 0)), Ok(&mut 1.0));
     assert_eq!(sm.get_mut_element_value(&Position(1, 1)), Ok(&mut 4.0));
@@ -46,8 +46,8 @@ fn test_add()
         vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
     let sm_1 = SquareMatrix::create(2, vec![1.0, 2.0, 3.0, 4.0]);
     let sm_2 = SquareMatrix::create(2, vec![1.0, 2.0, 3.0, 4.0]);
-    let v_1 = Vec3::create(&[1.0, 2.0, 3.0]);
-    let v_2 = Vec3::create(&[1.0, 2.0, 3.0]);
+    let v_1 = Vector3::create(&[1.0, 2.0, 3.0]);
+    let v_2 = Vector3::create(&[1.0, 2.0, 3.0]);
     let m_4 = Matrix::create(3, 1, vec![1.0, 2.0, 3.0]);
 
     let m_expected_1 = Matrix 
@@ -66,7 +66,7 @@ fn test_add()
             ) 
         };
 
-    let v_expected = Vec3 
+    let v_expected = Vector3 
         { 
             shape: NewShape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 2.0), (Position(1, 0), 4.0), (Position(2, 0), 6.0)]) 
@@ -98,8 +98,8 @@ fn test_subtract()
         vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
     let sm_1 = SquareMatrix::create(2, vec![1.0, 2.0, 3.0, 4.0]);
     let sm_2 = SquareMatrix::create(2, vec![1.0, 2.0, 3.0, 4.0]);
-    let v_1 = Vec3::create(&[1.0, 2.0, 3.0]);
-    let v_2 = Vec3::create(&[1.0, 2.0, 3.0]);
+    let v_1 = Vector3::create(&[1.0, 2.0, 3.0]);
+    let v_2 = Vector3::create(&[1.0, 2.0, 3.0]);
     let m_4 = Matrix::create(3, 1, vec![1.0, 2.0, 3.0]);
 
     let m_expected_1 = Matrix 
@@ -118,7 +118,7 @@ fn test_subtract()
             ) 
         };
 
-    let v_expected = Vec3 
+    let v_expected = Vector3 
         { 
             shape: NewShape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 0.0), (Position(1, 0), 0.0), (Position(2, 0), 0.0)]) 
@@ -146,7 +146,7 @@ fn test_multiply_by_scalar()
 {
     let m = Matrix::create(2, 2, vec![1.0, -2.0, 3.0, -4.0]);
     let sm = SquareMatrix::create(2, vec![1.0, -2.0, 3.0, -4.0]);
-    let v = Vec3::create(&[1.0, 2.0, 3.0]);
+    let v = Vector3::create(&[1.0, 2.0, 3.0]);
 
     let m_expected = Matrix 
         { 
@@ -164,7 +164,7 @@ fn test_multiply_by_scalar()
             ) 
         };
 
-    let v_expected = Vec3 
+    let v_expected = Vector3 
         { 
             shape: NewShape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 5.0), (Position(1, 0), 10.0), (Position(2, 0), 15.0)]) 
@@ -191,7 +191,7 @@ fn test_multiply()
         vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
     let sm_2 = SquareMatrix::create(3,
         vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
-    let v = Vec3::create(&[1.0, 2.0, 3.0]);
+    let v = Vector3::create(&[1.0, 2.0, 3.0]);
 
     let m_expected_1 = Matrix 
         { 
@@ -269,7 +269,7 @@ fn test_transpose()
     let m = Matrix::create(2, 3, 
         vec![1.0, -2.0, 3.0, -4.0, 5.0, -6.0]);
     let sm = SquareMatrix::create(2, vec![1.0, -2.0, 3.0, -4.0]);
-    let v = Vec3::create(&[1.0, -2.0, 3.0]);
+    let v = Vector3::create(&[1.0, -2.0, 3.0]);
 
     let m_expected = Matrix 
         { 
@@ -294,7 +294,7 @@ fn test_transpose()
             ) 
         };
 
-    let vt_expected = Vec3 
+    let vt_expected = Vector3 
         { 
             shape: NewShape(1, 3), 
             elements: HashMap::from([(Position(0, 0), 1.0), (Position(0, 1), -2.0), (Position(0, 2), 3.0)]) 
