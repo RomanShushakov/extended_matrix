@@ -12,30 +12,6 @@ pub struct SquareMatrix<V>
 }
 
 
-impl<V> SquareMatrix<V> 
-    where V: Copy + From<f32>,
-{
-    pub fn create(order: usize, elements_values: Vec<V>) -> Self
-    {
-        let mut elements = HashMap::new();
-
-        for i in 0..order * order
-        {
-            let (row_number, column_number) = (i / order, i % order);
-            let position = Position(row_number, column_number);
-
-            match elements_values.get(i)
-            {
-                Some(v) => elements.insert(position, *v),
-                None => elements.insert(position, V::from(0f32)),
-            };
-        }
-
-        SquareMatrix { shape: NewShape(order, order), elements }
-    }
-}
-
-
 impl<V> BasicOperationsTrait for SquareMatrix<V>
 {
     type Value = V;
@@ -72,5 +48,29 @@ impl<V> IntoMatrixTrait for SquareMatrix<V>
     fn into_matrix(self) -> Matrix<Self::Value>
     {
         Matrix { shape: self.shape, elements: self.elements }
+    }
+}
+
+
+impl<V> SquareMatrix<V> 
+    where V: Copy + From<f32>,
+{
+    pub fn create(order: usize, elements_values: Vec<V>) -> Self
+    {
+        let mut elements = HashMap::new();
+
+        for i in 0..order * order
+        {
+            let (row_number, column_number) = (i / order, i % order);
+            let position = Position(row_number, column_number);
+
+            match elements_values.get(i)
+            {
+                Some(v) => elements.insert(position, *v),
+                None => elements.insert(position, V::from(0f32)),
+            };
+        }
+
+        SquareMatrix { shape: NewShape(order, order), elements }
     }
 }

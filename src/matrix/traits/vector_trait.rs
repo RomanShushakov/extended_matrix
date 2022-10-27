@@ -38,21 +38,16 @@ pub trait VectorTrait:
     {
         self.vector_shape_conformity_check()?;
         other.vector_shape_conformity_check()?;
-        if self.get_shape().1 == 1 && other.get_shape().1 == 1
+        let mut lhs = self.clone();
+        let mut rhs = other.clone();
+        if lhs.get_shape().1 == 1
         {
-            Ok(*self.transpose().multiply(other)?.get_element_value(&Position(0, 0))?)
+            lhs = lhs.transpose();
         }
-        else if self.get_shape().0 == 1 && other.get_shape().1 == 1
+        if rhs.get_shape().0 == 1
         {
-            Ok(*self.multiply(other)?.get_element_value(&Position(0, 0))?)
+            rhs = rhs.transpose();
         }
-        else if self.get_shape().0 == 1 && other.get_shape().0 == 1
-        {
-            Ok(*self.multiply(&other.transpose())?.get_element_value(&Position(0, 0))?)
-        }
-        else
-        {
-            Ok(*other.multiply(self)?.get_element_value(&Position(0, 0))?)
-        }
+        Ok(*lhs.multiply(&rhs)?.get_element_value(&Position(0, 0))?)
     }
 }

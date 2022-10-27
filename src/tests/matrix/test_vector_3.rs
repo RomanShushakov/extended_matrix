@@ -83,32 +83,23 @@ fn test_into_matrix()
 
 
 #[test]
-#[should_panic(expected = "Shapes of matrices do not conform to each other!")]
 fn test_cross_product()
 {
     let v_1 = Vector3::create(&[3.0, 3.0, 0.0]);
     let v_2 = Vector3::create(&[0.0, 2.0, 2.0]);
-    let m = Matrix::create(3, 1, vec![0.0, 2.0, 2.0]);
     let v_3 = v_1.transpose();
     let v_4 = v_2.transpose();
-    let sm = SquareMatrix::create(3, vec![1.0, 2.0, 3.0, 4.0]);
 
-    let v_expected_1 = Vector3 
+    let v_expected = Vector3 
         { 
             shape: NewShape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 6.0), (Position(1, 0), -6.0), (Position(2, 0), 6.0)]) 
         };
 
-    let v_expected_2 = Vector3 
-        { 
-            shape: NewShape(1, 3), 
-            elements: HashMap::from([(Position(0, 0), 6.0), (Position(0, 1), -6.0), (Position(0, 2), 6.0)]) 
-        };
-
-    assert_eq!(v_1.cross_product(&v_2), Ok(v_expected_1.clone()));
-    assert_eq!(v_1.cross_product(&m), Ok(v_expected_1));
-    assert_eq!(v_3.cross_product(&v_4), Ok(v_expected_2.clone()));
-    assert_eq!(v_3.cross_product(&sm), Ok(v_expected_2));
+    assert_eq!(v_1.cross_product(&v_2), v_expected.clone());
+    assert_eq!(v_1.cross_product(&v_4), v_expected.clone());
+    assert_eq!(v_3.cross_product(&v_2), v_expected.clone());
+    assert_eq!(v_3.cross_product(&v_4), v_expected.clone());
 }
 
 
@@ -135,7 +126,7 @@ fn test_angle_between_vectors()
 
     let expected = 1.0471975511965979; 
 
-    assert_eq!(v_1.angle_between_vectors(&v_2), Ok(expected));
-    assert_eq!(v_1.angle_between_vectors(&v_4), Ok(expected));
-    assert_eq!(v_2.angle_between_vectors(&v_3), Ok(expected));
+    assert_eq!(v_1.angle_between_vectors(&v_2), expected);
+    assert_eq!(v_1.angle_between_vectors(&v_4), expected);
+    assert_eq!(v_2.angle_between_vectors(&v_3), expected);
 }

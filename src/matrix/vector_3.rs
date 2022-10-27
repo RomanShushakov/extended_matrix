@@ -79,52 +79,53 @@ impl<V> Vector3<V>
         {
             for column in 0..self.shape.1
             {
-                components[row + column] = *self.get_element_value(&Position(row, column)).unwrap();
+                components[row + column] = *self.get_element_value(&Position(row, column))
+                    .expect("Element is absent");
             }
         }
         components
     }
 
 
-    pub fn cross_product<M>(&self, other: &M) -> Result<Self, String>
-        where V: Sub<Output = V> + Mul<Output = V>,
-              M: BasicOperationsTrait<Value = V>,
+    pub fn cross_product(&self, other: &Self) -> Self
+        where V: Sub<Output = V> + Mul<Output = V>
     {
-        self.shape_conformity_check(other, Operation::Addition)?;
-        let mut result = self.clone();
-        if self.shape.1 == 1
+        let mut lhs = self.clone();
+        if lhs.shape.0 == 1
         {
-            *result.get_mut_element_value(&Position(0, 0))? = 
-                *self.get_element_value(&Position(1, 0))? * *other.get_element_value(&Position(2, 0))? -
-                *self.get_element_value(&Position(2, 0))? * *other.get_element_value(&Position(1, 0))?;
-            *result.get_mut_element_value(&Position(1, 0))? = 
-                *self.get_element_value(&Position(2, 0))? * *other.get_element_value(&Position(0, 0))? -
-                *self.get_element_value(&Position(0, 0))? * *other.get_element_value(&Position(2, 0))?;
-            *result.get_mut_element_value(&Position(2, 0))? = 
-                *self.get_element_value(&Position(0, 0))? * *other.get_element_value(&Position(1, 0))? -
-                *self.get_element_value(&Position(1, 0))? * *other.get_element_value(&Position(0, 0))?;
-        }
-        else
+            lhs = lhs.transpose();
+        } 
+        let mut rhs = other.clone();
+        if rhs.shape.0 == 1
         {
-            *result.get_mut_element_value(&Position(0, 0))? = 
-                *self.get_element_value(&Position(0, 1))? * *other.get_element_value(&Position(0, 2))? -
-                *self.get_element_value(&Position(0, 2))? * *other.get_element_value(&Position(0, 1))?;
-            *result.get_mut_element_value(&Position(0, 1))? = 
-                *self.get_element_value(&Position(0, 2))? * *other.get_element_value(&Position(0, 0))? -
-                *self.get_element_value(&Position(0, 0))? * *other.get_element_value(&Position(0, 2))?;
-            *result.get_mut_element_value(&Position(0, 2))? = 
-                *self.get_element_value(&Position(0, 0))? * *other.get_element_value(&Position(0, 1))? -
-                *self.get_element_value(&Position(0, 1))? * *other.get_element_value(&Position(0, 0))?;
+            rhs = rhs.transpose();
         }
-        
-        Ok(result)
+        let mut result = lhs.clone();
+        *result.get_mut_element_value(&Position(0, 0)).expect("Element is absent") = 
+            *lhs.get_element_value(&Position(1, 0)).expect("Element is absent") * 
+            *rhs.get_element_value(&Position(2, 0)).expect("Element is absent") -
+            *lhs.get_element_value(&Position(2, 0)).expect("Element is absent") * 
+            *rhs.get_element_value(&Position(1, 0)).expect("Element is absent");
+        *result.get_mut_element_value(&Position(1, 0)).expect("Element is absent") = 
+            *lhs.get_element_value(&Position(2, 0)).expect("Element is absent") * 
+            *rhs.get_element_value(&Position(0, 0)).expect("Element is absent") -
+            *lhs.get_element_value(&Position(0, 0)).expect("Element is absent") * 
+            *rhs.get_element_value(&Position(2, 0)).expect("Element is absent");
+        *result.get_mut_element_value(&Position(2, 0)).expect("Element is absent") = 
+            *lhs.get_element_value(&Position(0, 0)).expect("Element is absent") * 
+            *rhs.get_element_value(&Position(1, 0)).expect("Element is absent") -
+            *lhs.get_element_value(&Position(1, 0)).expect("Element is absent") * 
+            *rhs.get_element_value(&Position(0, 0)).expect("Element is absent");
+        result
     }
 
 
-    pub fn angle_between_vectors(&self, other: &Self) -> Result<V, String>
+    pub fn angle_between_vectors(&self, other: &Self) -> V
         where V: FloatTrait<Output = V>
     {
-        let cos_angle = self.dot_product(other)? / (self.norm()? * other.norm()?);
-        Ok(cos_angle.my_acos())
+        let cos_angle = self.dot_product(other).expect("Dot product could not be calculated is absent") / 
+            (self.norm().expect("Norm could not be calculated") * 
+            other.norm().expect("Norm could not be calculated"));
+        cos_angle.my_acos()
     }
 }
