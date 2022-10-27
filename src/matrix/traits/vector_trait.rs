@@ -2,21 +2,31 @@ use extended_matrix_float::MyFloatTrait;
 
 use crate::{BasicOperationsTrait, IntoMatrixTrait};
 use crate::FloatTrait;
-use crate::enums::Operation;
-use crate::matrix::{NewShape, Position};
+use crate::matrix::Position;
 
 
-pub trait VectorTrait: BasicOperationsTrait + IntoMatrixTrait
+pub trait VectorTrait: BasicOperationsTrait
 {
-    fn norm(&self) -> <Self as BasicOperationsTrait>::Value
+    fn vector_shape_conformity_check(&self) -> Result<(), String>
+    {
+        if self.get_shape().0 != 1 && self.get_shape().1 != 1
+        {
+            return Err("Not a vector".to_string())
+        }
+        Ok(())
+    }
+
+
+    fn norm(&self) -> Result<<Self as BasicOperationsTrait>::Value, String>
         where <Self as BasicOperationsTrait>::Value: FloatTrait<Output = <Self as BasicOperationsTrait>::Value>
     {
-        self.get_elements()
+        self.vector_shape_conformity_check()?;
+        Ok(self.get_elements()
             .values()
             .fold(<<Self as BasicOperationsTrait>::Value>::from(0f32),
                 |acc, x| 
                     acc + *x * *x)
-            .my_sqrt()
+            .my_sqrt())
     }
 
 
@@ -26,6 +36,14 @@ pub trait VectorTrait: BasicOperationsTrait + IntoMatrixTrait
               <Self as BasicOperationsTrait>::Value: FloatTrait<Output = <Self as BasicOperationsTrait>::Value>,
               Self: Clone
     {
-        Ok(*self.transpose().multiply(other)?.get_element_value(&Position(0, 0))?)
+        self.vector_shape_conformity_check()?;
+        if self.get_shape().1 == 1
+        {
+            Ok(*self.transpose().multiply(other)?.get_element_value(&Position(0, 0))?)
+        }
+        else
+        {
+            Ok(*self.multiply(&other.transpose())?.get_element_value(&Position(0, 0))?)
+        }
     }
 }
