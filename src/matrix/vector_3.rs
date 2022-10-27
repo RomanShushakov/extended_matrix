@@ -71,6 +71,20 @@ impl<V> Vector3<V>
     }
 
 
+    pub fn get_components(&self) -> [V; 3]
+    {
+        let mut components = [V::from(0f32); 3];
+        for row in 0..self.shape.0
+        {
+            for column in 0..self.shape.1
+            {
+                components[row + column] = *self.get_element_value(&Position(row, column)).unwrap();
+            }
+        }
+        components
+    }
+
+
     pub fn cross_product<M>(&self, other: &M) -> Result<Self, String>
         where V: Sub<Output = V> + Mul<Output = V>,
               M: BasicOperationsTrait<Value = V>,

@@ -110,3 +110,16 @@ fn test_cross_product()
     assert_eq!(v_3.cross_product(&v_4), Ok(v_expected_2.clone()));
     assert_eq!(v_3.cross_product(&sm), Ok(v_expected_2));
 }
+
+
+#[test]
+fn test_get_components()
+{
+    let v_1 = Vector3::create(&[3.0, 3.0, 0.0]);
+    let v_2 = v_1.transpose();
+
+    let expected = [3.0, 3.0, 0.0];
+
+    assert_eq!(v_1.get_components(), expected.clone());
+    assert_eq!(v_2.get_components(), expected);
+}
