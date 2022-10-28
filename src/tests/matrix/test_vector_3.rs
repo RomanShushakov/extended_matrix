@@ -130,3 +130,56 @@ fn test_angle_between_vectors()
     assert_eq!(v_1.angle_between_vectors(&v_4), expected);
     assert_eq!(v_2.angle_between_vectors(&v_3), expected);
 }
+
+
+#[test]
+fn test_projection_perpendicular_to_vector()
+{
+    let v_1 = Vector3::create(&[0.0, 0.0, 1.0]);
+    let v_2 = Vector3::create(&[12.0, 12.0, 12.0]);
+    let mut v_3 = Vector3::create(&[-1.0, 1.0, 1.0]);
+    v_3 = v_3.transpose();
+    let v_4 = Vector3::create(&[10.0, 0.0, 0.0]);
+    let v_5 = Vector3::create(&[2.0, 6.0, 8.0]);
+    let mut v_6 = Vector3::create(&[3.0, -2.0, 10.0]);
+    v_6 = v_6.transpose();
+    let v_7 = Vector3::create(&[0.0, 0.0, 1.0]);
+    let v_8 = Vector3::create(&[0.0, 0.0, 10.0]);
+
+    let v_expected_1 = Vector3
+        {
+            shape: NewShape(3, 1),
+            elements: HashMap::from([
+                (Position(0, 0), -0.3333333333333333), 
+                (Position(1, 0), -0.3333333333333333), 
+                (Position(2, 0), 0.6666666666666666),
+            ]) 
+        };
+
+    let v_expected_2 = Vector3
+        {
+            shape: NewShape(3, 1),
+            elements: HashMap::from([(Position(0, 0), 0.0), (Position(1, 0), 1.0), (Position(2, 0), 1.0)]) 
+        };
+
+    let v_expected_3 = Vector3
+        {
+            shape: NewShape(3, 1),
+            elements: HashMap::from([
+                (Position(0, 0), 0.03539823008849559), 
+                (Position(1, 0), 7.309734513274336), 
+                (Position(2, 0), 1.4513274336283186),
+            ]) 
+        };
+
+    let v_expected_4 = Vector3
+        {
+            shape: NewShape(3, 1),
+            elements: HashMap::from([(Position(0, 0), 0.0), (Position(1, 0), 0.0), (Position(2, 0), 0.0)]) 
+        };
+
+    assert_eq!(v_1.projection_perpendicular_to_vector(&v_2), v_expected_1);
+    assert_eq!(v_3.projection_perpendicular_to_vector(&v_4), v_expected_2);
+    assert_eq!(v_5.projection_perpendicular_to_vector(&v_6), v_expected_3);
+    assert_eq!(v_7.projection_perpendicular_to_vector(&v_8), v_expected_4);
+}

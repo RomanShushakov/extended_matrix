@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::fmt::Debug;
-use std::ops::{Sub, Mul};
+use std::ops::{Sub, Mul, MulAssign, Div};
 
 use crate::FloatTrait;
 use crate::matrix::{Matrix, NewShape, Position};
@@ -123,9 +123,19 @@ impl<V> Vector3<V>
     pub fn angle_between_vectors(&self, other: &Self) -> V
         where V: FloatTrait<Output = V>
     {
-        let cos_angle = self.dot_product(other).expect("Dot product could not be calculated is absent") / 
+        let cos_angle = self.dot_product(other).expect("Dot product could not be calculated") / 
             (self.norm().expect("Norm could not be calculated") * 
             other.norm().expect("Norm could not be calculated"));
         cos_angle.my_acos()
+    }
+
+
+    pub fn projection_perpendicular_to_vector(&self, other: &Self) -> Self
+        where V: FloatTrait<Output = V>
+    {
+        self.cross_product(other)
+            .multiply_by_scalar(V::from(-1f32) / other.norm().expect("Norm could not be calculated"))
+            .cross_product(other)
+            .multiply_by_scalar(V::from(1f32) / other.norm().expect("Norm could not be calculated"))
     }
 }
