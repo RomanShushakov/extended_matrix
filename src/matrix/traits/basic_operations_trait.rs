@@ -155,7 +155,8 @@ pub trait BasicOperationsTrait
             for column in 0..*columns_numbers
             {
                 let pos = Position(row, column);
-                let value = self.get_element_value(&pos);
+                let value = self.get_element_value(&pos)
+                    .expect("Element is absent");
                 row_str += &format!("{:?}, ", value);
             }
             row_str = row_str[..row_str.len() - 2].to_string();

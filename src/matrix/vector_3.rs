@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::ops::{Sub, Mul, MulAssign, Div};
+use std::cmp::min;
 
 use crate::FloatTrait;
 use crate::matrix::{Matrix, NewShape, Position};
@@ -120,13 +121,12 @@ impl<V> Vector3<V>
     }
 
 
-    pub fn angle_between_vectors(&self, other: &Self) -> V
+    pub fn cosine_angle_between_vectors(&self, other: &Self) -> V
         where V: FloatTrait<Output = V>
     {
-        let cos_angle = self.dot_product(other).expect("Dot product could not be calculated") / 
+        self.dot_product(other).expect("Dot product could not be calculated") / 
             (self.norm().expect("Norm could not be calculated") * 
-            other.norm().expect("Norm could not be calculated"));
-        cos_angle.my_acos()
+            other.norm().expect("Norm could not be calculated"))
     }
 
 
@@ -137,5 +137,51 @@ impl<V> Vector3<V>
             .multiply_by_scalar(V::from(-1f32) / other.norm().expect("Norm could not be calculated"))
             .cross_product(other)
             .multiply_by_scalar(V::from(1f32) / other.norm().expect("Norm could not be calculated"))
+    }
+
+
+    pub fn rotation_matrix_to_align_with_vector(&self, other: &Self, rel_tol: V, abs_tol: V) -> Result<Matrix<V>, String>
+        where V: FloatTrait<Output = V>
+    {
+        let (min_length, max_length) = 
+            {
+                let (lhs_norm, rhs_norm) = (self.norm()?, other.norm()?);
+                if lhs_norm < rhs_norm { (lhs_norm, rhs_norm) } else { (rhs_norm, lhs_norm) }
+            };
+        if (max_length - min_length) / min_length > rel_tol
+        {
+            return Err("Vectors with different lenghts could not be aligned".to_string());
+        }
+        let c = self.cosine_angle_between_vectors(other);
+        if V::from(1f32) - c < abs_tol
+        {
+            return Ok(Matrix::create(3, 3, vec![
+                V::from(1.0), V::from(0.0), V::from(0.0),
+                V::from(0.0), V::from(1.0), V::from(0.0),
+                V::from(0.0), V::from(0.0), V::from(1.0),
+            ]));
+        }
+        if V::from(1f32) + c < abs_tol
+        {
+            return Ok(Matrix::create(3, 3, vec![
+                V::from(-1.0), V::from(0.0), V::from(0.0),
+                V::from(0.0), V::from(-1.0), V::from(0.0),
+                V::from(0.0), V::from(0.0), V::from(-1.0),
+            ]));
+        }
+        let axis = self.cross_product(other);
+        let axis_norm = axis.norm()?;
+        let [x, y, z] = axis.get_components();
+        let [x_n, y_n, z_n] = [x / axis_norm, y / axis_norm, z / axis_norm];
+        let c = self.cosine_angle_between_vectors(other);
+        let s = axis.norm()? / (self.norm()? * other.norm()?);
+        let t = V::from(1f32) - c;
+        let rotation_matrix = Matrix::create(3, 3, 
+            vec![
+                t * x_n * x_n + c, t * x_n * y_n - z_n * s, t * x_n * z_n + y_n * s,
+                t * x_n * y_n + z_n * s	, t * y_n * y_n + c, t * y_n * z_n - x_n * s,
+                t * x_n * z_n - y_n * s, t * y_n * z_n + x_n * s, t * z_n * z_n + c, 
+            ]);
+        Ok(rotation_matrix)
     }
 }
