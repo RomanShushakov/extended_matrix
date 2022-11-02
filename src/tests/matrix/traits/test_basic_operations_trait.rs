@@ -11,8 +11,8 @@ use crate::matrix::BasicOperationsTrait;
 #[should_panic(expected = "Element is absent")]
 fn test_get_element_value()
 {
-    let m = Matrix::create(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
-    let sm = SquareMatrix::create(2, vec![1.0, 2.0, 3.0, 4.0]);
+    let m = Matrix::create(2, 2, &[1.0, 2.0, 3.0, 4.0]);
+    let sm = SquareMatrix::create(2, &[1.0, 2.0, 3.0, 4.0]);
     let v = Vector3::create(&[1.0, 2.0, 3.0]);
 
     assert_eq!(m.get_element_value(&Position(0, 0)), Ok(&1.0));
@@ -26,8 +26,8 @@ fn test_get_element_value()
 #[should_panic(expected = "Element is absent")]
 fn test_get_mut_element_value()
 {
-    let mut m = Matrix::create(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
-    let mut sm = SquareMatrix::create(2, vec![1.0, 2.0, 3.0, 4.0]);
+    let mut m = Matrix::create(2, 2, &[1.0, 2.0, 3.0, 4.0]);
+    let mut sm = SquareMatrix::create(2, &[1.0, 2.0, 3.0, 4.0]);
     let mut v = Vector3::create(&[1.0, 2.0, 3.0]);
 
     assert_eq!(m.get_mut_element_value(&Position(0, 0)), Ok(&mut 1.0));
@@ -40,15 +40,15 @@ fn test_get_mut_element_value()
 #[test]
 fn test_add()
 {
-    let m_1 = Matrix::create(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
-    let m_2 = Matrix::create(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
+    let m_1 = Matrix::create(2, 2, &[1.0, 2.0, 3.0, 4.0]);
+    let m_2 = Matrix::create(2, 2, &[1.0, 2.0, 3.0, 4.0]);
     let m_3 = Matrix::create(2, 3, 
-        vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
-    let sm_1 = SquareMatrix::create(2, vec![1.0, 2.0, 3.0, 4.0]);
-    let sm_2 = SquareMatrix::create(2, vec![1.0, 2.0, 3.0, 4.0]);
+        &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
+    let sm_1 = SquareMatrix::create(2, &[1.0, 2.0, 3.0, 4.0]);
+    let sm_2 = SquareMatrix::create(2, &[1.0, 2.0, 3.0, 4.0]);
     let v_1 = Vector3::create(&[1.0, 2.0, 3.0]);
     let v_2 = Vector3::create(&[1.0, 2.0, 3.0]);
-    let m_4 = Matrix::create(3, 1, vec![1.0, 2.0, 3.0]);
+    let m_4 = Matrix::create(3, 1, &[1.0, 2.0, 3.0]);
 
     let m_expected_1 = Matrix 
         { 
@@ -92,15 +92,15 @@ fn test_add()
 #[test]
 fn test_subtract()
 {
-    let m_1 = Matrix::create(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
-    let m_2 = Matrix::create(2, 2, vec![1.0, 2.0, 3.0, 4.0]);
+    let m_1 = Matrix::create(2, 2, &[1.0, 2.0, 3.0, 4.0]);
+    let m_2 = Matrix::create(2, 2, &[1.0, 2.0, 3.0, 4.0]);
     let m_3 = Matrix::create(2, 3, 
-        vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
-    let sm_1 = SquareMatrix::create(2, vec![1.0, 2.0, 3.0, 4.0]);
-    let sm_2 = SquareMatrix::create(2, vec![1.0, 2.0, 3.0, 4.0]);
+        &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
+    let sm_1 = SquareMatrix::create(2, &[1.0, 2.0, 3.0, 4.0]);
+    let sm_2 = SquareMatrix::create(2, &[1.0, 2.0, 3.0, 4.0]);
     let v_1 = Vector3::create(&[1.0, 2.0, 3.0]);
     let v_2 = Vector3::create(&[1.0, 2.0, 3.0]);
-    let m_4 = Matrix::create(3, 1, vec![1.0, 2.0, 3.0]);
+    let m_4 = Matrix::create(3, 1, &[1.0, 2.0, 3.0]);
 
     let m_expected_1 = Matrix 
         { 
@@ -144,8 +144,8 @@ fn test_subtract()
 #[test]
 fn test_multiply_by_scalar()
 {
-    let m = Matrix::create(2, 2, vec![1.0, -2.0, 3.0, -4.0]);
-    let sm = SquareMatrix::create(2, vec![1.0, -2.0, 3.0, -4.0]);
+    let m = Matrix::create(2, 2, &[1.0, -2.0, 3.0, -4.0]);
+    let sm = SquareMatrix::create(2, &[1.0, -2.0, 3.0, -4.0]);
     let v = Vector3::create(&[1.0, 2.0, 3.0]);
 
     let m_expected = Matrix 
@@ -179,18 +179,18 @@ fn test_multiply_by_scalar()
 #[test]
 fn test_multiply()
 {
-    let m_1 = Matrix::create(1, 3, vec![1.0, 2.0, 3.0]);
-    let m_2 = Matrix::create(3, 1, vec![4.0, 5.0, 6.0]);
+    let m_1 = Matrix::create(1, 3, &[1.0, 2.0, 3.0]);
+    let m_2 = Matrix::create(3, 1, &[4.0, 5.0, 6.0]);
     let m_3 = Matrix::create(2, 3, 
-        vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
+        &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
     let m_4 = Matrix::create(3, 3,
-        vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
+        &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
     let m_5 = Matrix::create(2, 3, 
-        vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
+        &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
     let sm_1 = SquareMatrix::create(3,
-        vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
+        &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
     let sm_2 = SquareMatrix::create(3,
-        vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
+        &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
     let v = Vector3::create(&[1.0, 2.0, 3.0]);
 
     let m_expected_1 = Matrix 
@@ -267,8 +267,8 @@ fn test_multiply()
 fn test_transpose()
 {
     let m = Matrix::create(2, 3, 
-        vec![1.0, -2.0, 3.0, -4.0, 5.0, -6.0]);
-    let sm = SquareMatrix::create(2, vec![1.0, -2.0, 3.0, -4.0]);
+        &[1.0, -2.0, 3.0, -4.0, 5.0, -6.0]);
+    let sm = SquareMatrix::create(2, &[1.0, -2.0, 3.0, -4.0]);
     let v = Vector3::create(&[1.0, -2.0, 3.0]);
 
     let m_expected = Matrix 

@@ -26,9 +26,9 @@ fn test_get_shape()
 {
     let v = Vector3::create(&[1.0, 2.0, 3.0]);
 
-    let v_expected = &NewShape(3, 1);
+    let s_expected = &NewShape(3, 1);
 
-    assert_eq!(v.get_shape(), v_expected);
+    assert_eq!(v.get_shape(), s_expected);
 }
 
 
@@ -37,9 +37,9 @@ fn test_get_mut_shape()
 {
     let mut v = Vector3::create(&[1.0, 2.0, 3.0]);
 
-    let v_expected = &mut NewShape(3, 1);
+    let s_expected = &mut NewShape(3, 1);
 
-    assert_eq!(v.get_mut_shape(), v_expected);
+    assert_eq!(v.get_mut_shape(), s_expected);
 }
 
 
@@ -48,10 +48,10 @@ fn test_get_elements()
 {
     let v = Vector3::create(&[1.0, 2.0, 3.0]);
 
-    let v_expected = &HashMap::from([
+    let e_expected = &HashMap::from([
         (Position(0, 0), 1.0), (Position(1, 0), 2.0), (Position(2, 0), 3.0)]);
 
-    assert_eq!(v.get_elements(), v_expected);
+    assert_eq!(v.get_elements(), e_expected);
 }
 
 
@@ -60,10 +60,10 @@ fn test_get_mut_elements()
 {
     let mut v = Vector3::create(&[1.0, 2.0, 3.0]);
 
-    let v_expected = &mut HashMap::from([
+    let e_expected = &mut HashMap::from([
         (Position(0, 0), 1.0), (Position(1, 0), 2.0), (Position(2, 0), 3.0)]);
 
-    assert_eq!(v.get_mut_elements(), v_expected);
+    assert_eq!(v.get_mut_elements(), e_expected);
 }
 
 
@@ -197,25 +197,25 @@ fn test_rotation_matrix_to_align_with_vector()
     let v_5 = Vector3::create(&[-10.0, 0.0, -1.0]);
 
     let m_expected_1 = Matrix::create(3, 3, 
-        vec![
+        &[
             0.7459255332342182, 0.4824210341757528, -0.4592004406074151,
             -0.5076857397612721, 0.8581108060421796, 0.07681818923074477,
             0.4311035705167576, 0.17582886662444727, 0.8850050401829728]);
 
     let m_expected_2 = Matrix::create(3, 3,
-        vec![
+        &[
             -0.9801980198019802, -0.0, -0.19801980198019803,
             0.0, 1.0, -0.0,
             0.19801980198019803, 0.0, -0.9801980198019802]);
 
     let m_expected_3 = Matrix::create(3, 3,
-        vec![
+        &[
             1.0, 0.0, 0.0,
             0.0, 1.0, 0.0,
             0.0, 0.0, 1.0]);
 
     let m_expected_4 = Matrix::create(3, 3,
-        vec![
+        &[
             -1.0, 0.0, 0.0,
             0.0, -1.0, 0.0,
             0.0, 0.0, -1.0]);

@@ -1,12 +1,10 @@
 use std::collections::HashMap;
 use std::fmt::Debug;
-use std::ops::{Sub, Mul, MulAssign, Div};
-use std::cmp::min;
+use std::ops::{Sub, Mul};
 
 use crate::FloatTrait;
 use crate::matrix::{Matrix, NewShape, Position};
 use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait, VectorTrait};
-use crate::enums::Operation;
 
 
 #[derive(Debug, PartialEq, Clone)]
@@ -121,7 +119,7 @@ impl<V> Vector3<V>
     }
 
 
-    pub fn cosine_angle_between_vectors(&self, other: &Self) -> V
+    pub(crate) fn cosine_angle_between_vectors(&self, other: &Self) -> V
         where V: FloatTrait<Output = V>
     {
         self.dot_product(other).expect("Dot product could not be calculated") / 
@@ -140,7 +138,7 @@ impl<V> Vector3<V>
     }
 
 
-    pub fn rotation_matrix_to_align_with_vector(&self, other: &Self, rel_tol: V, abs_tol: V) -> Result<Matrix<V>, String>
+    fn check_vectors_lenghts_are_the_same(&self, other: &Self, rel_tol: V) -> Result<(), String>
         where V: FloatTrait<Output = V>
     {
         let (min_length, max_length) = 
@@ -152,10 +150,18 @@ impl<V> Vector3<V>
         {
             return Err("Vectors with different lenghts could not be aligned".to_string());
         }
+        Ok(())
+    }
+
+
+    pub fn rotation_matrix_to_align_with_vector(&self, other: &Self, rel_tol: V, abs_tol: V) -> Result<Matrix<V>, String>
+        where V: FloatTrait<Output = V>
+    {
+        self.check_vectors_lenghts_are_the_same(other, rel_tol)?;
         let c = self.cosine_angle_between_vectors(other);
         if V::from(1f32) - c < abs_tol
         {
-            return Ok(Matrix::create(3, 3, vec![
+            return Ok(Matrix::create(3, 3, &[
                 V::from(1.0), V::from(0.0), V::from(0.0),
                 V::from(0.0), V::from(1.0), V::from(0.0),
                 V::from(0.0), V::from(0.0), V::from(1.0),
@@ -163,7 +169,7 @@ impl<V> Vector3<V>
         }
         if V::from(1f32) + c < abs_tol
         {
-            return Ok(Matrix::create(3, 3, vec![
+            return Ok(Matrix::create(3, 3, &[
                 V::from(-1.0), V::from(0.0), V::from(0.0),
                 V::from(0.0), V::from(-1.0), V::from(0.0),
                 V::from(0.0), V::from(0.0), V::from(-1.0),
@@ -177,7 +183,7 @@ impl<V> Vector3<V>
         let s = axis.norm()? / (self.norm()? * other.norm()?);
         let t = V::from(1f32) - c;
         let rotation_matrix = Matrix::create(3, 3, 
-            vec![
+            &[
                 t * x_n * x_n + c, t * x_n * y_n - z_n * s, t * x_n * z_n + y_n * s,
                 t * x_n * y_n + z_n * s	, t * y_n * y_n + c, t * y_n * z_n - x_n * s,
                 t * x_n * z_n - y_n * s, t * y_n * z_n + x_n * s, t * z_n * z_n + c, 

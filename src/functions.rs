@@ -34,7 +34,7 @@ pub fn conversion_usize_into_uint<T>(u: usize) -> T
 pub fn try_to_compact_matrix<T, V>(ref_symmetric_matrix: &ExtendedMatrix<T, V>)
     -> Result<(Vec<V>, Vec<i64>), String>
     where T: UIntTrait<Output = T>,
-          V: FloatTrait<Output = V, Other = V>,
+          V: FloatTrait<Output = V>,
 {
     let shape = ref_symmetric_matrix.copy_shape();
     let mut a = Vec::new();
@@ -99,7 +99,7 @@ pub fn try_to_compact_matrix<T, V>(ref_symmetric_matrix: &ExtendedMatrix<T, V>)
 pub fn matrix_element_value_extractor<T, V>(row: T, column: T, ref_matrix: &ExtendedMatrix<T, V>)
     -> Result<V, String>
     where T: UIntTrait<Output = T>,
-          V: FloatTrait<Output = V, Other = V>
+          V: FloatTrait<Output = V>
 {
     ref_matrix.copy_element_value_or_zero(MatrixElementPosition::create(row, column))
 }
@@ -108,7 +108,7 @@ pub fn matrix_element_value_extractor<T, V>(row: T, column: T, ref_matrix: &Exte
 pub(super) fn pivot<T, V>(a: &ExtendedMatrix<T, V>, o: &mut [usize], s: &[V], n: usize, k: usize)
     -> Result<(), String>
     where T: UIntTrait<Output = T>,
-          V: FloatTrait<Output = V, Other = V>
+          V: FloatTrait<Output = V>
 {
     let mut p = k;
     let mut big = (matrix_element_value_extractor(conversion_usize_into_uint(o[k]), 
@@ -134,7 +134,7 @@ pub(super) fn pivot<T, V>(a: &ExtendedMatrix<T, V>, o: &mut [usize], s: &[V], n:
 pub(super) fn decompose<T, V>(a: &mut ExtendedMatrix<T, V>, n: usize, tol: V, o: &mut [usize], s: &mut [V]) 
     -> Result<(), String>
     where T: UIntTrait<Output = T>,
-          V: FloatTrait<Output = V, Other = V>
+          V: FloatTrait<Output = V>
 {
     for i in 0..n
     {
@@ -203,7 +203,7 @@ pub(super) fn decompose<T, V>(a: &mut ExtendedMatrix<T, V>, n: usize, tol: V, o:
 pub(super) fn substitute<T, V>(a: &ExtendedMatrix<T, V>, o: &[usize], n: usize, b: &mut [V], x: &mut [V]) 
     -> Result<(), String>
     where T: UIntTrait<Output = T>,
-          V: FloatTrait<Output = V, Other = V>
+          V: FloatTrait<Output = V>
 {
     for i in 1..n
     {

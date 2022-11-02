@@ -2,7 +2,7 @@ use std::fmt::Debug;
 use std::hash::Hash;
 use std::collections::HashMap;
 
-use colsol::colsol::{factorization, find_unknown};
+use colsol::{factorization, find_unknown};
 
 use crate::basic_matrix::basic_matrix::{BasicMatrix, BasicMatrixType};
 
@@ -29,7 +29,7 @@ pub struct ExtendedMatrix<T, V>
 
 impl<T, V> ExtendedMatrix<T, V>
     where T: UIntTrait<Output = T>,
-          V: FloatTrait<Output = V, Other = V>
+          V: FloatTrait<Output = V>
 {
     pub fn create(rows_number: T, columns_number: T, all_elements_values: Vec<V>, tolerance: V)
         -> Result<Self, String>

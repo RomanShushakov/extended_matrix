@@ -16,7 +16,7 @@ pub struct Matrix<V>
 impl<V> Matrix<V> 
     where V: Debug + Copy + From<f32>,
 {
-    pub fn create(rows_number: usize, columns_number: usize, elements_values: Vec<V>) -> Self
+    pub fn create(rows_number: usize, columns_number: usize, elements_values: &[V]) -> Self
     {
         let shape = NewShape(rows_number, columns_number);
         let mut elements = HashMap::new();

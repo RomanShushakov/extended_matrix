@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::matrix::{Position, NewShape, Matrix};
-use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait};
+use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait, SquareMatrixTrait};
 
 
 #[derive(PartialEq, Debug, Clone)]
@@ -52,10 +52,13 @@ impl<V> IntoMatrixTrait for SquareMatrix<V>
 }
 
 
+impl<V> SquareMatrixTrait for SquareMatrix<V> {}
+
+
 impl<V> SquareMatrix<V> 
     where V: Copy + From<f32>,
 {
-    pub fn create(order: usize, elements_values: Vec<V>) -> Self
+    pub fn create(order: usize, elements_values: &[V]) -> Self
     {
         let mut elements = HashMap::new();
 

@@ -18,23 +18,20 @@ pub trait FloatTrait:
     Sub<Output = <Self as FloatTrait>::Output> +
     Mul<Output = <Self as FloatTrait>::Output> +
     Div<Output = <Self as FloatTrait>::Output> +
-    MyFloatTrait<Other = <Self as FloatTrait>::Other> +
+    MyFloatTrait +
     'static
 { 
     type Output;
-    type Other;
 }
 
 
 impl FloatTrait for f32 
 {
     type Output = f32;
-    type Other = f32;
 }
 
 
 impl FloatTrait for f64
 {
     type Output = f64;
-    type Other = f64;
 }

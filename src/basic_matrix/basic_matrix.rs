@@ -29,7 +29,7 @@ pub struct BasicMatrix<T, V>
 
 impl<T, V> BasicMatrix<T, V>
     where T: UIntTrait<Output = T>,
-          V: FloatTrait<Output = V, Other = V>
+          V: FloatTrait<Output = V>
 {
     pub fn create_default(rows_number: T, columns_number: T, matrix_type: BasicMatrixType) -> Self
     {
