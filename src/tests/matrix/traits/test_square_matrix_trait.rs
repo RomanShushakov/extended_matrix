@@ -99,6 +99,68 @@ fn test_gauss_gep() -> Result<(), String>
 
 
 #[test]
+fn test_inverse()
+{
+    let a_1 = SquareMatrix::create(3, &[
+        3.0f32, -0.1, -0.2,
+        0.1, 7.0, -0.3,
+        0.3, -0.2, 10.0,
+    ]);
+    let mut x_1 = Vector3::create(&[0.0; 3]);
+
+    let a_2 = SquareMatrix::create(2, &[
+        1.0f32, 2.0,
+        3.0, 4.0,
+    ]);
+    let mut x_2 = Vector::create(&[0.0; 2]);
+
+    let a_3 = SquareMatrix::create(3, &[
+        2.0f32, 5.0, 7.0,
+        6.0, 3.0, 4.0,
+        5.0, -2.0, -3.0,
+    ]);
+    let mut x_3 = Vector::create(&[0.0; 3]);
+
+    let a_4 = SquareMatrix::create(4, &[
+        1.0, 1.0, 1.0, 1.0,
+        1.0, 1.0, -1.0, -1.0,
+        1.0, -1.0, 1.0, -1.0,
+        1.0, -1.0, -1.0, 1.0,
+    ]);
+    let mut x_4 = Vector::create(&[0.0; 4]);
+
+    let expected_a_i_1 = SquareMatrix::create(3, &[
+        0.33248872, 0.0049440702, 0.0067980965,
+        -0.005181766, 0.14290264, 0.004183444,
+        -0.010078297, 0.0027097305, 0.09987973,
+    ]);
+
+    let expected_a_i_2 = SquareMatrix::create(2, &[
+        -2.0000002, 1.0000001,
+        1.5000001, -0.50000006,
+    ]);
+
+    let expected_a_i_3 = SquareMatrix::create(3, &[
+        1.0000025, -1.0000013, 1.0000025,
+        -38.00014, 41.00015, -34.000126,
+        27.000103, -29.000109, 24.000092,
+    ]);
+
+    let expected_a_i_4 = SquareMatrix::create(4, &[
+        0.25, 0.25, 0.25, 0.25,
+        0.25, 0.25, -0.25, -0.25,
+        0.25, -0.25, 0.25, -0.25,
+        0.25, -0.25, -0.25, 0.25,
+    ]);
+
+    assert_eq!(a_1.inverse(&mut x_1, 1e-6), Ok(expected_a_i_1));
+    assert_eq!(a_2.inverse(&mut x_2, 1e-6), Ok(expected_a_i_2));
+    assert_eq!(a_3.inverse(&mut x_3, 1e-6), Ok(expected_a_i_3));
+    assert_eq!(a_4.inverse(&mut x_4, 1e-6), Ok(expected_a_i_4));
+}
+
+
+#[test]
 fn test_lup_decomp() -> Result<(), String>
 {
     let a_1 = SquareMatrix::create(3, &[

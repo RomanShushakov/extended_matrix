@@ -307,6 +307,58 @@ pub trait SquareMatrixTrait: BasicOperationsTrait
     }
 
 
+    fn inverse<VT>(&self, x: &mut VT, rel_tol: <Self as BasicOperationsTrait>::Value) -> Result<Self, String>
+        where Self: Clone,
+              <Self as BasicOperationsTrait>::Value: FloatTrait<Output = <Self as BasicOperationsTrait>::Value>,
+              VT:  VectorTrait + BasicOperationsTrait<Value = <Self as BasicOperationsTrait>::Value> + Clone,
+    {
+        let mut a_i = self.clone();
+        for value in a_i.get_mut_elements().values_mut()
+        {
+            *value = <<Self as BasicOperationsTrait>::Value>::from(0f32);
+        }
+
+        let mut a = self.clone();
+        let n = a.get_shape().0;
+        let mut o = vec![0usize; n];
+        let mut s = 
+            vec![<<Self as BasicOperationsTrait>::Value>::from(0f32); n];
+
+        decompose_lup::<<Self as BasicOperationsTrait>::Value, Self, VT>(&mut a, n, rel_tol, &mut o, &mut s)?;
+
+        let b_values = 
+            vec![<<Self as BasicOperationsTrait>::Value>::from(0f32); n];
+        let mut b = Vector::create(&b_values);
+
+        for i in 0..n
+        {
+            for j in 0..n
+            {
+                if i == j
+                {
+                    *b.get_mut_element_value(&Position(j, 0)).expect("Element is absent") = 
+                        <<Self as BasicOperationsTrait>::Value>::from(1f32);
+                }
+                else
+                {
+                    *b.get_mut_element_value(&Position(j, 0)).expect("Element is absent") = 
+                        <<Self as BasicOperationsTrait>::Value>::from(0f32);
+                }
+            }
+            
+            substitute_lup(&a, &o, n, &mut b, x);
+
+            for j in 0..n
+            {
+                *a_i.get_mut_element_value(&Position(j, i)).expect("Element is absent") = 
+                    *x.get_mut_element_value(&Position(j, 0)).expect("Element is absent");
+            }
+        }
+
+        Ok(a_i)
+    }
+
+
     fn lup_decomp<VT1, VT2>(&self, b: &VT1, x: &mut VT2, rel_tol: <Self as BasicOperationsTrait>::Value) -> Result<(), String>
         where VT1:  VectorTrait + BasicOperationsTrait<Value = <Self as BasicOperationsTrait>::Value> + Clone,
               VT2:  VectorTrait + BasicOperationsTrait<Value = <Self as BasicOperationsTrait>::Value> + Clone,
@@ -335,7 +387,7 @@ pub trait SquareMatrixTrait: BasicOperationsTrait
 
         decompose_lup::<<Self as BasicOperationsTrait>::Value, Self, VT1>(&mut a, n, rel_tol, &mut o, &mut s)?;
         substitute_lup(&a, &o, n, &mut b, x);
-        
+
         Ok(())
     }
 }
