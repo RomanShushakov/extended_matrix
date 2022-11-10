@@ -144,6 +144,58 @@ pub trait BasicOperationsTrait
     }
 
 
+    fn remove_row(&self, row: usize) -> Result<Matrix<Self::Value>, String>
+        where Self::Value: Copy,
+    {
+        if row > self.get_shape().0 - 1
+        {
+            return Err(format!("Number of rows less than {}!", row + 1));
+        }
+        let shape = NewShape(self.get_shape().0 - 1, self.get_shape().1);
+        let mut elements = HashMap::new();
+        for (position, value) in self.get_elements()
+        {
+            if position.0 < row
+            {
+                elements.insert(position.clone(), *value);
+            }
+            if position.0 > row
+            {
+                let pos = Position(position.0 - 1, position.1);
+                elements.insert(pos, *value);
+            } 
+        }
+        let result = Matrix { shape, elements };
+        Ok(result)
+    }
+
+
+    fn remove_column(&self, column: usize) -> Result<Matrix<Self::Value>, String>
+        where Self::Value: Copy,
+    {
+        if column > self.get_shape().1 - 1
+        {
+            return Err(format!("Number of columns less than {}!", column + 1));
+        }
+        let shape = NewShape(self.get_shape().0, self.get_shape().1 - 1);
+        let mut elements = HashMap::new();
+        for (position, value) in self.get_elements()
+        {
+            if position.1 < column
+            {
+                elements.insert(position.clone(), *value);
+            }
+            if position.1 > column
+            {
+                let pos = Position(position.0, position.1 - 1);
+                elements.insert(pos, *value);
+            } 
+        }
+        let result = Matrix { shape, elements };
+        Ok(result)
+    }
+
+
     fn show<F>(&self, f: F)
         where F: Fn(&str),
               Self::Value: Copy + Debug

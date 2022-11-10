@@ -304,3 +304,84 @@ fn test_transpose()
     assert_eq!(sm.transpose(), sm_expected);
     assert_eq!(v.transpose(), vt_expected);
 }
+
+
+#[test]
+fn test_remove_row()
+{
+    let m = Matrix::create(2, 3, 
+        &[1.0, -2.0, 3.0, -4.0, 5.0, -6.0]);
+    let sm = SquareMatrix::create(2, &[1.0, -2.0, 3.0, -4.0]);
+    let v = Vector3::create(&[1.0, -2.0, 3.0]);
+
+    let m_expected_1 = Matrix 
+        { 
+            shape: NewShape(1, 3), 
+            elements: HashMap::from(
+                [
+                    (Position(0, 0), -4.0), (Position(0, 1), 5.0), (Position(0, 2), -6.0),
+                ]
+            ) 
+        };
+
+    let m_expected_2 = Matrix 
+        { 
+            shape: NewShape(1, 2), 
+            elements: HashMap::from(
+                [
+                    (Position(0, 0), 1.0), (Position(0, 1), -2.0),
+                ]
+            ) 
+        };
+
+    let m_expected_3 = Matrix 
+        { 
+            shape: NewShape(2, 1), 
+            elements: HashMap::from([(Position(0, 0), 1.0), (Position(1, 0), 3.0)]) 
+        };
+
+    assert_eq!(m.remove_row(0), Ok(m_expected_1));
+    assert_eq!(sm.remove_row(1), Ok(m_expected_2));
+    assert_eq!(v.remove_row(1), Ok(m_expected_3));
+    assert_eq!(m.remove_row(5), Err("Number of rows less than 6!".to_string()));
+}
+
+
+#[test]
+fn test_remove_column()
+{
+    let m = Matrix::create(1, 3, &[1.0, 2.0, 3.0]);
+    let sm = SquareMatrix::create(3,
+        &[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
+    let mut v = Vector3::create(&[1.0, 2.0, 3.0]);
+    v = v.transpose();
+
+    let m_expected_1 = Matrix 
+        { 
+            shape: NewShape(1, 2), 
+            elements: HashMap::from([(Position(0, 0), 1.0), (Position(0, 1), 3.0)]) 
+        };
+
+    let m_expected_2 = Matrix 
+        { 
+            shape: NewShape(3, 2), 
+            elements: HashMap::from(
+                [
+                    (Position(0, 0), 2.0), (Position(0, 1), 3.0),
+                    (Position(1, 0), 5.0), (Position(1, 1), 6.0),
+                    (Position(2, 0), 8.0), (Position(2, 1), 9.0)
+                ],
+            ) 
+        };
+
+    let m_expected_3 = Matrix 
+        { 
+            shape: NewShape(1, 2), 
+            elements: HashMap::from([(Position(0, 0), 2.0), (Position(0, 1), 3.0)]) 
+        };
+
+    assert_eq!(m.remove_column(1), Ok(m_expected_1));
+    assert_eq!(sm.remove_column(0), Ok(m_expected_2));
+    assert_eq!(v.remove_column(0), Ok(m_expected_3));
+    assert_eq!(m.remove_column(3), Err("Number of columns less than 4!".to_string()));
+}
