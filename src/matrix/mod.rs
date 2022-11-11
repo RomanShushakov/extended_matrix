@@ -13,3 +13,4 @@ pub use square_matrix::SquareMatrix;
 pub(crate) use traits::IntoMatrixTrait;
 pub use vector_3::Vector3;
 pub use vector::Vector;
+pub use traits::TryIntoSquareMatrixTrait;

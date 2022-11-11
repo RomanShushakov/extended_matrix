@@ -98,7 +98,7 @@ pub trait BasicOperationsTrait
 
 
     fn multiply<M>(&self, other: &M) -> Result<Matrix<Self::Value>, String>
-        where M: BasicOperationsTrait<Value = Self::Value> + IntoMatrixTrait<Value = Self::Value> + Clone,
+        where M: IntoMatrixTrait<Value = Self::Value> + Clone,
               Self::Value: Copy + AddAssign + SubAssign + Mul<Output = Self::Value> + From<f32>,
     {
         self.shape_conformity_check::<M>(&other, Operation::Multiplication)?;

@@ -44,15 +44,7 @@ impl<V> BasicOperationsTrait for Vector3<V>
 }
 
 
-impl<V> IntoMatrixTrait for Vector3<V>
-{
-    type Value = V;
-
-    fn into_matrix(self) -> Matrix<Self::Value>
-    {
-        Matrix { shape: self.shape, elements: self.elements }
-    }
-}
+impl<V> IntoMatrixTrait for Vector3<V> {}
 
 
 impl<V> VectorTrait for Vector3<V> {}

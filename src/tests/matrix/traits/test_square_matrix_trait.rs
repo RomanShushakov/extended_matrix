@@ -76,23 +76,37 @@ fn test_gauss_gep() -> Result<(), String>
         0.0, 0.0, -3.0, 10.0, 4.0,
         -1.0, 0.0, 0.0, 4.0, 10.0,
     ]);
-
     let mut b_3 = Vector::create(&[0.0, 1.0, 0.0, 0.0, 0.0]);
     b_3 = b_3.transpose();
     let mut x_3 = Vector::create(&[0.0; 5]);
+
+    let a_4 = SquareMatrix::create(6, &[
+        0.866f32, 0.0, -0.5, 0.0, 0.0, 0.0,
+        0.5, 0.0, 0.866, 0.0, 0.0, 0.0,
+        -0.866, -1.0, 0.0, -1.0, 0.0, 0.0,
+        -0.5, 0.0, 0.0, 0.0, -1.0, 0.0,
+        0.0, 1.0, 0.5, 0.0, 0.0, 0.0,
+        0.0, 0.0, -0.866, 0.0, 0.0, -1.0,
+
+    ]);
+    let b_4 = Vector::create(&[0.0, -1000.0, 0.0, 0.0, 0.0, 0.0]);
+    let mut x_4 = Vector::create(&[0.0; 6]);
 
     let expected_x_1 = Vector3::create(&[3.0, -2.5, 7.000000000000002]);
     let expected_x_2 = Vector::create(&[1.6000000000000028, 2.6000000000000045, 
         2.400000000000004, 1.4000000000000024]);
     let expected_x_3 = Vector::create(&[635.995, 618.9951, 291.99768, 73.99941, 33.999725]);
+    let expected_x_4 = Vector::create(&[-500.022, 433.01904, -866.0381, -0.0, 250.011, 749.989]);
 
     a_1.gauss_gep(&b_1, &mut x_1, 1e-6)?;
     a_2.gauss_gep(&b_2, &mut x_2, 1e-6)?;
     a_3.gauss_gep(&b_3, &mut x_3, 1e-6)?;
+    a_4.gauss_gep(&b_4, &mut x_4, 1e-6)?;
 
     assert_eq!(x_1, expected_x_1);
     assert_eq!(x_2, expected_x_2);
     assert_eq!(x_3, expected_x_3);
+    assert_eq!(x_4, expected_x_4);
 
     Ok(())
 }
@@ -187,23 +201,37 @@ fn test_lup_decomp() -> Result<(), String>
         0.0, 0.0, -3.0, 10.0, 4.0,
         -1.0, 0.0, 0.0, 4.0, 10.0,
     ]);
-
     let mut b_3 = Vector::create(&[0.0, 1.0, 0.0, 0.0, 0.0]);
     b_3 = b_3.transpose();
     let mut x_3 = Vector::create(&[0.0; 5]);
+
+    let a_4 = SquareMatrix::create(6, &[
+        0.866f32, 0.0, -0.5, 0.0, 0.0, 0.0,
+        0.5, 0.0, 0.866, 0.0, 0.0, 0.0,
+        -0.866, -1.0, 0.0, -1.0, 0.0, 0.0,
+        -0.5, 0.0, 0.0, 0.0, -1.0, 0.0,
+        0.0, 1.0, 0.5, 0.0, 0.0, 0.0,
+        0.0, 0.0, -0.866, 0.0, 0.0, -1.0,
+
+    ]);
+    let b_4 = Vector::create(&[0.0, -1000.0, 0.0, 0.0, 0.0, 0.0]);
+    let mut x_4 = Vector::create(&[0.0; 6]);
 
     let expected_x_1 = Vector3::create(&[3.0, -2.5, 7.000000000000002]);
     let expected_x_2 = Vector::create(&[1.6000000000000028, 2.6000000000000045, 
         2.400000000000004, 1.4000000000000024]);
     let expected_x_3 = Vector::create(&[635.995, 618.9951, 291.99768, 73.99941, 33.999725]);
+    let expected_x_4 = Vector::create(&[-500.022, 433.01904, -866.0381, -0.0, 250.011, 749.989]);
 
     a_1.lup_decomp(&b_1, &mut x_1, 1e-6)?;
     a_2.lup_decomp(&b_2, &mut x_2, 1e-6)?;
     a_3.lup_decomp(&b_3, &mut x_3, 1e-6)?;
+    a_4.lup_decomp(&b_4, &mut x_4, 1e-6)?;
 
     assert_eq!(x_1, expected_x_1);
     assert_eq!(x_2, expected_x_2);
     assert_eq!(x_3, expected_x_3);
+    assert_eq!(x_4, expected_x_4);
 
     Ok(())
 }

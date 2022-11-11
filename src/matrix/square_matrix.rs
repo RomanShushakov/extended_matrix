@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::matrix::{Position, NewShape, Matrix};
+use crate::matrix::{Position, NewShape};
 use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait, SquareMatrixTrait};
 
 
@@ -41,15 +41,7 @@ impl<V> BasicOperationsTrait for SquareMatrix<V>
 }
 
 
-impl<V> IntoMatrixTrait for SquareMatrix<V>
-{
-    type Value = V;
-
-    fn into_matrix(self) -> Matrix<Self::Value>
-    {
-        Matrix { shape: self.shape, elements: self.elements }
-    }
-}
+impl<V> IntoMatrixTrait for SquareMatrix<V> {}
 
 
 impl<V> SquareMatrixTrait for SquareMatrix<V> {}

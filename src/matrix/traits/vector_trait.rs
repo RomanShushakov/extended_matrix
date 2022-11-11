@@ -6,8 +6,7 @@ use crate::matrix::Position;
 
 
 pub trait VectorTrait: 
-    BasicOperationsTrait + 
-    IntoMatrixTrait<Value = <Self as BasicOperationsTrait>::Value>
+    IntoMatrixTrait
 {
     fn vector_shape_conformity_check(&self) -> Result<(), String>
     {

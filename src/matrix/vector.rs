@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::fmt::Debug;
 
-use crate::matrix::{Matrix, NewShape, Position};
+use crate::matrix::{NewShape, Position};
 use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait, VectorTrait};
 
 
@@ -42,15 +42,7 @@ impl<V> BasicOperationsTrait for Vector<V>
 }
 
 
-impl<V> IntoMatrixTrait for Vector<V>
-{
-    type Value = V;
-
-    fn into_matrix(self) -> Matrix<Self::Value>
-    {
-        Matrix { shape: self.shape, elements: self.elements }
-    }
-}
+impl<V> IntoMatrixTrait for Vector<V> {}
 
 
 impl<V> VectorTrait for Vector<V> {}
