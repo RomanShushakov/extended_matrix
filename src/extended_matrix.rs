@@ -4,7 +4,7 @@ use std::ops::{Mul, Add, Sub, Div, Rem, MulAssign, AddAssign, SubAssign};
 use std::hash::Hash;
 use std::collections::HashMap;
 
-use colsol::colsol::{factorization, find_unknown};
+use colsol::{factorization, find_unknown};
 
 use extended_matrix_float::MyFloatTrait;
 
