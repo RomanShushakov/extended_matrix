@@ -7,7 +7,7 @@ use crate::matrix::{Position, NewShape, BasicOperationsTrait, IntoMatrixTrait};
 
 
 #[test]
-fn test_vec_3_create()
+fn test_create()
 {
     let v = Vector::create(&[1.0, 2.0, 3.0, 4.0]);
 

@@ -7,7 +7,7 @@ use crate::matrix::{Position, NewShape, BasicOperationsTrait, IntoMatrixTrait};
 
 
 #[test]
-fn test_square_matrix_create()
+fn test_create()
 {
     let m = SquareMatrix::create(2, &[1.0, 2.0, 3.0, 4.0]);
 
