@@ -16,3 +16,4 @@ pub use vector_3::Vector3;
 pub use vector::Vector;
 pub use traits::TryIntoSquareMatrixTrait;
 pub use symmetric_matrix::SymmetricMatrix;
+pub use traits::TryIntoSymmetricMatrixTrait;

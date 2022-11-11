@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::matrix::{Position, NewShape};
-use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait, SquareMatrixTrait};
+use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait, SquareMatrixTrait, TryIntoSymmetricMatrixTrait};
 
 
 #[derive(PartialEq, Debug, Clone)]
@@ -45,6 +45,9 @@ impl<V> IntoMatrixTrait for SquareMatrix<V> {}
 
 
 impl<V> SquareMatrixTrait for SquareMatrix<V> {}
+
+
+impl<V> TryIntoSymmetricMatrixTrait for SquareMatrix<V> {}
 
 
 impl<V> SquareMatrix<V> 

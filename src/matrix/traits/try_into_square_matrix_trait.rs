@@ -11,7 +11,7 @@ pub trait TryIntoSquareMatrixTrait: BasicOperationsTrait
         {
             return Err("Could not be converted into square matrix!".to_string());
         }
+        
         Ok(SquareMatrix { shape: self.get_shape().clone(), elements: self.get_elements().clone() })
-    
     }
 }

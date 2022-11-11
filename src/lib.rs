@@ -7,7 +7,7 @@ mod matrix;
 pub use matrix::
 {
     Matrix, Position, BasicOperationsTrait, SquareMatrix, Vector3, VectorTrait, Vector, SquareMatrixTrait,
-    TryIntoSquareMatrixTrait, SymmetricMatrix
+    TryIntoSquareMatrixTrait, SymmetricMatrix, TryIntoSymmetricMatrixTrait
 };
 pub(crate) use matrix::IntoMatrixTrait;
 
