@@ -1,2 +1,0 @@
-cargo doc --open
-cargo test
