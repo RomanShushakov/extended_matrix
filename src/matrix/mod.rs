@@ -7,8 +7,7 @@ mod vector;
 mod vector_3;
 
 pub use matrix::Matrix;
-pub(crate) use structs::Shape;
-pub use structs::Position;
+pub use structs::{Position, Shape};
 pub use traits::
 {
     BasicOperationsTrait, VectorTrait, SquareMatrixTrait, TryIntoSquareMatrixTrait, 
