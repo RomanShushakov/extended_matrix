@@ -1,4 +1,4 @@
-use crate::matrix::{Matrix, BasicOperationsTrait};
+use crate::{Matrix, BasicOperationsTrait};
 
 
 pub trait IntoMatrixTrait: BasicOperationsTrait

@@ -2,8 +2,7 @@
 
 use std::collections::HashMap;
 
-use crate::Matrix;
-use crate::matrix::{NewShape, Position, BasicOperationsTrait, IntoMatrixTrait};
+use crate::{Matrix, Shape, Position, BasicOperationsTrait, IntoMatrixTrait};
 
 
 #[test]
@@ -13,7 +12,7 @@ fn test_create()
 
     let expected = Matrix 
         { 
-            shape: NewShape(2, 2), 
+            shape: Shape(2, 2), 
             elements: HashMap::from(
                 [(Position(0, 0), 1.0), (Position(0, 1), 2.0), (Position(1, 0), 3.0), (Position(1, 1), 4.0)]
             ) 
@@ -28,7 +27,7 @@ fn test_get_shape()
 {
     let m = Matrix::create(2, 2, &[1.0, 2.0, 3.0, 4.0]);
 
-    let expected = &NewShape(2, 2);
+    let expected = &Shape(2, 2);
 
     assert_eq!(m.get_shape(), expected);
 }
@@ -39,7 +38,7 @@ fn test_get_mut_shape()
 {
     let mut m = Matrix::create(2, 2, &[1.0, 2.0, 3.0, 4.0]);
 
-    let expected = &mut NewShape(2, 2);
+    let expected = &mut Shape(2, 2);
 
     assert_eq!(m.get_mut_shape(), expected);
 }
@@ -76,7 +75,7 @@ fn test_into_matrix()
 
     let expected = Matrix 
         { 
-            shape: NewShape(2, 2), 
+            shape: Shape(2, 2), 
             elements: HashMap::from(
                 [(Position(0, 0), 1.0), (Position(0, 1), 2.0), (Position(1, 0), 3.0), (Position(1, 1), 4.0)]
             ) 

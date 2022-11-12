@@ -1,14 +1,14 @@
 use std::collections::HashMap;
 use std::fmt::Debug;
 
-use crate::matrix::{NewShape, Position};
-use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait, VectorTrait};
+use crate::{Shape, Position};
+use crate::{BasicOperationsTrait, IntoMatrixTrait, VectorTrait};
 
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Vector<V> 
 {
-    pub(crate) shape: NewShape,
+    pub(crate) shape: Shape,
     pub(crate) elements: HashMap<Position, V>,
 }
 
@@ -17,13 +17,13 @@ impl<V> BasicOperationsTrait for Vector<V>
 {
     type Value = V;
 
-    fn get_shape(&self) -> &NewShape 
+    fn get_shape(&self) -> &Shape 
     {
         &self.shape
     }
 
 
-    fn get_mut_shape(&mut self) -> &mut NewShape 
+    fn get_mut_shape(&mut self) -> &mut Shape 
     {
         &mut self.shape
     }
@@ -54,7 +54,7 @@ impl<V> Vector<V>
     pub fn create(values: &[V]) -> Self
     {
 
-        let shape = NewShape(values.len(), 1);
+        let shape = Shape(values.len(), 1);
         let elements = values.iter().enumerate().map(|(i, v)| (Position(i, 0), *v))
             .collect::<HashMap<Position, V>>();
         Vector { shape, elements }

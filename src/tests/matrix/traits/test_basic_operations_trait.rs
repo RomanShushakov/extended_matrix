@@ -3,8 +3,8 @@
 use std::collections::HashMap;
 
 use crate::{Matrix, SquareMatrix, Vector3};
-use crate::matrix::{NewShape, Position};
-use crate::matrix::BasicOperationsTrait;
+use crate::{Shape, Position};
+use crate::BasicOperationsTrait;
 
 
 #[test]
@@ -52,7 +52,7 @@ fn test_add()
 
     let m_expected_1 = Matrix 
         { 
-            shape: NewShape(2, 2), 
+            shape: Shape(2, 2), 
             elements: HashMap::from(
                 [(Position(0, 0), 2.0), (Position(0, 1), 4.0), (Position(1, 0), 6.0), (Position(1, 1), 8.0)]
             ) 
@@ -60,7 +60,7 @@ fn test_add()
 
     let sm_expected = SquareMatrix 
         { 
-            shape: NewShape(2, 2), 
+            shape: Shape(2, 2), 
             elements: HashMap::from(
                 [(Position(0, 0), 2.0), (Position(0, 1), 4.0), (Position(1, 0), 6.0), (Position(1, 1), 8.0)]
             ) 
@@ -68,13 +68,13 @@ fn test_add()
 
     let v_expected = Vector3 
         { 
-            shape: NewShape(3, 1), 
+            shape: Shape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 2.0), (Position(1, 0), 4.0), (Position(2, 0), 6.0)]) 
         };
 
     let m_expected_2 = Matrix 
         { 
-            shape: NewShape(3, 1), 
+            shape: Shape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 2.0), (Position(1, 0), 4.0), (Position(2, 0), 6.0)]) 
         };
 
@@ -104,7 +104,7 @@ fn test_subtract()
 
     let m_expected_1 = Matrix 
         { 
-            shape: NewShape(2, 2), 
+            shape: Shape(2, 2), 
             elements: HashMap::from(
                 [(Position(0, 0), 0.0), (Position(0, 1), 0.0), (Position(1, 0), 0.0), (Position(1, 1), 0.0)]
             ) 
@@ -112,7 +112,7 @@ fn test_subtract()
 
     let sm_expected = SquareMatrix 
         { 
-            shape: NewShape(2, 2), 
+            shape: Shape(2, 2), 
             elements: HashMap::from(
                 [(Position(0, 0), 0.0), (Position(0, 1), 0.0), (Position(1, 0), 0.0), (Position(1, 1), 0.0)]
             ) 
@@ -120,13 +120,13 @@ fn test_subtract()
 
     let v_expected = Vector3 
         { 
-            shape: NewShape(3, 1), 
+            shape: Shape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 0.0), (Position(1, 0), 0.0), (Position(2, 0), 0.0)]) 
         };
 
     let m_expected_2 = Matrix 
         { 
-            shape: NewShape(3, 1), 
+            shape: Shape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 0.0), (Position(1, 0), 0.0), (Position(2, 0), 0.0)]) 
         };
 
@@ -150,7 +150,7 @@ fn test_multiply_by_scalar()
 
     let m_expected = Matrix 
         { 
-            shape: NewShape(2, 2), 
+            shape: Shape(2, 2), 
             elements: HashMap::from(
                 [(Position(0, 0), 5.0), (Position(0, 1), -10.0), (Position(1, 0), 15.0), (Position(1, 1), -20.0)]
             ) 
@@ -158,7 +158,7 @@ fn test_multiply_by_scalar()
 
     let sm_expected = SquareMatrix 
         { 
-            shape: NewShape(2, 2), 
+            shape: Shape(2, 2), 
             elements: HashMap::from(
                 [(Position(0, 0), 5.0), (Position(0, 1), -10.0), (Position(1, 0), 15.0), (Position(1, 1), -20.0)]
             ) 
@@ -166,7 +166,7 @@ fn test_multiply_by_scalar()
 
     let v_expected = Vector3 
         { 
-            shape: NewShape(3, 1), 
+            shape: Shape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 5.0), (Position(1, 0), 10.0), (Position(2, 0), 15.0)]) 
         };
 
@@ -195,13 +195,13 @@ fn test_multiply()
 
     let m_expected_1 = Matrix 
         { 
-            shape: NewShape(1, 1), 
+            shape: Shape(1, 1), 
             elements: HashMap::from([(Position(0, 0), 32.0)]) 
         };
 
     let m_expected_2 = Matrix 
         { 
-            shape: NewShape(2, 3), 
+            shape: Shape(2, 3), 
             elements: HashMap::from(
                 [
                     (Position(0, 0), 30.0), (Position(0, 1), 36.0), (Position(0, 2), 42.0),
@@ -212,7 +212,7 @@ fn test_multiply()
 
     let m_expected_3 = Matrix 
         { 
-            shape: NewShape(3, 3), 
+            shape: Shape(3, 3), 
             elements: HashMap::from(
                 [
                     (Position(0, 0), 30.0), (Position(0, 1), 36.0), (Position(0, 2), 42.0),
@@ -224,25 +224,25 @@ fn test_multiply()
 
     let m_expected_4 = Matrix 
         { 
-            shape: NewShape(1, 3), 
+            shape: Shape(1, 3), 
             elements: HashMap::from([(Position(0, 0), 30.0), (Position(0, 1), 36.0), (Position(0, 2), 42.0)]) 
         };
 
     let m_expected_5 = Matrix 
         { 
-            shape: NewShape(3, 1), 
+            shape: Shape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 32.0), (Position(1, 0), 77.0), (Position(2, 0), 122.0)]) 
         };
 
     let m_expected_6 = Matrix 
         { 
-            shape: NewShape(1, 1), 
+            shape: Shape(1, 1), 
             elements: HashMap::from([(Position(0, 0), 14.0)]) 
         };
 
     let m_expected_7 = Matrix 
         { 
-            shape: NewShape(3, 3), 
+            shape: Shape(3, 3), 
             elements: HashMap::from(
                 [
                     (Position(0, 0), 1.0), (Position(0, 1), 2.0), (Position(0, 2), 3.0),
@@ -273,7 +273,7 @@ fn test_transpose()
 
     let m_expected = Matrix 
         { 
-            shape: NewShape(3, 2), 
+            shape: Shape(3, 2), 
             elements: HashMap::from(
                 [
                     (Position(0, 0), 1.0), (Position(0, 1), -4.0),
@@ -285,7 +285,7 @@ fn test_transpose()
 
     let sm_expected = SquareMatrix 
         { 
-            shape: NewShape(2, 2), 
+            shape: Shape(2, 2), 
             elements: HashMap::from(
                 [
                     (Position(0, 0), 1.0), (Position(0, 1), 3.0),
@@ -296,7 +296,7 @@ fn test_transpose()
 
     let vt_expected = Vector3 
         { 
-            shape: NewShape(1, 3), 
+            shape: Shape(1, 3), 
             elements: HashMap::from([(Position(0, 0), 1.0), (Position(0, 1), -2.0), (Position(0, 2), 3.0)]) 
         };
 
@@ -316,7 +316,7 @@ fn test_remove_row()
 
     let m_expected_1 = Matrix 
         { 
-            shape: NewShape(1, 3), 
+            shape: Shape(1, 3), 
             elements: HashMap::from(
                 [
                     (Position(0, 0), -4.0), (Position(0, 1), 5.0), (Position(0, 2), -6.0),
@@ -326,7 +326,7 @@ fn test_remove_row()
 
     let m_expected_2 = Matrix 
         { 
-            shape: NewShape(1, 2), 
+            shape: Shape(1, 2), 
             elements: HashMap::from(
                 [
                     (Position(0, 0), 1.0), (Position(0, 1), -2.0),
@@ -336,7 +336,7 @@ fn test_remove_row()
 
     let m_expected_3 = Matrix 
         { 
-            shape: NewShape(2, 1), 
+            shape: Shape(2, 1), 
             elements: HashMap::from([(Position(0, 0), 1.0), (Position(1, 0), 3.0)]) 
         };
 
@@ -358,13 +358,13 @@ fn test_remove_column()
 
     let m_expected_1 = Matrix 
         { 
-            shape: NewShape(1, 2), 
+            shape: Shape(1, 2), 
             elements: HashMap::from([(Position(0, 0), 1.0), (Position(0, 1), 3.0)]) 
         };
 
     let m_expected_2 = Matrix 
         { 
-            shape: NewShape(3, 2), 
+            shape: Shape(3, 2), 
             elements: HashMap::from(
                 [
                     (Position(0, 0), 2.0), (Position(0, 1), 3.0),
@@ -376,7 +376,7 @@ fn test_remove_column()
 
     let m_expected_3 = Matrix 
         { 
-            shape: NewShape(1, 2), 
+            shape: Shape(1, 2), 
             elements: HashMap::from([(Position(0, 0), 2.0), (Position(0, 1), 3.0)]) 
         };
 

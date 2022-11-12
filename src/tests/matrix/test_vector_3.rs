@@ -3,7 +3,7 @@
 use std::collections::HashMap;
 
 use crate::{Matrix, Vector3, SquareMatrix};
-use crate::matrix::{Position, NewShape, BasicOperationsTrait, IntoMatrixTrait, VectorTrait};
+use crate::{Position, Shape, BasicOperationsTrait, IntoMatrixTrait, VectorTrait};
 
 
 #[test]
@@ -13,7 +13,7 @@ fn test_create()
 
     let v_expected = Vector3
         { 
-            shape: NewShape(3, 1), 
+            shape: Shape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 1.0), (Position(1, 0), 2.0), (Position(2, 0), 3.0)]), 
         };
 
@@ -26,7 +26,7 @@ fn test_get_shape()
 {
     let v = Vector3::create(&[1.0, 2.0, 3.0]);
 
-    let s_expected = &NewShape(3, 1);
+    let s_expected = &Shape(3, 1);
 
     assert_eq!(v.get_shape(), s_expected);
 }
@@ -37,7 +37,7 @@ fn test_get_mut_shape()
 {
     let mut v = Vector3::create(&[1.0, 2.0, 3.0]);
 
-    let s_expected = &mut NewShape(3, 1);
+    let s_expected = &mut Shape(3, 1);
 
     assert_eq!(v.get_mut_shape(), s_expected);
 }
@@ -74,7 +74,7 @@ fn test_into_matrix()
 
     let m_expected = Matrix 
         { 
-            shape: NewShape(3, 1), 
+            shape: Shape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 1.0), (Position(1, 0), 2.0), (Position(2, 0), 3.0)]) 
         };
 
@@ -92,7 +92,7 @@ fn test_cross_product()
 
     let v_expected = Vector3 
         { 
-            shape: NewShape(3, 1), 
+            shape: Shape(3, 1), 
             elements: HashMap::from([(Position(0, 0), 6.0), (Position(1, 0), -6.0), (Position(2, 0), 6.0)]) 
         };
 
@@ -148,7 +148,7 @@ fn test_projection_perpendicular_to_vector()
 
     let v_expected_1 = Vector3
         {
-            shape: NewShape(3, 1),
+            shape: Shape(3, 1),
             elements: HashMap::from([
                 (Position(0, 0), -0.3333333333333333), 
                 (Position(1, 0), -0.3333333333333333), 
@@ -158,13 +158,13 @@ fn test_projection_perpendicular_to_vector()
 
     let v_expected_2 = Vector3
         {
-            shape: NewShape(3, 1),
+            shape: Shape(3, 1),
             elements: HashMap::from([(Position(0, 0), 0.0), (Position(1, 0), 1.0), (Position(2, 0), 1.0)]) 
         };
 
     let v_expected_3 = Vector3
         {
-            shape: NewShape(3, 1),
+            shape: Shape(3, 1),
             elements: HashMap::from([
                 (Position(0, 0), 0.03539823008849559), 
                 (Position(1, 0), 7.309734513274336), 
@@ -174,7 +174,7 @@ fn test_projection_perpendicular_to_vector()
 
     let v_expected_4 = Vector3
         {
-            shape: NewShape(3, 1),
+            shape: Shape(3, 1),
             elements: HashMap::from([(Position(0, 0), 0.0), (Position(1, 0), 0.0), (Position(2, 0), 0.0)]) 
         };
 

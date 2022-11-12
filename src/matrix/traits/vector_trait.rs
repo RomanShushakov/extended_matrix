@@ -2,7 +2,7 @@ use extended_matrix_float::MyFloatTrait;
 
 use crate::{BasicOperationsTrait, IntoMatrixTrait};
 use crate::FloatTrait;
-use crate::matrix::Position;
+use crate::Position;
 
 
 pub trait VectorTrait: 

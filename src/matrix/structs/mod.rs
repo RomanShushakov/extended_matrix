@@ -1,5 +1,5 @@
 mod shape;
 mod position;
 
-pub(crate) use shape::{Shape, NewShape};
-pub use position::Position; 
+pub(crate) use shape::Shape;
+pub use position::Position;

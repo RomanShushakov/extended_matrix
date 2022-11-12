@@ -3,14 +3,14 @@ use std::fmt::Debug;
 use std::ops::{Sub, Mul};
 
 use crate::FloatTrait;
-use crate::matrix::{Matrix, NewShape, Position};
-use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait, VectorTrait};
+use crate::{Matrix, Shape, Position};
+use crate::{BasicOperationsTrait, IntoMatrixTrait, VectorTrait};
 
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Vector3<V> 
 {
-    pub(crate) shape: NewShape,
+    pub(crate) shape: Shape,
     pub(crate) elements: HashMap<Position, V>,
 }
 
@@ -19,13 +19,13 @@ impl<V> BasicOperationsTrait for Vector3<V>
 {
     type Value = V;
 
-    fn get_shape(&self) -> &NewShape 
+    fn get_shape(&self) -> &Shape 
     {
         &self.shape
     }
 
 
-    fn get_mut_shape(&mut self) -> &mut NewShape 
+    fn get_mut_shape(&mut self) -> &mut Shape 
     {
         &mut self.shape
     }
@@ -55,7 +55,7 @@ impl<V> Vector3<V>
 {
     pub fn create(components: &[V; 3]) -> Self
     {
-        let shape = NewShape(3, 1);
+        let shape = Shape(3, 1);
         let elements = HashMap::from([
             (Position(0, 0), components[0]), (Position(1, 0), components[1]), (Position(2, 0), components[2])]);
 
@@ -111,7 +111,7 @@ impl<V> Vector3<V>
     }
 
 
-    pub(crate) fn cosine_angle_between_vectors(&self, other: &Self) -> V
+    pub fn cosine_angle_between_vectors(&self, other: &Self) -> V
         where V: FloatTrait<Output = V>
     {
         self.dot_product(other).expect("Dot product could not be calculated") / 

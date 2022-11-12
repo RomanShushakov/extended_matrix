@@ -1,19 +1,21 @@
-mod matrix;
 mod structs;
 mod traits;
+mod enums;
+mod matrix;
 mod square_matrix;
-mod vector_3;
 mod vector;
-mod symmetric_matrix;
+mod vector_3;
 
 pub use matrix::Matrix;
-pub(crate) use structs::{Shape, NewShape};
+pub(crate) use structs::Shape;
 pub use structs::Position;
-pub use traits::{BasicOperationsTrait, VectorTrait, SquareMatrixTrait};
+pub use traits::
+{
+    BasicOperationsTrait, VectorTrait, SquareMatrixTrait, TryIntoSquareMatrixTrait, 
+    TryIntoSymmetricCompactedMatrixTrait,
+};
+pub(crate) use enums::Operation;
 pub use square_matrix::SquareMatrix;
 pub(crate) use traits::IntoMatrixTrait;
-pub use vector_3::Vector3;
 pub use vector::Vector;
-pub use traits::TryIntoSquareMatrixTrait;
-pub use symmetric_matrix::SymmetricMatrix;
-pub use traits::TryIntoSymmetricMatrixTrait;
+pub use vector_3::Vector3;

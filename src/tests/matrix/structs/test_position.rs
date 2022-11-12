@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 
-use crate::matrix::Position;
+use crate::Position;
 
 
 #[test]

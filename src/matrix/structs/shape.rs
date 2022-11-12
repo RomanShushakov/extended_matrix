@@ -1,12 +1,8 @@
-#[derive(Debug, PartialEq)]
-pub struct Shape<T>(pub T, pub T);
-
-
 #[derive(Debug, PartialEq, Clone)]
-pub struct NewShape(pub usize, pub usize);
+pub struct Shape(pub usize, pub usize);
 
 
-impl NewShape
+impl Shape
 {
     pub fn update(&mut self, rows_number: usize, columns_number: usize)
     {

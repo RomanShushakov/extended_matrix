@@ -1,7 +1,6 @@
 use extended_matrix_float::MyFloatTrait;
 
-use crate::{BasicOperationsTrait, VectorTrait, Position, FloatTrait, Vector};
-use crate::enums::Operation;
+use crate::{BasicOperationsTrait, VectorTrait, Position, FloatTrait, Vector, Operation};
 
 
 fn pivot_gep<V, SMT, VT>(a: &mut SMT, b: &mut VT, s: &mut [<SMT as BasicOperationsTrait>::Value], n: usize, k: usize, 

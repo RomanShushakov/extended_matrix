@@ -2,16 +2,15 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 use std::ops::{AddAssign, SubAssign, Mul, MulAssign};
 
-use crate::matrix::{NewShape, Position, Matrix, IntoMatrixTrait};
-use crate::enums::Operation;
+use crate::{Shape, Position, Matrix, IntoMatrixTrait, Operation};
 
 
 pub trait BasicOperationsTrait 
 {
     type Value;
 
-    fn get_shape(&self) -> &NewShape;
-    fn get_mut_shape(&mut self) -> &mut NewShape;
+    fn get_shape(&self) -> &Shape;
+    fn get_mut_shape(&mut self) -> &mut Shape;
     fn get_elements(&self) -> &HashMap<Position, Self::Value>;
     fn get_mut_elements(&mut self) -> &mut HashMap<Position, Self::Value>;
 
@@ -151,7 +150,7 @@ pub trait BasicOperationsTrait
         {
             return Err(format!("Number of rows less than {}!", row + 1));
         }
-        let shape = NewShape(self.get_shape().0 - 1, self.get_shape().1);
+        let shape = Shape(self.get_shape().0 - 1, self.get_shape().1);
         let mut elements = HashMap::new();
         for (position, value) in self.get_elements()
         {
@@ -177,7 +176,7 @@ pub trait BasicOperationsTrait
         {
             return Err(format!("Number of columns less than {}!", column + 1));
         }
-        let shape = NewShape(self.get_shape().0, self.get_shape().1 - 1);
+        let shape = Shape(self.get_shape().0, self.get_shape().1 - 1);
         let mut elements = HashMap::new();
         for (position, value) in self.get_elements()
         {
@@ -200,7 +199,7 @@ pub trait BasicOperationsTrait
         where F: Fn(&str),
               Self::Value: Copy + Debug
     {
-        let NewShape(rows_number, columns_numbers) = self.get_shape();
+        let Shape(rows_number, columns_numbers) = self.get_shape();
         for row in 0..*rows_number
         {
             let mut row_str = String::from("[");

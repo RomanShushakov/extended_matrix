@@ -1,13 +1,17 @@
 use std::collections::HashMap;
 
-use crate::matrix::{Position, NewShape};
-use crate::matrix::{BasicOperationsTrait, IntoMatrixTrait, SquareMatrixTrait, TryIntoSymmetricMatrixTrait};
+use crate::{Position, Shape};
+use crate::
+{
+    BasicOperationsTrait, IntoMatrixTrait, SquareMatrixTrait, 
+    TryIntoSymmetricCompactedMatrixTrait,
+};
 
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct SquareMatrix<V>
 {
-    pub(crate) shape: NewShape,
+    pub(crate) shape: Shape,
     pub(crate) elements: HashMap<Position, V>,
 }
 
@@ -16,13 +20,13 @@ impl<V> BasicOperationsTrait for SquareMatrix<V>
 {
     type Value = V;
 
-    fn get_shape(&self) -> &NewShape 
+    fn get_shape(&self) -> &Shape 
     {
         &self.shape
     }
 
 
-    fn get_mut_shape(&mut self) -> &mut NewShape 
+    fn get_mut_shape(&mut self) -> &mut Shape 
     {
         &mut self.shape
     }
@@ -47,7 +51,7 @@ impl<V> IntoMatrixTrait for SquareMatrix<V> {}
 impl<V> SquareMatrixTrait for SquareMatrix<V> {}
 
 
-impl<V> TryIntoSymmetricMatrixTrait for SquareMatrix<V> {}
+impl<V> TryIntoSymmetricCompactedMatrixTrait for SquareMatrix<V> {}
 
 
 impl<V> SquareMatrix<V> 
@@ -69,6 +73,6 @@ impl<V> SquareMatrix<V>
             };
         }
 
-        SquareMatrix { shape: NewShape(order, order), elements }
+        SquareMatrix { shape: Shape(order, order), elements }
     }
 }
