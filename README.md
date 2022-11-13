@@ -2,7 +2,7 @@
 
 A matrix calculation module.
 
-## Example
+### Example
 
 ```rust
 #[macro_use]
