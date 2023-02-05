@@ -1,6 +1,6 @@
 #![allow(unused_imports)]
 
-use crate::{SquareMatrix, TryIntoSymmetricCompactedMatrixTrait};
+use crate::{SquareMatrix, TryIntoSymmetricCompactedMatrixTrait, Position};
 
 
 #[test]
@@ -72,15 +72,15 @@ fn test_forced_into_symmetric_compacted_matrix()
         0.0, 1.0, -4.0, 0.0,
     ]);
 
-    let expected_warnings_1: Vec<String> = Vec::new();
+    let expected_warnings_1: Vec<Vec<(Position, f64)>> = Vec::new();
     let expected_a_1 = vec![5.0, 6.0, -4.0, 6.0, -4.0, 1.0, 5.0, -4.0, 1.0];
     let expected_maxa_1 = vec![0i64, 1, 3, 6, 9];
-    let expected_warnings_2: Vec<String> = Vec::new();
+    let expected_warnings_2: Vec<Vec<(Position, f64)>> = Vec::new();
     let expected_a_2 = vec![2.0, 3.0, -2.0, 5.0, -2.0, 10.0, -3.0, 10.0, 4.0, 0.0, 0.0, -1.0];
     let expected_maxa_2 = vec![0, 1, 3, 5, 7, 12];
-    let expected_warnings_3: Vec<String> = vec![
-        "Element [0, 1] does not match with [1, 0]!".to_string(),
-        "Diagonal element [3, 3] equals to zero!".to_string(),
+    let expected_warnings_3: Vec<Vec<(Position, f64)>> = vec![
+        vec![(Position(0, 1), -4.0), (Position(1, 0), -4.25)],
+        vec![(Position(3, 3), 0.0)],
     ];
     let expected_a_3 = vec![5.0, 6.0, -4.0, 6.0, -4.0, 1.0, 0.0, -4.0, 1.0];
     let expected_maxa_3 = vec![0i64, 1, 3, 6, 9];
