@@ -86,8 +86,12 @@ pub trait TryIntoSymmetricCompactedMatrixTrait: SquareMatrixTrait
     }
 
 
-    fn forced_into_symmetric_compacted_matrix(&self, rel_tol: <Self as BasicOperationsTrait>::Value, 
-        warnings: &mut Vec<String>) -> (Vec<<Self as BasicOperationsTrait>::Value>, Vec<i64>)
+    fn forced_into_symmetric_compacted_matrix(
+        &self, 
+        rel_tol: <Self as BasicOperationsTrait>::Value, 
+        warnings: &mut Vec<Vec<(Position, <Self as BasicOperationsTrait>::Value)>>
+    ) 
+        -> (Vec<<Self as BasicOperationsTrait>::Value>, Vec<i64>)
         where <Self as BasicOperationsTrait>::Value: FloatTrait<Output = <Self as BasicOperationsTrait>::Value>
     {
         let shape = self.get_shape();
@@ -100,7 +104,9 @@ pub trait TryIntoSymmetricCompactedMatrixTrait: SquareMatrixTrait
             if *self.get_element_value(&Position(column, column)).expect("Element is absent") == 
                 <<Self as BasicOperationsTrait>::Value>::from(0f32)
             {
-                let warning = format!("Diagonal element [{}, {}] equals to zero!", column, column);
+                let warning = vec![(
+                    Position(column, column), <<Self as BasicOperationsTrait>::Value>::from(0f32),
+                )];
                 warnings.push(warning);
             }
             let mut skyline = 0;
@@ -126,8 +132,9 @@ pub trait TryIntoSymmetricCompactedMatrixTrait: SquareMatrixTrait
                         *self.get_element_value(&Position(column, row)).expect("Element is absent");
                     if (<<Self as BasicOperationsTrait>::Value>::from(1f32) - value / symm_value).my_abs() > rel_tol
                     {
-                        let warning = format!("Element [{row}, {column}] does not match with \
-                            [{column}, {row}]!");
+                        let warning = vec![
+                            (Position(row, column), value), (Position(column, row), symm_value),
+                        ];
                         warnings.push(warning);
                     }
                     a.push(value);
@@ -143,8 +150,9 @@ pub trait TryIntoSymmetricCompactedMatrixTrait: SquareMatrixTrait
                     *self.get_element_value(&Position(column, row)).expect("Element is absent");
                 if (<<Self as BasicOperationsTrait>::Value>::from(1f32) - value / symm_value).my_abs() > rel_tol
                 {
-                    let warning = format!("Element [{row}, {column}] does not match with \
-                        [{column}, {row}]!");
+                    let warning = vec![
+                        (Position(row, column), value), (Position(column, row), symm_value)
+                    ];
                     warnings.push(warning);
                 }
                 a.push(value);
@@ -157,8 +165,9 @@ pub trait TryIntoSymmetricCompactedMatrixTrait: SquareMatrixTrait
                     *self.get_element_value(&Position(column, row)).expect("Element is absent");
                 if (<<Self as BasicOperationsTrait>::Value>::from(1f32) - value / symm_value).my_abs() > rel_tol
                 {
-                    let warning = format!("Element [{row}, {column}] does not match with \
-                        [{column}, {row}]!");
+                    let warning = vec![
+                        (Position(row, column), value), (Position(column, row), symm_value),
+                    ];
                     warnings.push(warning);
                 }
                 a.push(value);
