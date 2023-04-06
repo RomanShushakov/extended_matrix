@@ -161,6 +161,14 @@ impl<V> Vector3<V>
         }
         if V::from(1f32) + c < abs_tol
         {
+            if self.get_components()[..2] == [V::from(0f32); 2] && other.get_components()[..2] == [V::from(0f32); 2]
+            {
+                return Ok(Matrix::create(3, 3, &[
+                    V::from(-1.0), V::from(0.0), V::from(0.0),
+                    V::from(0.0), V::from(1.0), V::from(0.0),
+                    V::from(0.0), V::from(0.0), V::from(-1.0),
+                ]));
+            }
             return Ok(Matrix::create(3, 3, &[
                 V::from(-1.0), V::from(0.0), V::from(0.0),
                 V::from(0.0), V::from(-1.0), V::from(0.0),
