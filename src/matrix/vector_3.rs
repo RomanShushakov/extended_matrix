@@ -179,7 +179,6 @@ impl<V> Vector3<V>
         let axis_norm = axis.norm()?;
         let [x, y, z] = axis.get_components();
         let [x_n, y_n, z_n] = [x / axis_norm, y / axis_norm, z / axis_norm];
-        let c = self.cosine_angle_between_vectors(other);
         let s = axis.norm()? / (self.norm()? * other.norm()?);
         let t = V::from(1f32) - c;
         let rotation_matrix = Matrix::create(3, 3, 
