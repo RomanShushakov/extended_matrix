@@ -195,6 +195,8 @@ fn test_rotation_matrix_to_align_with_vector()
     let v_3 = Vector3::create(&[-10.0, 0.0, 1.0]);
     let v_4 = Vector3::create(&[10.0, 0.0, 1.0]);
     let v_5 = Vector3::create(&[-10.0, 0.0, -1.0]);
+    let v_6 = Vector3::create(&[0.0, 0.0, 5.0]);
+    let v_7 = Vector3::create(&[0.0, 0.0, -5.0]);
 
     let m_expected_1 = Matrix::create(3, 3, 
         &[
@@ -220,13 +222,21 @@ fn test_rotation_matrix_to_align_with_vector()
             0.0, -1.0, 0.0,
             0.0, 0.0, -1.0]);
 
+    let m_expected_5 = Matrix::create(3, 3,
+        &[
+            -1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 0.0, -1.0]);    
+
     let rotation_matrix_1 = v_1.rotation_matrix_to_align_with_vector(&v_2, rel_tol, abs_tol);
     let rotation_matrix_2 = v_1.rotation_matrix_to_align_with_vector(&v_3, rel_tol, abs_tol);
     let rotation_matrix_3 = v_1.rotation_matrix_to_align_with_vector(&v_4, rel_tol, abs_tol);
     let rotation_matrix_4 = v_1.rotation_matrix_to_align_with_vector(&v_5, rel_tol, abs_tol);
+    let rotation_matrix_5 = v_6.rotation_matrix_to_align_with_vector(&v_7, rel_tol, abs_tol);
 
     assert_eq!(rotation_matrix_1, Ok(m_expected_1));
     assert_eq!(rotation_matrix_2, Ok(m_expected_2));
     assert_eq!(rotation_matrix_3, Ok(m_expected_3));
     assert_eq!(rotation_matrix_4, Ok(m_expected_4));
+    assert_eq!(rotation_matrix_5, Ok(m_expected_5));
 }

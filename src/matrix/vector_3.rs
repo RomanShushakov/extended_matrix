@@ -161,6 +161,14 @@ impl<V> Vector3<V>
         }
         if V::from(1f32) + c < abs_tol
         {
+            if self.get_components()[..2] == [V::from(0f32); 2] && other.get_components()[..2] == [V::from(0f32); 2]
+            {
+                return Ok(Matrix::create(3, 3, &[
+                    V::from(-1.0), V::from(0.0), V::from(0.0),
+                    V::from(0.0), V::from(1.0), V::from(0.0),
+                    V::from(0.0), V::from(0.0), V::from(-1.0),
+                ]));
+            }
             return Ok(Matrix::create(3, 3, &[
                 V::from(-1.0), V::from(0.0), V::from(0.0),
                 V::from(0.0), V::from(-1.0), V::from(0.0),
@@ -171,7 +179,6 @@ impl<V> Vector3<V>
         let axis_norm = axis.norm()?;
         let [x, y, z] = axis.get_components();
         let [x_n, y_n, z_n] = [x / axis_norm, y / axis_norm, z / axis_norm];
-        let c = self.cosine_angle_between_vectors(other);
         let s = axis.norm()? / (self.norm()? * other.norm()?);
         let t = V::from(1f32) - c;
         let rotation_matrix = Matrix::create(3, 3, 
