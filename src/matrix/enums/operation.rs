@@ -1,6 +1,5 @@
 #[derive(Copy, Clone)]
-pub enum Operation
-{
+pub enum Operation {
     Addition,
     Multiplication,
     Subtraction,
