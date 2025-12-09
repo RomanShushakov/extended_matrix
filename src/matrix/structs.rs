@@ -1,5 +1,5 @@
-mod shape;
 mod position;
+mod shape;
 
-pub use shape::Shape;
 pub use position::Position;
+pub use shape::Shape;
