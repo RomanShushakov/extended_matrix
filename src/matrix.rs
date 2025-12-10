@@ -1,3 +1,4 @@
+mod csr_matrix;
 mod enums;
 mod matrix;
 mod square_matrix;
@@ -6,7 +7,8 @@ mod traits;
 mod vector;
 mod vector_3;
 
-pub(crate) use enums::Operation;
+pub use csr_matrix::CsrMatrix;
+pub use enums::Operation;
 pub use matrix::Matrix;
 pub use square_matrix::SquareMatrix;
 pub use structs::{Position, Shape};
