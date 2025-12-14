@@ -2,18 +2,18 @@ use crate::{BasicOperationsTrait, FloatTrait, Position, SquareMatrix};
 
 #[derive(Clone, Debug)]
 pub struct CsrMatrix<V> {
-    pub n_rows: usize,
-    pub n_cols: usize,
-    pub values: Vec<V>,
-    pub col_index: Vec<usize>,
-    pub row_ptr: Vec<usize>, // length = n_rows + 1
+    n_rows: usize,
+    n_cols: usize,
+    values: Vec<V>,
+    col_index: Vec<usize>,
+    row_ptr: Vec<usize>, // length = n_rows + 1
 }
 
 impl<V> CsrMatrix<V>
 where
     V: FloatTrait<Output = V> + Clone,
 {
-    pub fn new(
+    pub fn create(
         n_rows: usize,
         n_cols: usize,
         values: Vec<V>,
@@ -37,6 +37,14 @@ where
             col_index,
             row_ptr,
         })
+    }
+
+    pub fn get_n_rows(&self) -> usize {
+        self.n_rows
+    }
+
+    pub fn get_n_cols(&self) -> usize {
+        self.n_cols
     }
 
     pub fn from_square_matrix(a: &SquareMatrix<V>) -> Result<Self, String> {
@@ -91,7 +99,7 @@ where
             count_in_row = 0;
         }
 
-        CsrMatrix::new(n_rows, n_cols, values, col_index, row_ptr)
+        CsrMatrix::create(n_rows, n_cols, values, col_index, row_ptr)
     }
 
     pub fn spmv(&self, x: &[V]) -> Result<Vec<V>, String> {
