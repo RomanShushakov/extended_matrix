@@ -47,6 +47,18 @@ where
         self.n_cols
     }
 
+    pub fn get_values(&self) -> &[V] {
+        &self.values
+    }
+
+    pub fn get_col_index(&self) -> &[usize] {
+        &self.col_index
+    }
+
+    pub fn get_row_ptr(&self) -> &[usize] {
+        &self.row_ptr
+    }
+
     pub fn from_square_matrix(a: &SquareMatrix<V>) -> Result<Self, String> {
         let a_shape = a.get_shape();
         let (n_rows, n_cols) = (a_shape.0, a_shape.1);
