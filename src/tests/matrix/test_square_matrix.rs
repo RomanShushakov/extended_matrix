@@ -84,3 +84,32 @@ fn test_into_matrix() {
 
     assert_eq!(m.into_matrix(), expected);
 }
+
+#[test]
+fn test_create_sparse_empty() {
+    let m = SquareMatrix::<f64>::create(4, &[]);
+    assert_eq!(m.get_elements().len(), 0);
+}
+
+#[test]
+fn test_add_value_inserts_and_removes_zero() {
+    let mut m = SquareMatrix::create(4, &[]);
+    m.add_value(Position(1, 2), 3.0);
+    assert_eq!(*m.get_elements().get(&Position(1, 2)).unwrap(), 3.0);
+
+    m.add_value(Position(1, 2), -3.0);
+    assert!(m.get_elements().get(&Position(1, 2)).is_none());
+}
+
+#[test]
+fn test_to_dense_values() {
+    let mut m = SquareMatrix::create(3, &[]);
+    m.add_value(Position(0, 0), 1.0);
+    m.add_value(Position(1, 2), 5.0);
+
+    let dense = m.to_dense_values();
+    assert_eq!(dense.len(), 9);
+    assert_eq!(dense[0 * 3 + 0], 1.0);
+    assert_eq!(dense[1 * 3 + 2], 5.0);
+    assert_eq!(dense[2 * 3 + 2], 0.0);
+}

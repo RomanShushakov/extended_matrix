@@ -1,4 +1,4 @@
-#[derive(Debug, Hash, PartialEq, Eq, Clone)]
+#[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 pub struct Position(pub usize, pub usize);
 
 impl Position {
