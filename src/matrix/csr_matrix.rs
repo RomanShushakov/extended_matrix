@@ -114,6 +114,67 @@ where
         CsrMatrix::create(n_rows, n_cols, values, col_index, row_ptr)
     }
 
+    pub fn from_coo(
+        n_rows: usize,
+        n_cols: usize,
+        triplets: &[(usize, usize, V)],
+    ) -> Result<Self, String> {
+        if n_rows == 0 || n_cols == 0 {
+            return Err("CsrMatrix::from_coo: empty shape".to_string());
+        }
+
+        // Copy + validate
+        let mut entries: Vec<(usize, usize, V)> = Vec::with_capacity(triplets.len());
+        for &(r, c, v) in triplets {
+            if r >= n_rows || c >= n_cols {
+                return Err(format!(
+                    "CsrMatrix::from_coo: index out of bounds: ({},{}) for {}x{}",
+                    r, c, n_rows, n_cols
+                ));
+            }
+            entries.push((r, c, v));
+        }
+
+        // Sort by (row, col)
+        entries.sort_by(|a, b| (a.0, a.1).cmp(&(b.0, b.1)));
+
+        // Compress duplicates
+        let mut cols: Vec<usize> = Vec::new();
+        let mut vals: Vec<V> = Vec::new();
+        let mut row_ptr = vec![0usize; n_rows + 1];
+
+        let mut last_rc: Option<(usize, usize)> = None;
+
+        for (r, c, v) in entries {
+            match last_rc {
+                Some((lr, lc)) if lr == r && lc == c => {
+                    // duplicate -> sum
+                    let last = vals.last_mut().unwrap();
+                    *last = *last + v;
+                }
+                _ => {
+                    cols.push(c);
+                    vals.push(v);
+                    row_ptr[r + 1] += 1; // count nnz in row r
+                    last_rc = Some((r, c));
+                }
+            }
+        }
+
+        // Prefix sum: counts -> row pointers
+        for i in 0..n_rows {
+            row_ptr[i + 1] += row_ptr[i];
+        }
+
+        Ok(CsrMatrix {
+            n_rows,
+            n_cols,
+            values: vals,
+            col_index: cols,
+            row_ptr,
+        })
+    }
+
     pub fn spmv(&self, x: &[V]) -> Result<Vec<V>, String> {
         if x.len() != self.n_cols {
             return Err(format!(
