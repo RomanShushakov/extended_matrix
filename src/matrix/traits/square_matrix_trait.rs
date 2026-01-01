@@ -1,3 +1,17 @@
+//! Square-matrix algorithms.
+//!
+//! This trait groups “classical” routines that are commonly taught in numerical linear algebra:
+//! - Gaussian elimination (`*_gep` variants implement elimination/substitution with pivoting)
+//! - LU / LUP decomposition (including determinant/inverse helpers built on top)
+//!
+//! Notes on naming:
+//! - `*_gep` is used here as a short label for “Gaussian elimination process” style helpers.
+//!   In practice, these methods implement elimination/substitution steps with pivoting.
+//! - `lup_*` refers to an LU factorization with a permutation matrix (row pivoting).
+//!
+//! The goal is clarity over micro-optimizations.
+
+
 // external imports
 use extended_matrix_float::MyFloatTrait;
 

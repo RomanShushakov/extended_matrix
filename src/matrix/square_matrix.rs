@@ -1,3 +1,9 @@
+//! `SquareMatrix` type + implementations.
+//!
+//! `SquareMatrix` is the main “algorithm host” for dense square matrices in this crate.
+//! Many operations delegate to trait methods from `matrix::traits` to keep the API surface tidy.
+
+
 // external imports
 use std::collections::HashMap;
 use std::ops::AddAssign;

@@ -1,3 +1,15 @@
+//! Matrix module root.
+//!
+//! This module wires together the concrete matrix types and the algorithmic traits/implementations.
+//! Most “interesting” routines live under `matrix::traits` and are implemented for `SquareMatrix`.
+//!
+//! High-level structure:
+//! - `structs`: small helper structs (shape, position, …)
+//! - `traits`: algorithm contracts (e.g. square-matrix solvers/decompositions)
+//! - concrete types: `Matrix`, `SquareMatrix`, `CsrMatrix`
+//! - implementations: trait impls + operator overloads
+
+
 mod csr_matrix;
 mod enums;
 mod matrix;
